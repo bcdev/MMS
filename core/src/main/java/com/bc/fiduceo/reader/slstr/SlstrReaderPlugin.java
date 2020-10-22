@@ -21,7 +21,7 @@ public class SlstrReaderPlugin implements ReaderPlugin {
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
-        return new SlstrReader(readerContext, productType);
+        return new SlstrReaderNew(readerContext, productType);
     }
 
     @Override

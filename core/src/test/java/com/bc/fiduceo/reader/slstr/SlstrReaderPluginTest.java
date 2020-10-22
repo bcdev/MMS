@@ -21,7 +21,7 @@ public class SlstrReaderPluginTest {
     public void testCreateReader() {
         final Reader reader = plugin.createReader(new ReaderContext());
         assertNotNull(reader);
-        assertTrue(reader instanceof SlstrReader);
+        assertTrue(reader instanceof SlstrReaderNew);
     }
 
     @Test
