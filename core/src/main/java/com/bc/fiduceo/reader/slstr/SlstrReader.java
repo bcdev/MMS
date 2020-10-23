@@ -40,7 +40,7 @@ public class SlstrReader extends SNAP_Reader {
     private static final Interval INTERVAL = new Interval(100, 100);
     private static final int NUM_SPLITS = 1;
 
-    private final VariableNames variableNames;
+    private final VariableFactory variableFactory;
     private final String regEx;
     final private ReaderContext readerContext;
     private long[] subs_times;
@@ -52,7 +52,7 @@ public class SlstrReader extends SNAP_Reader {
         this.readerContext = readerContext;
         productDir = null;
 
-        variableNames = new VariableNames();
+        variableFactory = new VariableFactory();
 
         if (productType == ProductType.ALL) {
             this.regEx = REGEX_ALL;
@@ -170,7 +170,7 @@ public class SlstrReader extends SNAP_Reader {
 
         final Band[] bands = product.getBands();
         for (final Band band : bands) {
-            if (variableNames.isValidName(band.getName())) {
+            if (variableFactory.isValidName(band.getName())) {
                 final VariableProxy variableProxy = new VariableProxy(band);
                 result.add(variableProxy);
             }
@@ -178,7 +178,7 @@ public class SlstrReader extends SNAP_Reader {
 
         final TiePointGrid[] tiePointGrids = product.getTiePointGrids();
         for (final TiePointGrid tiePointGrid : tiePointGrids) {
-            if (variableNames.isValidName(tiePointGrid.getName())) {
+            if (variableFactory.isValidName(tiePointGrid.getName())) {
                 final VariableProxy variableProxy = new VariableProxy(tiePointGrid);
                 result.add(variableProxy);
             }
@@ -211,7 +211,7 @@ public class SlstrReader extends SNAP_Reader {
             return readScaled(centerX, centerY, interval, variableName);
         }
 
-        final VariableType variableType = variableNames.getVariableType(variableName);
+        final VariableType variableType = variableFactory.getVariableType(variableName);
         final Transform transform = transformFactory.get(variableType);
         final Dimension rasterSize = transform.getRasterSize();
 
@@ -251,7 +251,7 @@ public class SlstrReader extends SNAP_Reader {
             }
         }
 
-        if (variableNames.isFlagVariable(variableName)) {
+        if (variableFactory.isFlagVariable(variableName)) {
             return transform.processFlags(targetArray, (int) noDataValue);
         } else {
             return transform.process(targetArray, noDataValue);
@@ -260,7 +260,7 @@ public class SlstrReader extends SNAP_Reader {
 
     @Override
     public Array readScaled(int centerX, int centerY, Interval interval, String variableName) throws IOException {
-        final VariableType variableType = variableNames.getVariableType(variableName);
+        final VariableType variableType = variableFactory.getVariableType(variableName);
         final Transform transform = transformFactory.get(variableType);
 
         final RasterDataNode dataNode = getRasterDataNode(variableName);
@@ -331,7 +331,7 @@ public class SlstrReader extends SNAP_Reader {
     }
 
     protected void readProductData(RasterDataNode dataNode, Array targetArray, int width, int height, int xOffset, int yOffset) throws IOException {
-        final VariableType variableType = variableNames.getVariableType(dataNode.getName());
+        final VariableType variableType = variableFactory.getVariableType(dataNode.getName());
         final Transform transform = transformFactory.get(variableType);
         final Dimension rasterSize = transform.getRasterSize();
 
@@ -340,7 +340,7 @@ public class SlstrReader extends SNAP_Reader {
 
     @Override
     protected RasterDataNode getRasterDataNode(String variableName) {
-        if (!variableNames.isValidName(variableName)) {
+        if (!variableFactory.isValidName(variableName)) {
             throw new RuntimeException("Requested variable not contained in product: " + variableName);
         }
 

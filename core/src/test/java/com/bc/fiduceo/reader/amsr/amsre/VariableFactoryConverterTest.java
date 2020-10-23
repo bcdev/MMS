@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class VariableNamesConverterTest {
+public class VariableFactoryConverterTest {
 
     private VariableNamesConverter converter;
 
