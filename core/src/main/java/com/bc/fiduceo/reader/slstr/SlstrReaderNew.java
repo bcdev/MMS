@@ -14,17 +14,16 @@ import com.bc.fiduceo.util.NetCDFUtils;
 import org.esa.snap.core.datamodel.MetadataAttribute;
 import org.esa.snap.core.datamodel.MetadataElement;
 import org.esa.snap.core.datamodel.RasterDataNode;
+import org.esa.snap.core.datamodel.TiePointGrid;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import ucar.ma2.*;
-import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
-import ucar.nc2.constants.CF;
-import ucar.nc2.util.IO;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,8 +31,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipFile;
 
-import static com.bc.fiduceo.reader.slstr.VariableType.NADIR_1km;
-import static com.bc.fiduceo.util.NetCDFUtils.CF_FILL_VALUE_NAME;
+import static com.bc.fiduceo.reader.slstr.VariableType.Type.NADIR_1km;
+import static ucar.ma2.DataType.*;
 
 public class SlstrReaderNew implements Reader {
 
@@ -84,6 +83,44 @@ public class SlstrReaderNew implements Reader {
             }
         }
         return subs_times;
+    }
+
+    // @todo 1 tb/tb write test 2020-10-23
+    protected static double getGeophysicalNoDataValue(Variable variable) {
+        final DataType dataType = variable.getDataType();
+        final Number defaultFillValue = NetCDFUtils.getDefaultFillValue(dataType, dataType.isUnsigned());
+        return defaultFillValue.doubleValue();
+    }
+
+    // @todo 1 tb/tb write test 2020-10-23
+    protected static double getGeophysicalNoDataValue(TiePointGrid tiePointGrid) {
+        final DataType dataType = NetCDFUtils.getNetcdfDataType(tiePointGrid.getDataType());
+        final Number defaultFillValue = NetCDFUtils.getDefaultFillValue(dataType, dataType.isUnsigned());
+        return defaultFillValue.doubleValue();
+    }
+
+    // @todo 1 tb/tb write test 2020-10-23
+    protected static int[] getShape(Interval interval) {
+        final int[] shape = new int[2];
+        shape[0] = interval.getY();
+        shape[1] = interval.getX();
+
+        return shape;
+    }
+
+    // @todo 1 tb/tb write test 2020-10-23
+    // package access for testing only tb 2019-05-17
+    protected static Array createReadingArray(DataType targetDataType, int[] shape) {
+        switch (targetDataType) {
+            case FLOAT:
+                return Array.factory(DataType.FLOAT, shape);
+            case INT:
+            case SHORT:
+            case BYTE:
+                return Array.factory(DataType.INT, shape);
+            default:
+                throw new RuntimeException("unsupported data type: " + targetDataType);
+        }
     }
 
     @Override
@@ -194,7 +231,7 @@ public class SlstrReaderNew implements Reader {
 
     @Override
     public Dimension getProductSize() {
-        final Transform transform = transformFactory.get(NADIR_1km);
+        final Transform transform = transformFactory.get(new VariableType(NADIR_1km));
         return transform.getRasterSize();
     }
 
@@ -269,8 +306,70 @@ public class SlstrReaderNew implements Reader {
         final VariableType variableType = variableFactory.getVariableType(variableName);
         final Transform transform = transformFactory.get(variableType);
 
+        if (variableType.isTiePoint()) {
+            return readFromTiePoint(centerX, centerY, interval, variableName, transform);
+        } else {
+            return readScaledFromVariable(centerX, centerY, interval, variableName, transform);
+        }
+    }
+
+    private Array readFromTiePoint(int centerX, int centerY, Interval interval, String variableName, Transform transform) throws IOException {
+        final TiePointGrid tiePointGrid = getTiePointGrid(variableName);
+        // @todo 1 tb/tb all this is repeated! Move to common method an add tests 2020-10-26
+        final double noDataValue = getGeophysicalNoDataValue(tiePointGrid);
+
+        final Interval mappedInterval = transform.mapInterval(interval);
+        final int[] shape = getShape(mappedInterval);
+        final DataType dataType = NetCDFUtils.getNetcdfDataType(tiePointGrid.getDataType());
+        final Array targetArray = Array.factory(dataType, shape);
+
+        final int width = mappedInterval.getX();
+        final int height = mappedInterval.getY();
+
+        final int mappedX = (int) (transform.mapCoordinate_X(centerX) + 0.5);
+        final int mappedY = (int) (transform.mapCoordinate_Y(centerY) + 0.5);
+        final int xOffset = mappedX - width / 2 + transform.getOffset();
+        final int yOffset = mappedY - height / 2 + transform.getOffset();
+
+        final Rectangle subsetRectangle = new Rectangle(xOffset, yOffset, width, height);
+        final Dimension rasterSize = transform.getRasterSize();
+        final Rectangle productRectangle = new Rectangle(0, 0, rasterSize.getNx(), rasterSize.getNy());
+        final Rectangle intersection = productRectangle.intersection(subsetRectangle);
+        if (intersection.isEmpty()) {
+            MAMath.setDouble(targetArray, noDataValue);
+            return targetArray;
+        }
+
+        final Array readingArray = Array.factory(dataType, new int[]{intersection.height, intersection.width});
+
+        if (dataType == FLOAT) {
+            tiePointGrid.readPixels(intersection.x, intersection.y, intersection.width, intersection.height, (float[]) readingArray.getStorage());
+        } else if (dataType == INT || dataType == SHORT || dataType == BYTE) {
+            tiePointGrid.readPixels(intersection.x, intersection.y, intersection.width, intersection.height, (int[]) readingArray.getStorage());
+        }
+
+        final Index index = targetArray.getIndex();
+        int readIndex = 0;
+        for (int y = 0; y < width; y++) {
+            final int currentY = yOffset + y;
+            for (int x = 0; x < height; x++) {
+                final int currentX = xOffset + x;
+                index.set(y, x);
+                if (currentX >= 0 && currentX < rasterSize.getNx() && currentY >= 0 && currentY < rasterSize.getNy()) {
+                    targetArray.setObject(index, readingArray.getObject(readIndex));
+                    ++readIndex;
+                } else {
+                    targetArray.setObject(index, noDataValue);
+                }
+            }
+        }
+
+        return transform.process(targetArray, noDataValue);
+    }
+
+    private Array readScaledFromVariable(int centerX, int centerY, Interval interval, String variableName, Transform transform) throws IOException {
         final Variable variable = getVariable(variableName);
-        final double noDataValue = SlstrReaderNew.getGeophysicalNoDataValue(variable);
+        final double noDataValue = getGeophysicalNoDataValue(variable);
 
         final Interval mappedInterval = transform.mapInterval(interval);
         final int[] shape = getShape(mappedInterval);
@@ -309,6 +408,22 @@ public class SlstrReaderNew implements Reader {
             throw new IOException("Variable not found: " + variableName);
         }
         return variable;
+    }
+
+    private TiePointGrid getTiePointGrid(String variableName) throws IOException {
+        final Variable variable = getVariable(variableName);
+
+        final Array variableArray = variable.read();
+        if (variableArray.getDataType() != DataType.DOUBLE) {
+            throw new IllegalStateException("not implemented");
+        }
+        final double[] storage = (double[]) variableArray.getStorage();
+        final float[] floats = new float[storage.length];
+        for (int i = 0; i < storage.length; i++){
+            floats[i] = (float) storage[i];
+        }
+        final int[] shape = variable.getShape();
+        return new TiePointGrid(variableName, shape[0], shape[1], 0.5f, 0.5f, 2.f, 2.f, floats);
     }
 
     @Override
@@ -469,36 +584,5 @@ public class SlstrReaderNew implements Reader {
 //        }
 
         throw new IllegalStateException("not implemented");
-    }
-
-    // @todo 1 tb/tb write test 2020-10-23
-    protected static double getGeophysicalNoDataValue(Variable variable) {
-        final DataType dataType = variable.getDataType();
-        final Number defaultFillValue = NetCDFUtils.getDefaultFillValue(dataType, dataType.isUnsigned());
-        return defaultFillValue.doubleValue();
-    }
-
-    // @todo 1 tb/tb write test 2020-10-23
-    protected static int[] getShape(Interval interval) {
-        final int[] shape = new int[2];
-        shape[0] = interval.getY();
-        shape[1] = interval.getX();
-
-        return shape;
-    }
-
-    // @todo 1 tb/tb write test 2020-10-23
-    // package access for testing only tb 2019-05-17
-    protected static Array createReadingArray(DataType targetDataType, int[] shape) {
-        switch (targetDataType) {
-            case FLOAT:
-                return Array.factory(DataType.FLOAT, shape);
-            case INT:
-            case SHORT:
-            case BYTE:
-                return Array.factory(DataType.INT, shape);
-            default:
-                throw new RuntimeException("unsupported data type: " + targetDataType);
-        }
     }
 }

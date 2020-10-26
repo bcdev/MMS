@@ -2,8 +2,7 @@ package com.bc.fiduceo.reader.slstr;
 
 import org.junit.Test;
 
-import static com.bc.fiduceo.reader.slstr.VariableType.*;
-import static org.junit.Assert.assertNotNull;
+import static com.bc.fiduceo.reader.slstr.VariableType.Type.*;
 import static org.junit.Assert.assertTrue;
 
 public class TransformFactoryTest {
@@ -12,16 +11,16 @@ public class TransformFactoryTest {
     public void testGet() {
         final TransformFactory factory = new TransformFactory(100, 200, 18);
 
-        Transform transform = factory.get(NADIR_1km);
+        Transform transform = factory.get(new VariableType(NADIR_1km));
         assertTrue(transform instanceof Nadir1kmTransform);
 
-        transform = factory.get(NADIR_500m);
+        transform = factory.get(new VariableType(NADIR_500m));
         assertTrue(transform instanceof Nadir500mTransform);
 
-        transform = factory.get(OBLIQUE_1km);
+        transform = factory.get(new VariableType(OBLIQUE_1km));
         assertTrue(transform instanceof Oblique1kmTransform);
 
-        transform = factory.get(OBLIQUE_500m);
+        transform = factory.get(new VariableType(OBLIQUE_500m));
         assertTrue(transform instanceof Oblique500mTransform);
     }
 }

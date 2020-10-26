@@ -34,8 +34,8 @@ import static org.junit.Assert.*;
 @RunWith(IOTestRunner.class)
 public class SlstrReader_IO_Test {
 
-    private SlstrReader reader;
-//    private SlstrReaderNew reader;
+//    private SlstrReader reader;
+    private SlstrReaderNew reader;
     private TempFileUtils tempFileUtils;
 
     @Before
@@ -45,8 +45,8 @@ public class SlstrReader_IO_Test {
         tempFileUtils = new TempFileUtils();
         readerContext.setTempFileUtils(tempFileUtils);
 
-//        reader = new SlstrReaderNew(readerContext, ProductType.ALL);
-        reader = new SlstrReader(readerContext, ProductType.ALL);
+        reader = new SlstrReaderNew(readerContext, ProductType.ALL);
+//        reader = new SlstrReader(readerContext, ProductType.ALL);
     }
 
     @After
@@ -432,21 +432,21 @@ public class SlstrReader_IO_Test {
             reader.open(file);
 
             final Interval interval = new Interval(5, 5);
-//            Array array = reader.readScaled(339, 812, interval, "sat_azimuth_tn");
-//            NCTestUtils.assertValueAt(117.35515594482422, 0, 0, array);
-//            NCTestUtils.assertValueAt(117.35452270507812, 1, 0, array);
-//            NCTestUtils.assertValueAt(117.35389709472656, 2, 0, array);
+            Array array = reader.readScaled(339, 812, interval, "sat_azimuth_tn");
+            NCTestUtils.assertValueAt(117.35515594482422, 0, 0, array);
+            NCTestUtils.assertValueAt(117.35452270507812, 1, 0, array);
+            NCTestUtils.assertValueAt(117.35389709472656, 2, 0, array);
 
-            Array array = reader.readScaled(662, 617, interval, "S1_radiance_an");
-//            NCTestUtils.assertValueAt(19.536825, 3, 0, array);
-//            NCTestUtils.assertValueAt(19.340475, 4, 0, array);
-//            NCTestUtils.assertValueAt(18.055275, 0, 1, array);
+            array = reader.readScaled(662, 617, interval, "S1_radiance_an");
+            NCTestUtils.assertValueAt(19.536825, 3, 0, array);
+            NCTestUtils.assertValueAt(19.340475, 4, 0, array);
+            NCTestUtils.assertValueAt(18.055275, 0, 1, array);
 
             array = reader.readScaled(1256, 239, interval, "S5_radiance_an");
-//            NCTestUtils.assertValueAt(2.7090355, 1, 1, array);
-//            NCTestUtils.assertValueAt(1.889946, 2, 2, array);
-//            NCTestUtils.assertValueAt(0.531759, 3, 3, array);
-//            NCTestUtils.assertValueAt(0.5018405, 4, 4, array);
+            NCTestUtils.assertValueAt(2.7090355, 1, 1, array);
+            NCTestUtils.assertValueAt(1.889946, 2, 2, array);
+            NCTestUtils.assertValueAt(0.531759, 3, 3, array);
+            NCTestUtils.assertValueAt(0.5018405, 4, 4, array);
         } finally {
             reader.close();
         }

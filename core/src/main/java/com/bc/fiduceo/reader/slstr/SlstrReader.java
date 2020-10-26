@@ -8,9 +8,9 @@ import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.ReaderUtils;
-import com.bc.fiduceo.reader.time.TimeLocator;
 import com.bc.fiduceo.reader.snap.SNAP_Reader;
 import com.bc.fiduceo.reader.snap.VariableProxy;
+import com.bc.fiduceo.reader.time.TimeLocator;
 import com.bc.fiduceo.reader.time.TimeLocator_MicrosSince2000;
 import com.bc.fiduceo.util.NetCDFUtils;
 import com.bc.fiduceo.util.TimeUtils;
@@ -28,8 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.bc.fiduceo.reader.slstr.VariableType.NADIR_1km;
-import static com.bc.fiduceo.reader.slstr.VariableType.NADIR_500m;
+import static com.bc.fiduceo.reader.slstr.VariableType.Type.NADIR_1km;
+import static com.bc.fiduceo.reader.slstr.VariableType.Type.NADIR_500m;
 import static ucar.ma2.DataType.INT;
 
 public class SlstrReader extends SNAP_Reader {
@@ -149,7 +149,7 @@ public class SlstrReader extends SNAP_Reader {
 
     @Override
     public PixelLocator getPixelLocator() {
-        return new SlstrPixelLocator(product.getSceneGeoCoding(), transformFactory.get(NADIR_500m));
+        return new SlstrPixelLocator(product.getSceneGeoCoding(), transformFactory.get(new VariableType(NADIR_500m)));
     }
 
     @Override
@@ -189,7 +189,7 @@ public class SlstrReader extends SNAP_Reader {
 
     @Override
     public Dimension getProductSize() {
-        final Transform transform = transformFactory.get(NADIR_1km);
+        final Transform transform = transformFactory.get(new VariableType(NADIR_1km));
         return transform.getRasterSize();
     }
 
@@ -292,7 +292,7 @@ public class SlstrReader extends SNAP_Reader {
 
         ensureTimingVector();
 
-        final Transform transform = transformFactory.get(NADIR_1km);
+        final Transform transform = transformFactory.get(new VariableType(NADIR_1km));
         final Dimension rasterSize = transform.getRasterSize();
         final int fillValue = NetCDFUtils.getDefaultFillValue(int.class).intValue();
         final int halfHeight = height / 2;

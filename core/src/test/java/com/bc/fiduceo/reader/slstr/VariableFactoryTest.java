@@ -3,7 +3,7 @@ package com.bc.fiduceo.reader.slstr;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.bc.fiduceo.reader.slstr.VariableType.*;
+import static com.bc.fiduceo.reader.slstr.VariableType.Type.*;
 import static org.junit.Assert.*;
 
 public class VariableFactoryTest {
@@ -11,7 +11,7 @@ public class VariableFactoryTest {
     private VariableFactory variableFactory;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         variableFactory = new VariableFactory();
     }
 
@@ -26,19 +26,41 @@ public class VariableFactoryTest {
 
     @Test
     public void testGetVariableType() {
-        assertEquals(NADIR_500m, variableFactory.getVariableType("longitude_tx"));
-        assertEquals(NADIR_500m, variableFactory.getVariableType("solar_azimuth_tn"));
-        assertEquals(NADIR_500m, variableFactory.getVariableType("solar_zenith_to"));
+        VariableType type = variableFactory.getVariableType("longitude_tx");
+        assertEquals(NADIR_500m, type.getType());
+        assertTrue(type.isTiePoint());
 
-        assertEquals(NADIR_1km, variableFactory.getVariableType("S7_BT_in"));
-        assertEquals(NADIR_1km, variableFactory.getVariableType("S9_exception_in"));
+        type = variableFactory.getVariableType("solar_azimuth_tn");
+        assertEquals(NADIR_500m, type.getType());
+        assertTrue(type.isTiePoint());
 
+        type = variableFactory.getVariableType("solar_zenith_to");
+        assertTrue(type.isTiePoint());
+        assertEquals(NADIR_500m, type.getType());
 
-        assertEquals(OBLIQUE_500m, variableFactory.getVariableType("S4_radiance_ao"));
-        assertEquals(OBLIQUE_500m, variableFactory.getVariableType("S4_exception_ao"));
+        type = variableFactory.getVariableType("S7_BT_in");
+        assertEquals(NADIR_1km, type.getType());
+        assertFalse(type.isTiePoint());
 
-        assertEquals(OBLIQUE_1km, variableFactory.getVariableType("S9_BT_io"));
-        assertEquals(OBLIQUE_1km, variableFactory.getVariableType("bayes_io"));
+        type = variableFactory.getVariableType("S9_exception_in");
+        assertEquals(NADIR_1km, type.getType());
+        assertFalse(type.isTiePoint());
+
+        type = variableFactory.getVariableType("S4_radiance_ao");
+        assertEquals(OBLIQUE_500m, type.getType());
+        assertFalse(type.isTiePoint());
+
+        type = variableFactory.getVariableType("S4_exception_ao");
+        assertEquals(OBLIQUE_500m, type.getType());
+        assertFalse(type.isTiePoint());
+
+        type = variableFactory.getVariableType("S9_BT_io");
+        assertEquals(OBLIQUE_1km, type.getType());
+        assertFalse(type.isTiePoint());
+
+        type = variableFactory.getVariableType("bayes_io");
+        assertEquals(OBLIQUE_1km, type.getType());
+        assertFalse(type.isTiePoint());
     }
 
     @Test
@@ -58,5 +80,14 @@ public class VariableFactoryTest {
 
         assertFalse(variableFactory.isFlagVariable("solar_zenith_to"));
         assertFalse(variableFactory.isFlagVariable("S8_BT_in"));
+    }
+
+    @Test
+    public void testIsTiePointVariable() {
+        assertTrue(variableFactory.isTiePointVariable("latitude_tx"));
+        assertTrue(variableFactory.isTiePointVariable("solar_azimuth_to"));
+
+        assertFalse(variableFactory.isTiePointVariable("S4_exception_ao"));
+        assertFalse(variableFactory.isTiePointVariable("S5_radiance_ao"));
     }
 }

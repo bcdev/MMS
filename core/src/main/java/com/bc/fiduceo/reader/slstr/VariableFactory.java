@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.bc.fiduceo.reader.slstr.VariableType.*;
+import static com.bc.fiduceo.reader.slstr.VariableType.Type.*;
 
 class VariableFactory {
 
@@ -13,6 +13,7 @@ class VariableFactory {
     private final HashMap<String, String> oblique1kmNames;
     private final HashMap<String, String> oblique500mNames;
     private final List<String> flagNames;
+    private final List<String> tiePointNames;
 
     VariableFactory() {
         nadir500mNames = new HashMap<>();
@@ -100,6 +101,18 @@ class VariableFactory {
         flagNames.add("S9_exception_io");
         flagNames.add("bayes_io");
         flagNames.add("cloud_io");
+
+        tiePointNames = new ArrayList<>();
+        tiePointNames.add("latitude_tx");
+        tiePointNames.add("longitude_tx");
+        tiePointNames.add("sat_azimuth_tn");
+        tiePointNames.add("sat_zenith_tn");
+        tiePointNames.add("solar_azimuth_tn");
+        tiePointNames.add("solar_zenith_tn");
+        tiePointNames.add("sat_azimuth_to");
+        tiePointNames.add("sat_zenith_to");
+        tiePointNames.add("solar_azimuth_to");
+        tiePointNames.add("solar_zenith_to");
     }
 
     boolean isValidName(String variableName) {
@@ -110,20 +123,29 @@ class VariableFactory {
     }
 
     VariableType getVariableType(String variableName) {
+        final VariableType variableType;
         if (nadir500mNames.keySet().contains(variableName)) {
-            return NADIR_500m;
+             variableType  = new VariableType(NADIR_500m);
         } else if (nadir1kmNames.keySet().contains(variableName)) {
-            return NADIR_1km;
+            return new VariableType(NADIR_1km);
         } else if (oblique500mNames.keySet().contains(variableName)) {
-            return OBLIQUE_500m;
+            return new VariableType(OBLIQUE_500m);
         } else if (oblique1kmNames.keySet().contains(variableName)) {
-            return OBLIQUE_1km;
+            return new VariableType(OBLIQUE_1km);
+        } else {
+            throw new RuntimeException("Requested variable not supported: " + variableName);
         }
-        throw new RuntimeException("Requested variable not supported: " + variableName);
+
+        variableType.setTiePoint(isTiePointVariable(variableName));
+        return variableType;
     }
 
     boolean isFlagVariable(String variableName) {
         return flagNames.contains(variableName);
+    }
+
+    boolean isTiePointVariable(String variableName) {
+        return tiePointNames.contains(variableName);
     }
 
     // @todo 1 tb/tb add tests 2020-10-23

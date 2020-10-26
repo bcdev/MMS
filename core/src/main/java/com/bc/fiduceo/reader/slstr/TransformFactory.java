@@ -1,6 +1,6 @@
 package com.bc.fiduceo.reader.slstr;
 
-import static com.bc.fiduceo.reader.slstr.VariableType.*;
+import static com.bc.fiduceo.reader.slstr.VariableType.Type;
 
 class TransformFactory {
 
@@ -15,13 +15,13 @@ class TransformFactory {
     }
 
     public Transform get(VariableType variableType) {
-        if (variableType == NADIR_1km) {
+        if (variableType.getType() == Type.NADIR_1km) {
             return new Nadir1kmTransform(rasterWidth, rasterHeight);
-        } else if (variableType == NADIR_500m) {
+        } else if (variableType.getType() == Type.NADIR_500m) {
             return new Nadir500mTransform(rasterWidth, rasterHeight);
-        } else if (variableType == OBLIQUE_1km) {
+        } else if (variableType.getType() == Type.OBLIQUE_1km) {
             return new Oblique1kmTransform(rasterWidth, rasterHeight, obliqueRasterOffset);
-        } else if (variableType == OBLIQUE_500m) {
+        } else if (variableType.getType() == Type.OBLIQUE_500m) {
             return new Oblique500mTransform(rasterWidth, rasterHeight, obliqueRasterOffset);
         }
 
