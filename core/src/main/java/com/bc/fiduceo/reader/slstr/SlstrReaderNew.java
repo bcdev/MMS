@@ -15,6 +15,7 @@ import org.esa.snap.core.datamodel.MetadataAttribute;
 import org.esa.snap.core.datamodel.MetadataElement;
 import org.esa.snap.core.datamodel.RasterDataNode;
 import org.esa.snap.core.datamodel.TiePointGrid;
+import org.esa.snap.core.util.ArrayUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import ucar.ma2.*;
@@ -39,6 +40,11 @@ public class SlstrReaderNew implements Reader {
     private static final String REGEX_ALL = "S3([AB])_SL_1_RBT_.*(.SEN3|zip)";
     private static final String REGEX_NR = "S3([AB])_SL_1_RBT_.*_NR_.*(.SEN3|zip)";
     private static final String REGEX_NT = "S3([AB])_SL_1_RBT_.*_NT_.*(.SEN3|zip)";
+
+    private static final String[] SLSTR_GRID_INDEXES = new String[]{
+            "an", "ao", "bn", "bo", "cn", "co", "in", "io", "fn", "fo", "tn", "to", "tx"
+    };
+
     private static final Interval INTERVAL = new Interval(100, 100);
     private static final int NUM_SPLITS = 1;
 
@@ -411,12 +417,20 @@ public class SlstrReaderNew implements Reader {
     }
 
     private TiePointGrid getTiePointGrid(String variableName) throws IOException {
+        // @todo 1 tb/tb add caching mechanism for TiePointGrids 2020-10-28
         final Variable variable = getVariable(variableName);
 
         final Array variableArray = variable.read();
         if (variableArray.getDataType() != DataType.DOUBLE) {
             throw new IllegalStateException("not implemented");
         }
+
+        final String gridIndex = getGridIndex(variableName);
+        final short[] sourceResolutions = getResolutions(gridIndex);
+
+//        final int subSamplingX = sourceResolutions[0] / referenceResolutions[0];
+//        final int subSamplingY = sourceResolutions[1] / referenceResolutions[1];
+
         final double[] storage = (double[]) variableArray.getStorage();
         final float[] floats = new float[storage.length];
         for (int i = 0; i < storage.length; i++){
@@ -518,9 +532,7 @@ public class SlstrReaderNew implements Reader {
     }
 
     private int getObliqueGridOffset() {
-        final MetadataElement metadata = manifest.getMetadata();
-        final MetadataElement metadataElement = metadata.getElement("metadataSection");
-        final MetadataElement productInformationElement = metadataElement.getElement("slstrProductInformation");
+        final MetadataElement productInformationElement =  manifest.getSlstrProductInformation();
 
         int nadirTrackOffset = -1;
         int obliqueTrackOffset = -1;
@@ -550,9 +562,7 @@ public class SlstrReaderNew implements Reader {
     private Dimension readProductSize() {
         final Dimension productSize = new Dimension();
 
-        final MetadataElement metadata = manifest.getMetadata();
-        final MetadataElement metadataElement = metadata.getElement("metadataSection");
-        final MetadataElement productInformationElement = metadataElement.getElement("slstrProductInformation");
+        final MetadataElement productInformationElement =  manifest.getSlstrProductInformation();
         final MetadataElement[] elements = productInformationElement.getElements();
         for (final MetadataElement element : elements) {
             if (element.getName().equalsIgnoreCase("nadirImageSize")) {
@@ -584,5 +594,39 @@ public class SlstrReaderNew implements Reader {
 //        }
 
         throw new IllegalStateException("not implemented");
+    }
+
+    static String getGridIndex(String bandName) {
+        String[] nameParts = bandName.split("_");
+        int lastPartIndex = nameParts.length - 1;
+        int index = lastPartIndex;
+        int firstIndexOfPartWithTwoLetters = -1;
+        while (index >= 0) {
+            if (ArrayUtils.isMemberOf(nameParts[index], SLSTR_GRID_INDEXES)) {
+                return nameParts[index];
+            } else if (firstIndexOfPartWithTwoLetters < 0 && nameParts[index].length() == 2) {
+                firstIndexOfPartWithTwoLetters = index;
+            }
+            index--;
+        }
+        if (firstIndexOfPartWithTwoLetters >= 0) {
+            return nameParts[firstIndexOfPartWithTwoLetters];
+        }
+        if (nameParts[lastPartIndex].length() > 1) {
+            return nameParts[lastPartIndex].substring(nameParts[lastPartIndex].length() - 2);
+        }
+        return nameParts[lastPartIndex];
+    }
+
+    protected short[] getResolutions(String gridIndex) {
+        short[] resolutions;
+        if (gridIndex.startsWith("i") || gridIndex.startsWith("f")) {
+            resolutions = new short[]{1000, 1000};
+        } else if (gridIndex.startsWith("t")) {
+            resolutions = new short[]{16000, 1000};
+        } else {
+            resolutions = new short[]{500, 500};
+        }
+        return resolutions;
     }
 }

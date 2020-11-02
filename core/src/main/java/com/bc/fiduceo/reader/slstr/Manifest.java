@@ -50,10 +50,16 @@ class Manifest {
                 }
             }
         }
-
-
-
         return fileName;
+    }
+
+    MetadataElement getSlstrProductInformation() {
+        final MetadataElement metadataElement = getMetadata();
+        final MetadataElement productInformationElement = metadataElement.getElement("slstrProductInformation");
+        if (productInformationElement == null) {
+            throw new IllegalStateException("Metadata element 'slstrProductInformation' not found");
+        }
+        return productInformationElement;
     }
 
     private MetadataElement convertNodeToMetadataElement(Node rootNode, MetadataElement rootMetadata) {
