@@ -2,6 +2,7 @@ package com.bc.fiduceo.reader.netcdf;
 
 import org.esa.snap.core.util.StringUtils;
 import ucar.ma2.Array;
+import ucar.ma2.Index;
 import ucar.nc2.Attribute;
 import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
@@ -40,6 +41,7 @@ public class NcChunkCache {
             if (variable == null) {
                 throw new IOException("Unknown variable: " + variableName);
             }
+            final Array read = variable.read();
             final Attribute chunkSize = variable.findAttribute("_ChunkSizes");
             if (chunkSize == null) {
                 // data is not chunked, read completely.

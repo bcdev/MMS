@@ -17,8 +17,8 @@ import static org.junit.Assert.fail;
 public class NcChunkCache_IO_Test {
 
     @Test
-    public void testRead_MODIS_unknownVariable() throws IOException {
-        final File file = getMODISAquaFile();
+    public void testRead_AVHRR_unknownVariable() throws IOException {
+        final File file = getAvhrrGACFile();
 
         try (NetcdfFile netcdfFile = NetcdfFiles.open(file.getPath())) {
             final NcChunkCache ncTileCache = new NcChunkCache(netcdfFile);
@@ -40,20 +40,8 @@ public class NcChunkCache_IO_Test {
         }
     }
 
-    @Test
-    public void testRead_MODIS_AQUA_2d_chunked_with_group() throws IOException {
-        final File file = getMODISAquaFile();
-
-        try (NetcdfFile netcdfFile = NetcdfFiles.open(file.getPath())) {
-            final NcChunkCache ncTileCache = new NcChunkCache(netcdfFile);
-
-            final Array array = ncTileCache.read(new int[] {1, 1}, new int[] {1, 1},  "MODIS_SWATH_Type_L1B/Geolocation_Fields",
-                    "Longitude");
-        }
-    }
-
-    private File getMODISAquaFile() throws IOException {
-        final String testFilePath = TestUtil.assembleFileSystemPath(new String[]{"myd021km-aq", "v61", "2011", "06", "17", "MYD021KM.A2011168.2210.061.2018032001033.hdf"}, false);
+    private File getAvhrrGACFile() throws IOException {
+        final String testFilePath = TestUtil.assembleFileSystemPath(new String[]{"avhrr-ma", "v2.10.2", "2010", "01", "01", "20100101113716-ESACCI-L1C-AVHRRMTA_G-v1.5-fv02.0.nc"}, false);
         return TestUtil.getTestDataFileAsserted(testFilePath);
     }
 
