@@ -54,4 +54,16 @@ public class NcIndex {
         }
         return true;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 53;
+
+        hash += offsets.length * 7;
+        hash = hash << 23;
+        for (int i = 0; i < offsets.length; i++) {
+            hash += (i + 1) * 1111 * offsets[i] + 1;
+        }
+        return hash;
+    }
 }

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-@SuppressWarnings({"SimplifiableAssertion", "EqualsWithItself"})
+@SuppressWarnings({"SimplifiableAssertion", "EqualsWithItself", "EqualsBetweenInconvertibleTypes", "UnnecessaryBoxing"})
 public class NcIndexTest {
 
     @Test
@@ -160,5 +160,57 @@ public class NcIndexTest {
 
         assertFalse(idx_1.equals(idx_2));
         assertFalse(idx_2.equals(idx_1));
+
+        idx_1.setDim(0, 22);
+        idx_1.setDim(1, 33);
+        idx_2.setDim(0, 22);
+        idx_2.setDim(1, 33);
+
+        assertFalse(idx_1.equals(idx_2));
+        assertFalse(idx_2.equals(idx_1));
+    }
+
+    @Test
+    public void testHashCode() {
+        final NcIndex idx_2 = NcIndex.create(2);
+        assertEquals(562033405, idx_2.hashCode());
+        idx_2.setDim(0, 7);
+        assertEquals(562042293, idx_2.hashCode());
+        idx_2.setDim(1, 8);
+        assertEquals(562062291, idx_2.hashCode());
+
+        final NcIndex idx_2b = NcIndex.create(2);
+        idx_2b.setDim(0, 7);
+        idx_2b.setDim(1, 8);
+        assertEquals(idx_2.hashCode(), idx_2b.hashCode());
+
+        final NcIndex idx_3 = NcIndex.create(3);
+        assertEquals(620750329, idx_3.hashCode());
+        idx_3.setDim(0, 14);
+        assertEquals(620766994, idx_3.hashCode());
+        idx_3.setDim(1, 15);
+        assertEquals(620802546, idx_3.hashCode());
+        idx_3.setDim(2, 16);
+        assertEquals(620859207, idx_3.hashCode());
+
+        final NcIndex idx_4 = NcIndex.create(4);
+        assertEquals(679466142, idx_4.hashCode());
+        idx_4.setDim(0, 17);
+        assertEquals(679486140, idx_4.hashCode());
+        idx_4.setDim(1, 18);
+        assertEquals(679528358, idx_4.hashCode());
+        idx_4.setDim(2, 19);
+        assertEquals(679595018, idx_4.hashCode());
+        idx_4.setDim(3, 20);
+        assertEquals(679688342, idx_4.hashCode());
+
+        idx_2.setDim(0, 128);
+        idx_2.setDim(1, 0);
+        assertEquals(562178946, idx_2.hashCode());
+
+        idx_3.setDim(0, 128);
+        idx_3.setDim(1, 0);
+        idx_3.setDim(2, 0);
+        assertEquals(620899203, idx_3.hashCode());
     }
 }

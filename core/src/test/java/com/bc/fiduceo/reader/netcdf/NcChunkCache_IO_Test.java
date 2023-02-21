@@ -31,12 +31,12 @@ public class NcChunkCache_IO_Test {
 
     @Test
     public void testRead_AVHRR_GAC_2d_chunked() throws IOException {
-        final File file = getWindsatFile();
+        final File file = getAvhrrGACFile();
 
         try (NetcdfFile netcdfFile = NetcdfFiles.open(file.getPath())) {
             final NcChunkCache ncTileCache = new NcChunkCache(netcdfFile);
 
-            final Array array = ncTileCache.read(new int[] {0, 0}, new int[] {1, 1},  "latitude");
+            final Array array = ncTileCache.read(new int[] {0, 0}, new int[] {1, 1},  "lat");
         }
     }
 
