@@ -372,7 +372,7 @@ public class PostProcessingToolIntegrationTest_Era5 {
         configBuffer.append("            <satellite-fields>");
         configBuffer.append("                <x_dim name='slstr.s3a.nt_nwp_x' length='1' />");
         configBuffer.append("                <y_dim name='slstr.s3a.nt_nwp_y' length='1' />");
-        configBuffer.append("                <z_dim name='slstr.s3a.nt_nwp_z' />");
+        configBuffer.append("                <z_dim name='slstr.s3a.nt_nwp_z' length='137'/>");
         configBuffer.append("                <era5_time_variable>slstr.s3ant_nwp_time</era5_time_variable>");
         configBuffer.append("                <time_variable>slstr-s3a-nt_acquisition_time</time_variable>");
         configBuffer.append("                <longitude_variable>slstr-s3a-nt_longitude_tx</longitude_variable>");
@@ -409,7 +409,7 @@ public class PostProcessingToolIntegrationTest_Era5 {
                 "                <sensor-ref>slstr-s3a-nt</sensor-ref>" +
                 "                <x_dim name='slstr.s3a.nt_nwp_x' length='1' />" +
                 "                <y_dim name='slstr.s3a.nt_nwp_y' length='1' />" +
-                "                <z_dim name='slstr.s3a.nt_nwp_z' />" +
+                "                <z_dim name='slstr.s3a.nt_nwp_z' length='137' />" +
                 "                <era5_time_variable>{sensor-ref}_nwp_time</era5_time_variable>" +
                 "                <time_variable>{sensor-ref}_acquisition_time</time_variable>" +
                 "                <longitude_variable>{sensor-ref}_longitude_tx</longitude_variable>" +

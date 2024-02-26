@@ -1,6 +1,7 @@
 package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.util.TimeUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -10,11 +11,11 @@ class Era5Archive {
 
     private static final DecimalFormat twoDigitsFormat = new DecimalFormat("00");
 
-    private final String rootPath;
     private final Era5Collection collection;
+    private final Configuration config;
 
-    Era5Archive(String rootPath, Era5Collection collection) {
-        this.rootPath = rootPath;
+    Era5Archive(Configuration config, Era5Collection collection) {
+        this.config = config;
         this.collection = collection;
     }
 
@@ -86,11 +87,13 @@ class Era5Archive {
         final Calendar utcCalendar = TimeUtils.getUTCCalendar();
         utcCalendar.setTimeInMillis(timeStamp * 1000L);
 
-        final int cutPoint = variableType.lastIndexOf("_");
+        final int cutPoint = StringUtils.ordinalIndexOf(variableType, "_", 2);
         final String collection = variableType.substring(0, cutPoint);
 
         String variable = variableType.substring(cutPoint + 1);
-        variable = mapVariable(variable);
+        if (config.isTranslateVariableNameToFileAccessName()) {
+            variable = mapVariable(variable);
+        }
 
         adjustCalendarForForecast(utcCalendar, collection);
 
@@ -105,9 +108,13 @@ class Era5Archive {
         final int day = utcCalendar.get(Calendar.DAY_OF_MONTH);
         final String dayString = twoDigitsFormat.format(day);
 
-        return rootPath + File.separator + collection + File.separator +
-                year + File.separator + monthString + File.separator + dayString + File.separator +
-                fileName;
+        final String rootPath = config.getNWPAuxDir();
+        return rootPath + File.separator
+               + collection + File.separator
+               + year + File.separator
+               + monthString + File.separator
+               + dayString + File.separator
+               + fileName;
     }
 
     // @todo 1 tb/tb make static and add test 2020-12-11

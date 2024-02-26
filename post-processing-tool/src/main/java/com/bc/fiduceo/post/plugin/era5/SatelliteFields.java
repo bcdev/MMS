@@ -44,7 +44,7 @@ class SatelliteFields extends FieldsProcessor {
     void compute(Configuration config, NetcdfFile reader, NetcdfFileWriter writer) throws IOException, InvalidRangeException {
         final SatelliteFieldsConfiguration satFieldsConfig = config.getSatelliteFields();
         final int numLayers = satFieldsConfig.get_z_dim();
-        final Era5Archive era5Archive = new Era5Archive(config.getNWPAuxDir(), collection);
+        final Era5Archive era5Archive = new Era5Archive(config, collection);
         final VariableCache variableCache = new VariableCache(era5Archive, 52); // 4 * 13 variables tb 2020-11-25
 
         try {
@@ -103,6 +103,7 @@ class SatelliteFields extends FieldsProcessor {
                 //     - store to target raster
                 final Set<String> variableKeys = variables.keySet();
                 for (final String variableKey : variableKeys) {
+                    final float fillValue = variables.get(variableKey).getFillValue();
                     VariableCache.CacheEntry cacheEntry = variableCache.get(variableKey, era5Time);
                     final Array subset = readSubset(numLayers, layerRegion, cacheEntry);
                     final Index subsetIndex = subset.getIndex();
@@ -116,13 +117,13 @@ class SatelliteFields extends FieldsProcessor {
                             for (int x = 0; x < width; x++) {
                                 targetIndex.set(m, y, x);
                                 if (isTimeFill) {
-                                    targetArray.setFloat(targetIndex, TemplateVariable.getFillValue());
+                                    targetArray.setFloat(targetIndex, fillValue);
                                     continue;
                                 }
 
                                 final BilinearInterpolator interpolator = interpolationContext.get(x, y);
                                 if (interpolator == null) {
-                                    targetArray.setFloat(targetIndex, TemplateVariable.getFillValue());
+                                    targetArray.setFloat(targetIndex, fillValue);
                                     continue;
                                 }
 
@@ -153,13 +154,13 @@ class SatelliteFields extends FieldsProcessor {
                                     targetIndex.set(m, z, y, x);
 
                                     if (isTimeFill) {
-                                        targetArray.setFloat(targetIndex, TemplateVariable.getFillValue());
+                                        targetArray.setFloat(targetIndex, fillValue);
                                         continue;
                                     }
 
                                     final BilinearInterpolator interpolator = interpolationContext.get(x, y);
                                     if (interpolator == null) {
-                                        targetArray.setFloat(targetIndex, TemplateVariable.getFillValue());
+                                        targetArray.setFloat(targetIndex, fillValue);
                                         continue;
                                     }
 
@@ -243,22 +244,30 @@ class SatelliteFields extends FieldsProcessor {
     }
 
     Map<String, TemplateVariable> getVariables(SatelliteFieldsConfiguration configuration) {
-        final HashMap<String, TemplateVariable> variablesMap = new HashMap<>();
+        final Map<String, TemplateVariable> generalizedVariables = configuration.getGeneralizedVariables();
+        if (generalizedVariables != null) {
+            for (String key : generalizedVariables.keySet()) {
+                generalizedVariables.get(key).setName(configuration.getVarName(key));
+            }
+            return generalizedVariables;
+        } else {
+            final HashMap<String, TemplateVariable> variablesMap = new HashMap<>();
 
-        variablesMap.put("an_ml_q", createTemplate(configuration.get_an_q_name(), "kg kg**-1", "Specific humidity", "specific_humidity", true));
-        variablesMap.put("an_ml_t", createTemplate(configuration.get_an_t_name(), "K", "Temperature", "air_temperature", true));
-        variablesMap.put("an_ml_o3", createTemplate(configuration.get_an_o3_name(), "kg kg**-1", "Ozone mass mixing ratio", null, true));
-        variablesMap.put("an_ml_lnsp", createTemplate(configuration.get_an_lnsp_name(), "~", "Logarithm of surface pressure", null, false));
-        variablesMap.put("an_sfc_t2m", createTemplate(configuration.get_an_t2m_name(), "K", "2 metre temperature", null, false));
-        variablesMap.put("an_sfc_u10", createTemplate(configuration.get_an_u10_name(), "m s**-1", "10 metre U wind component", null, false));
-        variablesMap.put("an_sfc_v10", createTemplate(configuration.get_an_v10_name(), "m s**-1", "10 metre V wind component", null, false));
-        variablesMap.put("an_sfc_siconc", createTemplate(configuration.get_an_siconc_name(), "(0 - 1)", "Sea ice area fraction", "sea_ice_area_fraction", false));
-        variablesMap.put("an_sfc_msl", createTemplate(configuration.get_an_msl_name(), "Pa", "Mean sea level pressure", "air_pressure_at_mean_sea_level", false));
-        variablesMap.put("an_sfc_skt", createTemplate(configuration.get_an_skt_name(), "K", "Skin temperature", null, false));
-        variablesMap.put("an_sfc_sst", createTemplate(configuration.get_an_sst_name(), "K", "Sea surface temperature", null, false));
-        variablesMap.put("an_sfc_tcc", createTemplate(configuration.get_an_tcc_name(), "(0 - 1)", "Total cloud cover", "cloud_area_fraction", false));
-        variablesMap.put("an_sfc_tcwv", createTemplate(configuration.get_an_tcwv_name(), "kg m**-2", "Total column water vapour", "lwe_thickness_of_atmosphere_mass_content_of_water_vapor", false));
+            variablesMap.put("an_ml_q", createTemplate(configuration.getVarName("an_ml_q"), "kg kg**-1", "Specific humidity", "specific_humidity", true));
+            variablesMap.put("an_ml_t", createTemplate(configuration.getVarName("an_ml_t"), "K", "Temperature", "air_temperature", true));
+            variablesMap.put("an_ml_o3", createTemplate(configuration.getVarName("an_ml_o3"), "kg kg**-1", "Ozone mass mixing ratio", null, true));
+            variablesMap.put("an_ml_lnsp", createTemplate(configuration.getVarName("an_ml_lnsp"), "~", "Logarithm of surface pressure", null, false));
+            variablesMap.put("an_sfc_t2m", createTemplate(configuration.getVarName("an_sfc_t2m"), "K", "2 metre temperature", null, false));
+            variablesMap.put("an_sfc_u10", createTemplate(configuration.getVarName("an_sfc_u10"), "m s**-1", "10 metre U wind component", null, false));
+            variablesMap.put("an_sfc_v10", createTemplate(configuration.getVarName("an_sfc_v10"), "m s**-1", "10 metre V wind component", null, false));
+            variablesMap.put("an_sfc_siconc", createTemplate(configuration.getVarName("an_sfc_siconc"), "(0 - 1)", "Sea ice area fraction", "sea_ice_area_fraction", false));
+            variablesMap.put("an_sfc_msl", createTemplate(configuration.getVarName("an_sfc_msl"), "Pa", "Mean sea level pressure", "air_pressure_at_mean_sea_level", false));
+            variablesMap.put("an_sfc_skt", createTemplate(configuration.getVarName("an_sfc_skt"), "K", "Skin temperature", null, false));
+            variablesMap.put("an_sfc_sst", createTemplate(configuration.getVarName("an_sfc_sst"), "K", "Sea surface temperature", null, false));
+            variablesMap.put("an_sfc_tcc", createTemplate(configuration.getVarName("an_sfc_tcc"), "(0 - 1)", "Total cloud cover", "cloud_area_fraction", false));
+            variablesMap.put("an_sfc_tcwv", createTemplate(configuration.getVarName("an_sfc_tcwv"), "kg m**-2", "Total column water vapour", "lwe_thickness_of_atmosphere_mass_content_of_water_vapor", false));
 
-        return variablesMap;
+            return variablesMap;
+        }
     }
 }

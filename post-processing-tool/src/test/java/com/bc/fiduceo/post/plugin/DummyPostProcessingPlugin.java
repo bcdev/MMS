@@ -19,6 +19,7 @@
 package com.bc.fiduceo.post.plugin;
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import org.jdom.Element;
 
@@ -27,7 +28,7 @@ public class DummyPostProcessingPlugin implements PostProcessingPlugin {
     public static final String DUMMY_POST_PROCESSING_NAME = "dummy-post-processing";
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         return new DummyPostProcessing(element.getValue());
     }
 

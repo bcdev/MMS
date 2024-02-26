@@ -25,7 +25,8 @@ class VariableUtils {
         if (StringUtils.isNotNullAndNotEmpty(standardName)) {
             variable.addAttribute(new Attribute("standard_name", standardName));
         }
-        variable.addAttribute(new Attribute("_FillValue", TemplateVariable.getFillValue()));
+        variable.addAttribute(new Attribute("_FillValue", template.getFillValue()));
+        variable.addAttribute(new Attribute("missing_value", template.getFillValue()));
     }
 
     static Array readTimeArray(String timeVariableName, NetcdfFile reader) throws IOException, InvalidRangeException {

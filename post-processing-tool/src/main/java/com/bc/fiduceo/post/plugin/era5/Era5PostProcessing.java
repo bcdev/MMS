@@ -70,8 +70,7 @@ class Era5PostProcessing extends PostProcessing {
                 final float lon = lonArray.getFloat(lonIdx);
                 final float lat = latArray.getFloat(latIdx);
                 if (!(isValidLon(lon) && isValidLat(lat))) {
-                    // we cannot interpolate here tb 2021-05-04
-                    continue;
+                    continue; // we cannot interpolate here tb 2021-05-04
                 }
 
                 // + detect four era5 corner-points for interpolation
@@ -138,7 +137,11 @@ class Era5PostProcessing extends PostProcessing {
     }
 
     static boolean isValidLon(float lon) {
-        return lon >= -180.f && lon <= 180.f;
+        // changed because the lon range of some satellite product is not
+        // from -180 to 180 but from 0 to 360
+        return lon >= -180.f && lon <= 360.f;
+
+        // return lon >= -180.f && lon <= 180.f;
     }
 
     static boolean isValidLat(float lat) {

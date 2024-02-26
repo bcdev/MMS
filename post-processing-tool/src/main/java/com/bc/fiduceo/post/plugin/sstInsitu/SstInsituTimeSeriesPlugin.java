@@ -20,6 +20,7 @@
 package com.bc.fiduceo.post.plugin.sstInsitu;
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
 import org.jdom.Element;
@@ -36,7 +37,7 @@ public class SstInsituTimeSeriesPlugin implements PostProcessingPlugin {
     static final String TAG_NAME_SECONDARY_SENSOR_MATCHUP_TIME_VARIABLE = "secondary-sensor-matchup-time-variable";
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         final SstInsituTimeSeries.Configuration configuration = parseConfiguration(element);
 
         return new SstInsituTimeSeries(configuration);

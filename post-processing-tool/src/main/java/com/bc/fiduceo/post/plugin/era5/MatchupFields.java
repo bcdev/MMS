@@ -68,7 +68,7 @@ class MatchupFields extends FieldsProcessor {
     }
 
     void compute(Configuration config, NetcdfFile reader, NetcdfFileWriter writer) throws IOException, InvalidRangeException {
-        final Era5Archive era5Archive = new Era5Archive(config.getNWPAuxDir(), collection);
+        final Era5Archive era5Archive = new Era5Archive(config, collection);
         final MatchupFieldsConfiguration matchupConfig = config.getMatchupFields();
 
         // allocate cache large enough to hold the time-series for one Era-5 variable
@@ -104,6 +104,7 @@ class MatchupFields extends FieldsProcessor {
 
             // iterate over matchups
             for (final String variableKey : variableKeys) {
+                final float fillValue = variables.get(variableKey).getFillValue();
                 final Array targetArray = targetArrays.get(variableKey);
                 final Index targetIndex = targetArray.getIndex();
 
@@ -123,7 +124,7 @@ class MatchupFields extends FieldsProcessor {
 
                         final int timeStamp = targetTimeArray.getInt(timeIndex);
                         if (VariableUtils.isTimeFill(timeStamp)) {
-                            targetArray.setFloat(targetIndex, TemplateVariable.getFillValue());
+                            targetArray.setFloat(targetIndex, fillValue);
                             continue;
                         }
 
@@ -134,7 +135,7 @@ class MatchupFields extends FieldsProcessor {
                         final Index subsetIndex = subset.getIndex();
                         final BilinearInterpolator bilinearInterpolator = interpolationContext.get(0, 0);
                         if (bilinearInterpolator == null) {
-                            targetArray.setFloat(targetIndex, TemplateVariable.getFillValue());
+                            targetArray.setFloat(targetIndex, fillValue);
                             continue;
                         }
 

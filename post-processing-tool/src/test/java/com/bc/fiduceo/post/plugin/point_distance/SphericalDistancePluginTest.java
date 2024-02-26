@@ -50,7 +50,7 @@ public class SphericalDistancePluginTest {
 
     @Test
     public void testCreatePostProcessing() {
-        final PostProcessing postProcessing = plugin.createPostProcessing(element);
+        final PostProcessing postProcessing = plugin.createPostProcessing(element, null);
 
         assertNotNull(postProcessing);
         assertEquals("com.bc.fiduceo.post.plugin.point_distance.SphericalDistance", postProcessing.getClass().getTypeName());
@@ -78,7 +78,7 @@ public class SphericalDistancePluginTest {
         element.setName("wrong_name");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Illegal XML Element. Tagname 'spherical-distance' expected.", expected.getMessage());
@@ -90,7 +90,7 @@ public class SphericalDistancePluginTest {
         element.removeChild(TAG_NAME_TARGET);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element 'target' expected", expected.getMessage());
@@ -102,7 +102,7 @@ public class SphericalDistancePluginTest {
         element.getChild(TAG_NAME_TARGET).removeChild(TAG_NAME_VAR_NAME);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element 'var-name' expected", expected.getMessage());
@@ -114,7 +114,7 @@ public class SphericalDistancePluginTest {
         element.getChild(TAG_NAME_TARGET).getChild(TAG_NAME_VAR_NAME).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element 'var-name' expected", expected.getMessage());
@@ -126,7 +126,7 @@ public class SphericalDistancePluginTest {
         element.getChild(TAG_NAME_TARGET).removeChild(TAG_NAME_DATA_TYPE);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element 'data-type' expected", expected.getMessage());
@@ -138,7 +138,7 @@ public class SphericalDistancePluginTest {
         element.getChild(TAG_NAME_TARGET).getChild(TAG_NAME_DATA_TYPE).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element 'data-type' expected", expected.getMessage());
@@ -150,7 +150,7 @@ public class SphericalDistancePluginTest {
         element.removeChild(TAG_NAME_PRIM_LAT_VAR);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element 'primary-lat-variable' expected", expected.getMessage());
@@ -162,7 +162,7 @@ public class SphericalDistancePluginTest {
         element.getChild(TAG_NAME_PRIM_LAT_VAR).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element 'primary-lat-variable' expected", expected.getMessage());
@@ -174,7 +174,7 @@ public class SphericalDistancePluginTest {
         element.removeChild(TAG_NAME_PRIM_LON_VAR);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element 'primary-lon-variable' expected", expected.getMessage());
@@ -186,7 +186,7 @@ public class SphericalDistancePluginTest {
         element.getChild(TAG_NAME_PRIM_LON_VAR).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element 'primary-lon-variable' expected", expected.getMessage());
@@ -198,7 +198,7 @@ public class SphericalDistancePluginTest {
         element.removeChild(TAG_NAME_SECO_LAT_VAR);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element 'secondary-lat-variable' expected", expected.getMessage());
@@ -210,7 +210,7 @@ public class SphericalDistancePluginTest {
         element.getChild(TAG_NAME_SECO_LAT_VAR).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element 'secondary-lat-variable' expected", expected.getMessage());
@@ -222,7 +222,7 @@ public class SphericalDistancePluginTest {
         element.removeChild(TAG_NAME_SECO_LON_VAR);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element 'secondary-lon-variable' expected", expected.getMessage());
@@ -234,7 +234,7 @@ public class SphericalDistancePluginTest {
         element.getChild(TAG_NAME_SECO_LON_VAR).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element 'secondary-lon-variable' expected", expected.getMessage());

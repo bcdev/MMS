@@ -23,7 +23,7 @@ import org.jdom.Element;
 
 public interface PostProcessingPlugin {
 
-    PostProcessing createPostProcessing(Element element);
+    PostProcessing createPostProcessing(Element element, PostProcessingContext context);
 
     String getPostProcessingName();
 }

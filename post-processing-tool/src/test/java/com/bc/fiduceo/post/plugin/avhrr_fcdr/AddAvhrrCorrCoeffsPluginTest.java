@@ -36,7 +36,7 @@ public class AddAvhrrCorrCoeffsPluginTest {
                 "    <target-x-line-variable name=\"x-line\" />" +
                 "</add-avhrr-corr-coeffs>");
 
-        final PostProcessing postProcessing = plugin.createPostProcessing(element);
+        final PostProcessing postProcessing = plugin.createPostProcessing(element, null);
         assertNotNull(postProcessing);
         assertTrue(postProcessing instanceof AddAvhrrCorrCoeffs);
     }
