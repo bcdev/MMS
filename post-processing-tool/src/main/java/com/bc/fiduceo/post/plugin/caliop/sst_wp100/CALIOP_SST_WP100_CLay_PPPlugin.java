@@ -23,6 +23,7 @@ package com.bc.fiduceo.post.plugin.caliop.sst_wp100;
 import static com.bc.fiduceo.util.JDomUtils.getMandatoryChildMandatoryTextTrim;
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import org.jdom.Element;
 
@@ -36,7 +37,7 @@ public class CALIOP_SST_WP100_CLay_PPPlugin implements PostProcessingPlugin {
 
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         if (!getPostProcessingName().equals(element.getName())) {
             throw new RuntimeException("Illegal XML Element. Tagname '" + getPostProcessingName() + "' expected.");
         }

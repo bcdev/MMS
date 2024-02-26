@@ -28,7 +28,9 @@ public class VariableCacheTest {
         final File era5RootDir = new File(testDataDirectory, "era-5" + File.separator + "v1");
         assertTrue(era5RootDir.isDirectory());
 
-        final Era5Archive era5Archive = new Era5Archive(era5RootDir.getAbsolutePath(), Era5Collection.ERA_5);
+        final Configuration config = new Configuration();
+        config.setNWPAuxDir(era5RootDir.getAbsolutePath());
+        final Era5Archive era5Archive = new Era5Archive(config, Era5Collection.ERA_5);
 
         variableCache = new VariableCache(era5Archive, 3);
     }

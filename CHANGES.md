@@ -1,3 +1,21 @@
+### Updates from version 1.5.8 to 1.5.9
+* era5 post processing .. In era5-post-processing-general-info.xml a fill value per
+  variable can be defined.
+* era5 post processing .. can now load generalized information from an optional
+  era5-post-processing-general-info.xml in the config directory.
+  A general info file can contain variable definition for satellite-fields. 
+* Upgrade Mockito to version 4.11.0 and also include artifact mockito-inline for static mocking
+* era5 post processing .. setter and getter of variable names in class SatelliteFieldsConfiguration was
+  generalized. E.g. config.set_an_ml_q_name("abcde") was replaced by config.setVarName("an_ml_q", "abcde")  
+* era5 post processing .. "length" attribute of tag <satellite-fields><z_dim name='up' length='???' />" is no
+  longer optional. 
+* era5 post processing .. The translation of variable name to variable name for file access has been made
+  switchable. 
+* post processing .. added PostProcessingContext to method PostProcessingPlugin.createPostProcessing(...).
+  Now plugins can perform extended initializations. E.g. by loading extra files from config directory. 
+* post processing .. the config directory has been added to the PostProcessingContext so that plugins can load 
+  additional generalized information required for the plugin from this directory.
+
 ### Updates from version 1.5.7 to 1.5.8
 * added support for SMAP Salinity L2C data  
 * added functionality to configure several global attributes before computing MMD files.

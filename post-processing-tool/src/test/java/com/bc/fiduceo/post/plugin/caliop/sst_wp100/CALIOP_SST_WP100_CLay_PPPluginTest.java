@@ -53,7 +53,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
 
     @Test
     public void createPostProcessing() {
-        final PostProcessing pp = ppPlugin.createPostProcessing(createValidRootElement());
+        final PostProcessing pp = ppPlugin.createPostProcessing(createValidRootElement(), null);
         assertNotNull(pp);
         assertEquals(CALIOP_SST_WP100_CLay_PP.class, pp.getClass());
         final CALIOP_SST_WP100_CLay_PP cwp100_CLay_pp = (CALIOP_SST_WP100_CLay_PP) pp;
@@ -67,7 +67,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
     public void createPostProcessing_wrongRootTag() {
         final Element rootElement = createValidRootElement();
         try {
-            ppPlugin.createPostProcessing(rootElement.setName("wrongRootName"));
+            ppPlugin.createPostProcessing(rootElement.setName("wrongRootName"), null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());
@@ -80,7 +80,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
         final Element rootElement = createValidRootElement();
         rootElement.removeChild(TAG_MMD_SOURCE_FILE_VARIABE_NAME);
         try {
-            ppPlugin.createPostProcessing(rootElement);
+            ppPlugin.createPostProcessing(rootElement, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());
@@ -93,7 +93,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
         final Element rootElement = createValidRootElement();
         rootElement.getChild(TAG_MMD_SOURCE_FILE_VARIABE_NAME).setText("   ");
         try {
-            ppPlugin.createPostProcessing(rootElement);
+            ppPlugin.createPostProcessing(rootElement, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());
@@ -107,7 +107,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
         final Element rootElement = createValidRootElement();
         rootElement.removeChild(TAG_MMD_PROCESSING_VERSION);
         try {
-            ppPlugin.createPostProcessing(rootElement);
+            ppPlugin.createPostProcessing(rootElement, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());
@@ -120,7 +120,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
         final Element rootElement = createValidRootElement();
         rootElement.getChild(TAG_MMD_PROCESSING_VERSION).setText("   ");
         try {
-            ppPlugin.createPostProcessing(rootElement);
+            ppPlugin.createPostProcessing(rootElement, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());
@@ -133,7 +133,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
         final Element rootElement = createValidRootElement();
         rootElement.removeChild(TAG_MMD_Y_VARIABE_NAME);
         try {
-            ppPlugin.createPostProcessing(rootElement);
+            ppPlugin.createPostProcessing(rootElement, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());
@@ -146,7 +146,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
         final Element rootElement = createValidRootElement();
         rootElement.getChild(TAG_MMD_Y_VARIABE_NAME).setText("   ");
         try {
-            ppPlugin.createPostProcessing(rootElement);
+            ppPlugin.createPostProcessing(rootElement, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());
@@ -159,7 +159,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
         final Element rootElement = createValidRootElement();
         rootElement.removeChild(TAG_TARGET_VARIABE_PREFIX);
         try {
-            ppPlugin.createPostProcessing(rootElement);
+            ppPlugin.createPostProcessing(rootElement, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());
@@ -172,7 +172,7 @@ public class CALIOP_SST_WP100_CLay_PPPluginTest {
         final Element rootElement = createValidRootElement();
         rootElement.getChild(TAG_TARGET_VARIABE_PREFIX).setText("   ");
         try {
-            ppPlugin.createPostProcessing(rootElement);
+            ppPlugin.createPostProcessing(rootElement, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals(RuntimeException.class.getTypeName(), expected.getClass().getTypeName());

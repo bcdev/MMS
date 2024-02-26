@@ -29,7 +29,7 @@ public class AddGruanSourcePluginTest {
     public void testCreatePostProcessing() throws JDOMException, IOException {
         final Element rootElement = AddGruanSourceTest.createFullConfigElement();
 
-        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement);
+        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement, null);
         assertTrue(postProcessing instanceof AddGruanSource);
     }
 }

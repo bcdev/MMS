@@ -105,6 +105,9 @@ public class PostProcessingTool_IOTest {
 
         final PostProcessingContext context = PostProcessingTool.initializeContext(commandLine);
 
+        assertNotNull(context.getConfigDirectory());
+        assertEquals(testDir.toPath().resolve("config"), context.getConfigDirectory());
+
         final String separator = FileSystems.getDefault().getSeparator();
         assertEquals(separator + "mmd_files", context.getMmdInputDirectory().toString());
         assertEquals("03-May-2011 00:00:00", ProductData.UTC.createDateFormat().format(context.getStartDate()));

@@ -21,6 +21,7 @@
 package com.bc.fiduceo.post.plugin.hirs.flag;
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.post.util.DistanceToLandMap;
 import org.jdom.Element;
@@ -51,7 +52,7 @@ public class HirsL1CloudyFlagsPlugin implements PostProcessingPlugin {
     private FileSystem fileSystem;
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         if (!getPostProcessingName().equals(element.getName())) {
             throw new RuntimeException("Illegal XML Element. Tagname '" + getPostProcessingName() + "' expected.");
         }

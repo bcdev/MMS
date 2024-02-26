@@ -1,5 +1,6 @@
 package com.bc.fiduceo.post.plugin.era5;
 
+import org.apache.commons.lang.StringUtils;
 import org.esa.snap.core.util.io.FileUtils;
 import ucar.ma2.Array;
 import ucar.nc2.NetcdfFile;
@@ -66,8 +67,8 @@ class VariableCache {
     }
 
     private String getVariableName(String variableKey) {
-        final int cutPoint = variableKey.lastIndexOf("_");
-        return variableKey.substring(cutPoint + 1, variableKey.length());
+        final int cutPoint = StringUtils.ordinalIndexOf(variableKey, "_", 2);
+        return variableKey.substring(cutPoint + 1);
     }
 
     private void removeOldest() throws IOException {
