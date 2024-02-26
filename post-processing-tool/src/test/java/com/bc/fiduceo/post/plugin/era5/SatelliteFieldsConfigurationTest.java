@@ -226,11 +226,22 @@ public class SatelliteFieldsConfigurationTest {
         } catch (IllegalArgumentException expected) {
         }
     }
-
     @Test
     public void testVerify_y_dim_name() {
         prepareConfig();
         config.set_y_dim_name("");
+
+        try {
+            config.verify();
+            fail("IllegalArgumentException expected");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testVerify_z_dim() {
+        prepareConfig();
+        config.set_z_dim(-2);
 
         try {
             config.verify();
@@ -249,6 +260,17 @@ public class SatelliteFieldsConfigurationTest {
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException expected) {
         }
+    }
+
+    @Test
+    public void test_dont_verify_z_dim_if_z_dim_name_is_not_set() {
+        //preparation
+        prepareConfig();
+        config.set_z_dim(-2);
+        config.set_z_dim_name(null);
+
+        //execution
+        config.verify();
     }
 
     @Test
