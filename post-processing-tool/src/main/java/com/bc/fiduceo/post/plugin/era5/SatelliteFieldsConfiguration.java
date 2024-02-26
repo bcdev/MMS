@@ -150,7 +150,6 @@ class SatelliteFieldsConfiguration extends FieldsConfiguration {
     }
 
     void verify() {
-        // TODO: 26.02.2024 SE -- show Tom -- verification z_dim?
         if (x_dim < 1 || y_dim < 1) {
             // do not check z-dimension, this might be not configured tb 2020-11-16
             throw new IllegalArgumentException("dimensions incorrect: x:" + x_dim + " y:" + y_dim);
@@ -164,9 +163,13 @@ class SatelliteFieldsConfiguration extends FieldsConfiguration {
             throw new IllegalArgumentException("y dimension name not configured");
         }
 
-        // TODO: 26.02.2024 SE -- show Tom -- verification z_dim_name?
-        if (StringUtils.isNullOrEmpty(z_dim_name)) {
-            throw new IllegalArgumentException("z dimension name not configured");
+        if (z_dim_name != null) {
+            if (StringUtils.isNullOrEmpty(z_dim_name)) {
+                throw new IllegalArgumentException("z dimension name not configured");
+            }
+            if (z_dim < 1) {
+                throw new IllegalArgumentException("dimension incorrect: z:" + z_dim);
+            }
         }
 
         if (StringUtils.isNullOrEmpty(nwp_time_variable_name)) {
