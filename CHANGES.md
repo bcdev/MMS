@@ -1,4 +1,4 @@
-### Updates from version 1.5.8 to 1.5.9
+### Updates from version 1.5.8 to 1.6.0
 * era5 post processing .. In era5-post-processing-general-info.xml a fill value per
   variable can be defined.
 * era5 post processing .. can now load generalized information from an optional
