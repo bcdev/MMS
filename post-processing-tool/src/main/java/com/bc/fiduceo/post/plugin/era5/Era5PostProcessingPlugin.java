@@ -292,7 +292,8 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
                             varName,
                             attributes.containsKey(ATT_NAME_UNITS) ? attributes.get(ATT_NAME_UNITS) : "~",
                             attributes.get(ATT_NAME_LONG_NAME),
-                            attributes.get(ATT_NAME_STANDARD_NAME), is3d);
+                            attributes.get(ATT_NAME_STANDARD_NAME),
+                            is3d);
                     if (attributes.containsKey(ATT_NAME_FILL_VALUE)) {
                         templateVariable.setFill_value(Float.valueOf(attributes.get(ATT_NAME_FILL_VALUE)));
                     }
