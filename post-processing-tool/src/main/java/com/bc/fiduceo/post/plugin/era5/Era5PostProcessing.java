@@ -47,7 +47,7 @@ class Era5PostProcessing extends PostProcessing {
         if (shape.length == 2) {
             return createInterpolationContext_2D(lonArray, latArray, shape);
         } else if (shape.length == 0) {
-            return createInterpolationContext_1D(lonArray, latArray);
+            return createInterpolationContext_0D(lonArray, latArray);
         }
 
         throw new IllegalStateException("Unsupported dimensionality of geolocation data");
@@ -118,7 +118,7 @@ class Era5PostProcessing extends PostProcessing {
         return new BilinearInterpolator(lonDelta, latDelta, era5_X_min, era5_Y_min);
     }
 
-    private static InterpolationContext createInterpolationContext_1D(Array lonArray, Array latArray) {
+    private static InterpolationContext createInterpolationContext_0D(Array lonArray, Array latArray) {
         final InterpolationContext context = new InterpolationContext(1, 1);
 
         final float lon = lonArray.getFloat(0);
@@ -137,11 +137,7 @@ class Era5PostProcessing extends PostProcessing {
     }
 
     static boolean isValidLon(float lon) {
-        // changed because the lon range of some satellite product is not
-        // from -180 to 180 but from 0 to 360
-        return lon >= -180.f && lon <= 360.f;
-
-        // return lon >= -180.f && lon <= 180.f;
+         return lon >= -180.f && lon <= 180.f;
     }
 
     static boolean isValidLat(float lat) {

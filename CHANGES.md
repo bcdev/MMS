@@ -1,4 +1,7 @@
 ### Updates from version 1.5.8 to 1.6.0
+* era5 post processing .. can now also handle satellite longitude data which not fits the range [-180 to 180].
+  In such cases (e.g. Windsat-Coriolis [0 to 360]), longitude data will be converted so that it fits into the
+  required range of [-180 to 180] to be able to create correct interpolation of era5 data.
 * era5 post processing .. In era5-post-processing-general-info.xml a fill value per
   variable can be defined.
 * era5 post processing .. can now load generalized information from an optional
