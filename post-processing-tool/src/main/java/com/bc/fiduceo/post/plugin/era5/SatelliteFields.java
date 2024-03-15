@@ -5,6 +5,7 @@ import com.bc.fiduceo.util.NetCDFUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
+import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.*;
 import ucar.nc2.Dimension;
@@ -62,6 +63,7 @@ class SatelliteFields extends FieldsProcessor {
             // + scale if necessary
             final com.bc.fiduceo.core.Dimension geoDimension = new com.bc.fiduceo.core.Dimension("geoloc", satFieldsConfig.get_x_dim(), satFieldsConfig.get_y_dim());
             final Array lonArray = readGeolocationVariable(geoDimension, reader, satFieldsConfig.get_longitude_variable_name());
+            convertToFitTheRangeMinus180to180(lonArray);
             final Array latArray = readGeolocationVariable(geoDimension, reader, satFieldsConfig.get_latitude_variable_name());
 
             // prepare data
@@ -201,6 +203,17 @@ class SatelliteFields extends FieldsProcessor {
 
         } finally {
             variableCache.close();
+        }
+    }
+
+    private static void convertToFitTheRangeMinus180to180(Array lonArray) {
+        final IndexIterator indexIterator = lonArray.getIndexIterator();
+        while (indexIterator.hasNext()) {
+            double lonD = indexIterator.getDoubleNext();
+            while (lonD>180) {
+                lonD -= 360;
+            }
+            indexIterator.setDoubleCurrent(lonD);
         }
     }
 
