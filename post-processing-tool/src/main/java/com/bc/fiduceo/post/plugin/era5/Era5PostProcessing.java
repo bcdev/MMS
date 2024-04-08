@@ -37,8 +37,8 @@ class Era5PostProcessing extends PostProcessing {
 
     static int getEra5LonMin(float lonMin) {
         final double normLonMin = (lonMin + 360.0) % 360.0;
-        final double scaledLonMin = Math.floor(normLonMin * 4) / 4;
-        return (int) (scaledLonMin * 4);
+        final double xIndex = Math.floor(normLonMin * 4);  // lon index
+        return (int) xIndex;
     }
 
     // package access for testing only tb 2020-11-20
