@@ -1,6 +1,7 @@
 package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.FiduceoConstants;
+import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -10,7 +11,6 @@ import ucar.ma2.InvalidRangeException;
 import ucar.nc2.*;
 import ucar.nc2.Dimension;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -92,7 +92,6 @@ class SatelliteFields extends FieldsProcessor {
                 final int height = shape[0];
 
                 final InterpolationContext interpolationContext = Era5PostProcessing.getInterpolationContext(lonLayer, latLayer);
-                final Rectangle layerRegion = interpolationContext.getEra5Region();
 
                 timeIndex.set(m);
                 final int era5Time = era5TimeArray.getInt(timeIndex);
@@ -106,15 +105,17 @@ class SatelliteFields extends FieldsProcessor {
                 final Set<String> variableKeys = variables.keySet();
                 for (final String variableKey : variableKeys) {
                     final float fillValue = variables.get(variableKey).getFillValue();
-                    VariableCache.CacheEntry cacheEntry = variableCache.get(variableKey, era5Time);
-                    final Array subset = readSubset(numLayers, layerRegion, cacheEntry);
-                    final Index subsetIndex = subset.getIndex();
+                    final Variable variable = variableCache.get(variableKey, era5Time);
 
                     final Array targetArray = targetArrays.get(variableKey);
                     final Index targetIndex = targetArray.getIndex();
 
-                    final int rank = subset.getRank();
-                    if (rank == 2) {
+                    final double scaleFactor = NetCDFUtils.getScaleFactor(variable);
+                    final double offset = NetCDFUtils.getOffset(variable);
+                    final boolean mustScale = ReaderUtils.mustScale(scaleFactor, offset);
+
+                    final int rank = variable.getRank();
+                    if (rank == 3) {
                         for (int y = 0; y < height; y++) {
                             for (int x = 0; x < width; x++) {
                                 targetIndex.set(m, y, x);
@@ -128,28 +129,41 @@ class SatelliteFields extends FieldsProcessor {
                                     targetArray.setFloat(targetIndex, fillValue);
                                     continue;
                                 }
+                                final int offsetX = interpolator.getXMin();
+                                final int offsetY = interpolator.getYMin();
 
-                                final int offsetX = interpolator.getXMin() - layerRegion.x;
-                                final int offsetY = interpolator.getYMin() - layerRegion.y;
-
-                                subsetIndex.set(offsetY, offsetX);
-                                final float c00 = subset.getFloat(subsetIndex);
-
-                                subsetIndex.set(offsetY, offsetX + 1);
-                                final float c10 = subset.getFloat(subsetIndex);
-
-                                subsetIndex.set(offsetY + 1, offsetX);
-                                final float c01 = subset.getFloat(subsetIndex);
-
-                                subsetIndex.set(offsetY + 1, offsetX + 1);
-                                final float c11 = subset.getFloat(subsetIndex);
+                                final float c00;
+                                final float c10;
+                                final float c01;
+                                final float c11;
+                                if (offsetX < 1439) {
+                                    Array subset = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 2}).reduce();
+                                    if (mustScale) {
+                                        subset = NetCDFUtils.scale(subset, scaleFactor, offset);
+                                    }
+                                    c00 = subset.getFloat(0);
+                                    c10 = subset.getFloat(1);
+                                    c01 = subset.getFloat(2);
+                                    c11 = subset.getFloat(3);
+                                } else {
+                                    Array subset1439 = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 1}).reduce();
+                                    Array subset0 = variable.read(new int[]{0, offsetY, 0}, new int[]{1, 2, 1}).reduce();
+                                    if (mustScale) {
+                                        subset1439 = NetCDFUtils.scale(subset1439, scaleFactor, offset);
+                                        subset0 = NetCDFUtils.scale(subset0, scaleFactor, offset);
+                                    }
+                                    c00 = subset1439.getFloat(0);
+                                    c10 = subset0.getFloat(0);
+                                    c01 = subset1439.getFloat(1);
+                                    c11 = subset0.getFloat(1);
+                                }
 
                                 final double interpolate = interpolator.interpolate(c00, c10, c01, c11);
 
                                 targetArray.setFloat(targetIndex, (float) interpolate);
                             }
                         }
-                    } else if (rank == 3) {
+                    } else if (rank == 4) {
                         for (int z = 0; z < numLayers; z++) {
                             for (int y = 0; y < height; y++) {
                                 for (int x = 0; x < width; x++) {
@@ -166,14 +180,34 @@ class SatelliteFields extends FieldsProcessor {
                                         continue;
                                     }
 
-                                    final int offsetX = interpolator.getXMin() - layerRegion.x;
-                                    final int offsetY = interpolator.getYMin() - layerRegion.y;
+                                    final int offsetX = interpolator.getXMin();
+                                    final int offsetY = interpolator.getYMin();
 
-                                    subsetIndex.set(z, offsetY, offsetX);
-                                    final float c00 = subset.getFloat(subsetIndex);
-
-                                    subsetIndex.set(z, offsetY, offsetX + 1);
-                                    final float c10 = subset.getFloat(subsetIndex);
+                                    final float c00;
+                                    final float c10;
+                                    final float c01;
+                                    final float c11;
+                                    if (offsetX < 1439) {
+                                        Array subset = variable.read(new int[]{0, z, offsetY, offsetX}, new int[]{1, 1, 2, 2}).reduce();
+                                        if (mustScale) {
+                                            subset = NetCDFUtils.scale(subset, scaleFactor, offset);
+                                        }
+                                        c00 = subset.getFloat(0);
+                                        c10 = subset.getFloat(1);
+                                        c01 = subset.getFloat(2);
+                                        c11 = subset.getFloat(3);
+                                    } else {
+                                        Array subset1439 = variable.read(new int[]{0, z, offsetY, offsetX}, new int[]{1, 1, 2, 1}).reduce();
+                                        Array subset0 = variable.read(new int[]{0, z, offsetY, 0}, new int[]{1, 1, 2, 1}).reduce();
+                                        if (mustScale) {
+                                            subset1439 = NetCDFUtils.scale(subset1439, scaleFactor, offset);
+                                            subset0 = NetCDFUtils.scale(subset0, scaleFactor, offset);
+                                        }
+                                        c00 = subset1439.getFloat(0);
+                                        c10 = subset0.getFloat(0);
+                                        c01 = subset1439.getFloat(1);
+                                        c11 = subset0.getFloat(1);
+                                    }
 
                                     final double interpolate = interpolator.interpolate(c00, c10, c01, c11);
 
@@ -204,7 +238,7 @@ class SatelliteFields extends FieldsProcessor {
         final IndexIterator indexIterator = lonArray.getIndexIterator();
         while (indexIterator.hasNext()) {
             double lonD = indexIterator.getDoubleNext();
-            while (lonD>180) {
+            while (lonD > 180) {
                 lonD -= 360;
             }
             indexIterator.setDoubleCurrent(lonD);

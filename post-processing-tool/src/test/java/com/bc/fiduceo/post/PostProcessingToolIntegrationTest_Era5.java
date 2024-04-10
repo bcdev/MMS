@@ -191,7 +191,7 @@ public class PostProcessingToolIntegrationTest_Era5 {
             NCTestUtils.assertAttribute(variable, "units", "kg kg**-1");
             NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 0, 0, 1.9407424645123683E-7, mmd);
             NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 10, 0, 3.718567541000084E-6, mmd);
-            NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 20, 0, 9.952551408787258E-6, mmd);
+            NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 20, 0, 9.968232006940525E-6, mmd);
 
             variable = NCTestUtils.getVariable("nwp_u10", mmd);
             assertNull(variable.findAttribute("standard_name"));
@@ -245,8 +245,8 @@ public class PostProcessingToolIntegrationTest_Era5 {
             variable = NCTestUtils.getVariable("nwp_o3", mmd);
             NCTestUtils.assertAttribute(variable, "units", "kg kg**-1");
             NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 30, 0, 1.5600191545672715E-5, mmd);
-            NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 40, 0, 7.585892490169499E-6, mmd);
-            NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 50, 0, 1.5478117347811349E-6, mmd);
+            NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 40, 0, 7.563196959381457E-6, mmd);
+            NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 50, 0, 1.5587879715894815E-6, mmd);
         }
     }
 
@@ -286,7 +286,7 @@ public class PostProcessingToolIntegrationTest_Era5 {
             NCTestUtils.assertAttribute(variable, "units", "kg kg**-1");
             NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 0, 0, 1.9407424645123683E-7, mmd);
             NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 10, 0, 3.718567541000084E-6, mmd);
-            NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 20, 0, 9.952551408787258E-6, mmd);
+            NCTestUtils.assert4DVariable(variable.getFullName(), 0, 0, 20, 0, 9.968232006940525E-6, mmd);
 
             variable = NCTestUtils.getVariable("nwp_u10", mmd);
             assertNull(variable.findAttribute("standard_name"));

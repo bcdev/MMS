@@ -1,6 +1,6 @@
 package com.bc.fiduceo.post.plugin.era5;
 
-import com.bc.fiduceo.FiduceoConstants;
+import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -9,7 +9,6 @@ import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Dimension;
 import ucar.nc2.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
@@ -115,7 +114,6 @@ class MatchupFields extends FieldsProcessor {
                     final Array latLayer = latArray.section(nwpOffset, nwpShape).copy();
 
                     final InterpolationContext interpolationContext = Era5PostProcessing.getInterpolationContext(lonLayer, latLayer);
-                    final Rectangle layerRegion = interpolationContext.getEra5Region();
 
                     // iterate over time stamps
                     for (int t = 0; t < numTimeSteps; t++) {
@@ -128,28 +126,45 @@ class MatchupFields extends FieldsProcessor {
                             continue;
                         }
 
-                        VariableCache.CacheEntry cacheEntry = variableCache.get(variableKey, timeStamp);
+                        final Variable variable = variableCache.get(variableKey, timeStamp);
+                        final double scaleFactor = NetCDFUtils.getScaleFactor(variable);
+                        final double offset = NetCDFUtils.getOffset(variable);
+                        final boolean mustScale = ReaderUtils.mustScale(scaleFactor, offset);
 
-                        // read and get rid of fake z-dimension
-                        final Array subset = readSubset(1, layerRegion, cacheEntry);
-                        final Index subsetIndex = subset.getIndex();
                         final BilinearInterpolator bilinearInterpolator = interpolationContext.get(0, 0);
                         if (bilinearInterpolator == null) {
                             targetArray.setFloat(targetIndex, fillValue);
                             continue;
                         }
 
-                        subsetIndex.set(0, 0);
-                        final float c00 = subset.getFloat(subsetIndex);
+                        final int offsetX = bilinearInterpolator.getXMin();
+                        final int offsetY = bilinearInterpolator.getYMin();
 
-                        subsetIndex.set(0, 1);
-                        final float c10 = subset.getFloat(subsetIndex);
-
-                        subsetIndex.set(1, 0);
-                        final float c01 = subset.getFloat(subsetIndex);
-
-                        subsetIndex.set(1, 1);
-                        final float c11 = subset.getFloat(subsetIndex);
+                        final float c00;
+                        final float c10;
+                        final float c01;
+                        final float c11;
+                        if (offsetX < 1439) {
+                            Array subset = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 2}).reduce();
+                            if (mustScale) {
+                                subset = NetCDFUtils.scale(subset, scaleFactor, offset);
+                            }
+                            c00 = subset.getFloat(0);
+                            c10 = subset.getFloat(1);
+                            c01 = subset.getFloat(2);
+                            c11 = subset.getFloat(3);
+                        } else {
+                            Array subset1439 = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 1}).reduce();
+                            Array subset0 = variable.read(new int[]{0, offsetY, 0}, new int[]{1, 2, 1}).reduce();
+                            if (mustScale) {
+                                subset1439 = NetCDFUtils.scale(subset1439, scaleFactor, offset);
+                                subset0 = NetCDFUtils.scale(subset0, scaleFactor, offset);
+                            }
+                            c00 = subset1439.getFloat(0);
+                            c10 = subset0.getFloat(0);
+                            c01 = subset1439.getFloat(1);
+                            c11 = subset0.getFloat(1);
+                        }
                         final double interpolated = bilinearInterpolator.interpolate(c00, c10, c01, c11);
 
                         targetArray.setFloat(targetIndex, (float) interpolated);

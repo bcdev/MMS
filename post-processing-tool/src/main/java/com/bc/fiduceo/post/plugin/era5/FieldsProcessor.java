@@ -16,44 +16,6 @@ class FieldsProcessor {
         return new TemplateVariable(name, units, longName, standardName, is3d);
     }
 
-    static Array readSubset(int numLayers, Rectangle era5RasterPosition, VariableCache.CacheEntry cacheEntry) throws IOException, InvalidRangeException {
-        Array subset;
-
-        final int maxRequestedX = era5RasterPosition.x + era5RasterPosition.width - 1;
-        if (era5RasterPosition.x < 0 || maxRequestedX >= RASTER_WIDTH) {
-            subset = readVariableDataOverlapped(numLayers, era5RasterPosition, cacheEntry.array);
-        } else {
-            subset = readVariableData(numLayers, era5RasterPosition, cacheEntry.array);
-        }
-
-        return NetCDFUtils.scaleIfNecessary(cacheEntry.variable, subset);
-    }
-
-    private static Array readVariableDataOverlapped(int numLayers, Rectangle era5RasterPosition, Array array) throws IOException, InvalidRangeException {
-        Array subset;
-        int xMin = 0;
-        int xMax;
-        int leftWidth;
-        int rightWidth;
-        if (era5RasterPosition.x < 0) {
-            xMax = RASTER_WIDTH + era5RasterPosition.x; // notabene: rasterposition is negative tb 2021-01-13
-            leftWidth = era5RasterPosition.width + era5RasterPosition.x;
-            rightWidth = -era5RasterPosition.x;
-        } else {
-            xMax = era5RasterPosition.x;
-            rightWidth = RASTER_WIDTH - era5RasterPosition.x;
-            leftWidth = era5RasterPosition.width - rightWidth;
-        }
-        final Rectangle leftEraPos = new Rectangle(xMin, era5RasterPosition.y, leftWidth, era5RasterPosition.height);
-        final Array leftSubset = readVariableData(numLayers, leftEraPos, array);
-
-        final Rectangle rightEraPos = new Rectangle(xMax, era5RasterPosition.y, rightWidth, era5RasterPosition.height);
-        final Array rightSubset = readVariableData(numLayers, rightEraPos, array);
-
-        subset = mergeData(leftSubset, rightSubset, numLayers, era5RasterPosition, array);
-        return subset;
-    }
-
     static Array mergeData(Array leftSubset, Array rightSubset, int numLayers, Rectangle era5RasterPosition, Array array) {
         final int rank = array.getRank();
         final Array mergedArray;
