@@ -58,10 +58,6 @@ class Era5PostProcessing extends PostProcessing {
 
         final Index lonIdx = lonArray.getIndex();
         final Index latIdx = latArray.getIndex();
-        int xMin = Integer.MAX_VALUE;
-        int xMax = Integer.MIN_VALUE;
-        int yMin = Integer.MAX_VALUE;
-        int yMax = Integer.MIN_VALUE;
         for (int y = 0; y < shape[0]; y++) {
             for (int x = 0; x < shape[1]; x++) {
                 lonIdx.set(y, x);
@@ -80,26 +76,10 @@ class Era5PostProcessing extends PostProcessing {
                 // + store to context at (x, y)
                 final int era5_X_min = getEra5LonMin(lon);
                 final int era5_Y_min = getEra5LatMin(lat);
-                if (era5_X_min < xMin) {
-                    xMin = era5_X_min;
-                }
-                if (era5_X_min > xMax) {
-                    xMax = era5_X_min;
-                }
-                if (era5_Y_min < yMin) {
-                    yMin = era5_Y_min;
-                }
-                if (era5_Y_min > yMax) {
-                    yMax = era5_Y_min;
-                }
 
                 final BilinearInterpolator interpolator = createInterpolator(lon, lat, era5_X_min, era5_Y_min);
                 context.set(x, y, interpolator);
             }
-
-            // add 2 to width and height to have always 4 points for the interpolation tb 2020-11-30
-            final Rectangle era5Rect = new Rectangle(xMin, yMin, xMax - xMin + 2, yMax - yMin + 2);
-            context.setEra5Region(era5Rect);
         }
         return context;
     }
@@ -129,9 +109,6 @@ class Era5PostProcessing extends PostProcessing {
 
         final BilinearInterpolator interpolator = createInterpolator(lon, lat, era5_X_min, era5_Y_min);
         context.set(0, 0, interpolator);
-
-        final Rectangle era5Rect = new Rectangle(era5_X_min, era5_Y_min, 2, 2);
-        context.setEra5Region(era5Rect);
 
         return context;
     }
