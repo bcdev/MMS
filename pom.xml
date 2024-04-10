@@ -53,10 +53,10 @@
                 <artifactId>s3tbx-sentinel3-reader</artifactId>
                 <version>9.0.3</version>
                 <!--<exclusions>-->
-                <!--<exclusion>-->
-                <!--<groupId>edu.ucar</groupId>-->
-                <!--<artifactId>netcdf</artifactId>-->
-                <!--</exclusion>-->
+                    <!--<exclusion>-->
+                        <!--<groupId>edu.ucar</groupId>-->
+                        <!--<artifactId>netcdf</artifactId>-->
+                    <!--</exclusion>-->
                 <!--</exclusions>-->
             </dependency>
 
@@ -118,15 +118,15 @@
                 <version>5.3.3</version>
             </dependency>
             <!--<dependency>-->
-            <!--<groupId>edu.ucar</groupId>-->
-            <!--<artifactId>netcdf4</artifactId>-->
-            <!--<version>4.7.4</version>-->
+                <!--<groupId>edu.ucar</groupId>-->
+                <!--<artifactId>netcdf4</artifactId>-->
+                <!--<version>4.7.4</version>-->
             <!--</dependency>-->
 
             <!--<dependency>-->
-            <!--<groupId>edu.ucar</groupId>-->
-            <!--<artifactId>cdm</artifactId>-->
-            <!--<version>4.6.14</version>-->
+                <!--<groupId>edu.ucar</groupId>-->
+                <!--<artifactId>cdm</artifactId>-->
+                <!--<version>4.6.14</version>-->
             <!--</dependency>-->
 
             <!-- test dependencies -->

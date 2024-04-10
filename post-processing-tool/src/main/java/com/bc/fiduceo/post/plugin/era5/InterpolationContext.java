@@ -1,7 +1,5 @@
 package com.bc.fiduceo.post.plugin.era5;
 
-import java.awt.*;
-
 class InterpolationContext {
 
     private final BilinearInterpolator[][] interpolators;
