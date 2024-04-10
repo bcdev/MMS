@@ -175,13 +175,7 @@ class SatelliteFields extends FieldsProcessor {
                                     subsetIndex.set(z, offsetY, offsetX + 1);
                                     final float c10 = subset.getFloat(subsetIndex);
 
-                                    subsetIndex.set(z, offsetY + 1, offsetX);
-                                    final float c01 = subset.getFloat(subsetIndex);
-
-                                    subsetIndex.set(z, offsetY + 1, offsetX + 1);
-                                    final float c11 = subset.getFloat(subsetIndex);
-
-                                    final double interpolate = interpolator.interpolate(c00, c01, c10, c11);
+                                    final double interpolate = interpolator.interpolate(c00, c10, c01, c11);
 
                                     targetArray.setFloat(targetIndex, (float) interpolate);
                                 }
