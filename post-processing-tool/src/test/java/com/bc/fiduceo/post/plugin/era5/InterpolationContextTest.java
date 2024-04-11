@@ -83,4 +83,20 @@ public class InterpolationContextTest {
         } catch (IllegalArgumentException expected) {
         }
     }
+
+    @Test
+    public void testGetMinMaxY() {
+        final InterpolationContext interpolationContext = new InterpolationContext(3, 3);
+        interpolationContext.set(0, 0, new BilinearInterpolator(0, 0, 0, 121));
+//        interpolationContext.set(1, 0, new BilinearInterpolator(0, 0, 0, 128));
+        interpolationContext.set(2, 0, new BilinearInterpolator(0, 0, 0, 118));
+        interpolationContext.set(0, 1, new BilinearInterpolator(0, 0, 0, 313));
+        interpolationContext.set(1, 1, new BilinearInterpolator(0, 0, 0, 215));
+//        interpolationContext.set(2, 1, new BilinearInterpolator(0, 0, 0, 256));
+        interpolationContext.set(0, 2, new BilinearInterpolator(0, 0, 0, 244));
+//        interpolationContext.set(1, 2, new BilinearInterpolator(0, 0, 0, 170));
+        interpolationContext.set(2, 2, new BilinearInterpolator(0, 0, 0, 199));
+
+        assertArrayEquals(new int[]{118, 314}, interpolationContext.getMinMaxY());
+    }
 }

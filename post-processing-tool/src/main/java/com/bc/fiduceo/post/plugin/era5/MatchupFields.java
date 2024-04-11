@@ -138,33 +138,19 @@ class MatchupFields extends FieldsProcessor {
                         }
 
                         final int offsetX = bilinearInterpolator.getXMin();
+                        final int offsetX1 = (offsetX + 1) % 1440;
                         final int offsetY = bilinearInterpolator.getYMin();
 
-                        final float c00;
-                        final float c10;
-                        final float c01;
-                        final float c11;
-                        if (offsetX < 1439) {
-                            Array subset = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 2}).reduce();
+                            Array leftSide = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 1}).reduce();
+                            Array rightSide = variable.read(new int[]{0, offsetY, offsetX1}, new int[]{1, 2, 1}).reduce();
                             if (mustScale) {
-                                subset = NetCDFUtils.scale(subset, scaleFactor, offset);
+                                leftSide = NetCDFUtils.scale(leftSide, scaleFactor, offset);
+                                rightSide = NetCDFUtils.scale(rightSide, scaleFactor, offset);
                             }
-                            c00 = subset.getFloat(0);
-                            c10 = subset.getFloat(1);
-                            c01 = subset.getFloat(2);
-                            c11 = subset.getFloat(3);
-                        } else {
-                            Array subset1439 = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 1}).reduce();
-                            Array subset0 = variable.read(new int[]{0, offsetY, 0}, new int[]{1, 2, 1}).reduce();
-                            if (mustScale) {
-                                subset1439 = NetCDFUtils.scale(subset1439, scaleFactor, offset);
-                                subset0 = NetCDFUtils.scale(subset0, scaleFactor, offset);
-                            }
-                            c00 = subset1439.getFloat(0);
-                            c10 = subset0.getFloat(0);
-                            c01 = subset1439.getFloat(1);
-                            c11 = subset0.getFloat(1);
-                        }
+                        final float c00 = leftSide.getFloat(0);
+                        final float c10 = rightSide.getFloat(0);
+                        final float c01 = leftSide.getFloat(1);
+                        final float c11 = rightSide.getFloat(1);
                         final double interpolated = bilinearInterpolator.interpolate(c00, c10, c01, c11);
 
                         targetArray.setFloat(targetIndex, (float) interpolated);

@@ -9,7 +9,6 @@ import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
 
-import java.awt.*;
 import java.io.IOException;
 
 class Era5PostProcessing extends PostProcessing {

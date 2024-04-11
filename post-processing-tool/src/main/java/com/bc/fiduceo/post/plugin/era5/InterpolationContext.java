@@ -27,4 +27,23 @@ class InterpolationContext {
             throw new IllegalArgumentException("Access interpolator out of raster: " + x + ", " + y);
         }
     }
+
+    public int[] getMinMaxY() {
+        int yMin = Integer.MAX_VALUE;
+        int yMax = Integer.MIN_VALUE;
+        for (BilinearInterpolator[] bilinearInterpolators : interpolators) {
+            for (BilinearInterpolator interpolator : bilinearInterpolators) {
+                if (interpolator==null) continue;
+                final int min = interpolator.getYMin();
+                final int max = min + 1;
+                if (min < yMin) {
+                    yMin = min;
+                }
+                if (max > yMax) {
+                    yMax = max;
+                }
+            }
+        }
+        return new int[]{yMin, yMax};
+    }
 }
