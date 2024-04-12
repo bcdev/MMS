@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static com.bc.fiduceo.post.util.PPUtils.convertToFitTheRangeMinus180to180;
+
 
 class AddLandDistance extends PostProcessing {
 
@@ -84,22 +86,6 @@ class AddLandDistance extends PostProcessing {
     // for testing only - to inject a mock tb 2017-06-28
     void setDistanceToLandMap(DistanceToLandMap distanceToLandMap) {
         this.distanceToLandMap = distanceToLandMap;
-    }
-
-    private static void convertToFitTheRangeMinus180to180(Array lonArray) {
-        final IndexIterator indexIterator = lonArray.getIndexIterator();
-        while (indexIterator.hasNext()) {
-            double lonD = indexIterator.getDoubleNext();
-            if (Double.isFinite(lonD)) {
-                while (lonD > 180) {
-                    lonD -= 360;
-                }
-                while (lonD < -180) {
-                    lonD += 360;
-                }
-            }
-            indexIterator.setDoubleCurrent(lonD);
-        }
     }
 
     private void initDistanceToLandMap() {

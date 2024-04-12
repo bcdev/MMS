@@ -1,12 +1,12 @@
 package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.FiduceoConstants;
+import com.bc.fiduceo.post.util.PPUtils;
 import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
-import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.*;
 import ucar.nc2.Dimension;
@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.List;
 
 import static com.bc.fiduceo.post.plugin.era5.VariableUtils.*;
+import static com.bc.fiduceo.post.util.PPUtils.convertToFitTheRangeMinus180to180;
 
 class SatelliteFields extends FieldsProcessor {
 
@@ -203,17 +204,6 @@ class SatelliteFields extends FieldsProcessor {
 
         } finally {
             variableCache.close();
-        }
-    }
-
-    private static void convertToFitTheRangeMinus180to180(Array lonArray) {
-        final IndexIterator indexIterator = lonArray.getIndexIterator();
-        while (indexIterator.hasNext()) {
-            double lonD = indexIterator.getDoubleNext();
-            while (lonD > 180) {
-                lonD -= 360;
-            }
-            indexIterator.setDoubleCurrent(lonD);
         }
     }
 
