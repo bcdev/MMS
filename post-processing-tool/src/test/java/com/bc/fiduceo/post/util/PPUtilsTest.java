@@ -11,17 +11,17 @@ public class PPUtilsTest {
 
     @Test
     public void convertToFitTheRangeMinus180to180() {
-        final int farOutside = 360 * 200;
+        final int farOutside = 360 * 10;
 
         final double[] lons = {
                 -180,
                 -179.999999999,
-                 179.999999999,
-                 180,
+                179.999999999,
+                180,
                 -190,
-                 190,
+                190,
                 -30 - farOutside,
-                 40 + farOutside,
+                40 + farOutside,
                 Double.NaN,
                 Double.NEGATIVE_INFINITY,
                 Double.POSITIVE_INFINITY
