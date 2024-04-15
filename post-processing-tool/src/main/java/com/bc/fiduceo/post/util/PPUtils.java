@@ -9,7 +9,7 @@ public class PPUtils {
         final IndexIterator indexIterator = lonArray.getIndexIterator();
         while (indexIterator.hasNext()) {
             double lonD = indexIterator.getDoubleNext();
-            if (Double.isFinite(lonD)) {
+            if (lonD < 9999 && lonD > -9999 && Double.isFinite(lonD)) {
                 while (lonD > 180) {
                     lonD -= 360;
                 }
