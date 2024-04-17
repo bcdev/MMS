@@ -21,6 +21,7 @@
 package com.bc.fiduceo.post.plugin.amsr;
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
 import org.jdom.Attribute;
@@ -29,7 +30,7 @@ import org.jdom.Element;
 public class AddAmsr2ScanDataQualityPlugin implements PostProcessingPlugin {
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         final AddAmsr2ScanDataQuality.Configuration configuration = createConfiguration(element);
 
         final AddAmsr2ScanDataQuality postProcessing = new AddAmsr2ScanDataQuality();

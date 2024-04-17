@@ -8,6 +8,6 @@ end_date=$3
 job_config=$4
 config_dir=$5
 
-echo "`date -u +%Y%m%d-%H%M%S` ingestion ${start_date} - ${end_date} ..."
+echo "`date -u +%Y%m%d-%H%M%S` post_processing ${start_date} - ${end_date} ..."
 
 ${PM_EXE_DIR}/post-processing-tool.sh -i ${input_dir} -start ${start_date} -end ${end_date} -j ${job_config} -c ${config_dir}

@@ -1,13 +1,10 @@
 package com.bc.fiduceo.post.plugin.era5;
 
-import java.awt.*;
-
 class InterpolationContext {
 
     private final BilinearInterpolator[][] interpolators;
     private final int width;
     private final int height;
-    private Rectangle era5Region;
 
     InterpolationContext(int x, int y) {
         width = x;
@@ -22,21 +19,31 @@ class InterpolationContext {
 
     public void set(int x, int y, BilinearInterpolator interpolator) {
         checkBoundaries(x, y);
-
         interpolators[y][x] = interpolator;
-    }
-
-    Rectangle getEra5Region() {
-        return era5Region;
-    }
-
-    void setEra5Region(Rectangle era5Region) {
-        this.era5Region = era5Region;
     }
 
     private void checkBoundaries(int x, int y) {
         if (x < 0 || x >= width || y < 0 || y >= height) {
             throw new IllegalArgumentException("Access interpolator out of raster: " + x + ", " + y);
         }
+    }
+
+    public int[] getMinMaxY() {
+        int yMin = Integer.MAX_VALUE;
+        int yMax = Integer.MIN_VALUE;
+        for (BilinearInterpolator[] bilinearInterpolators : interpolators) {
+            for (BilinearInterpolator interpolator : bilinearInterpolators) {
+                if (interpolator==null) continue;
+                final int min = interpolator.getYMin();
+                final int max = min + 1;
+                if (min < yMin) {
+                    yMin = min;
+                }
+                if (max > yMax) {
+                    yMax = max;
+                }
+            }
+        }
+        return new int[]{yMin, yMax};
     }
 }

@@ -410,11 +410,12 @@ class Workflow:
 
     def run_post_processing(self, hosts, num_parallel_tasks, simulation=False, logdir='trace', synchronous=False):
         """
-
         :param hosts: list
         :param num_parallel_tasks: int
         :param simulation: bool
         :param logdir: str
+        :param synchronous: bool:
+                decides whether post_processing_run.sh (True) or post_processing_start.sh (False) is called.
         :return:
         """
 
@@ -423,7 +424,7 @@ class Workflow:
         else:
             runs_script = 'post_processing_start.sh'
 
-        monitor = self._get_monitor(hosts, [(runs_script, num_parallel_tasks)], logdir, simulation)
+        monitor = self._get_monitor(hosts, [(runs_script, num_parallel_tasks)], logdir, simulation, synchronous)
         production_period = self.get_production_period()
         date = production_period.get_start_date()
         while date < production_period.get_end_date():
@@ -436,7 +437,7 @@ class Workflow:
             pre_condition = 'mmd-' + start_string + '-' + end_string
             post_condition = 'post-processing-' + start_string + '-' + end_string + '-' + self.usecase_config
 
-            job = Job(job_name, 'post_processing_start.sh', [pre_condition], [post_condition],
+            job = Job(job_name, runs_script, [pre_condition], [post_condition],
                       [self.input_dir, start_string, end_string, self.usecase_config, self._get_config_dir()])
             monitor.execute(job)
 

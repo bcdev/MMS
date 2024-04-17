@@ -1,15 +1,45 @@
 package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
-import org.esa.snap.core.util.StringUtils;
 import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.esa.snap.core.util.StringUtils.isNotNullAndNotEmpty;
 
 public class Era5PostProcessingPlugin implements PostProcessingPlugin {
 
-    static Configuration createConfiguration(Element rootElement) {
+    static final String ERA5_POST_PROCESSING_GENERAL_INFO_XML = "era5-post-processing-general-info.xml";
+
+    private static final String TAG_NAME_SATELLITE_FIELDS = "satellite-fields";
+
+    private static final String ATT_NAME_UNITS = "units";
+    private static final String ATT_NAME_LONG_NAME = "long_name";
+    private static final String ATT_NAME_STANDARD_NAME = "standard_name";
+    private static final String ATT_NAME_FILL_VALUE = "_FillValue";
+
+    private static final Set<String> KNOWN_ATTRIB_NAMES = new TreeSet<>(
+            Arrays.asList(ATT_NAME_UNITS, ATT_NAME_LONG_NAME, ATT_NAME_STANDARD_NAME, ATT_NAME_FILL_VALUE));
+
+    static Configuration createConfiguration(Element rootElement, PostProcessingContext context) {
         final Configuration configuration = new Configuration();
 
         final String nwpAuxDirValue = JDomUtils.getMandatoryChildTextTrim(rootElement, "nwp-aux-dir");
@@ -18,21 +48,35 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
         final Element era5CollectionElement = rootElement.getChild("era5-collection");
         if (era5CollectionElement != null) {
             final String value = era5CollectionElement.getValue();
-            if (StringUtils.isNotNullAndNotEmpty(value)) {
+            if (isNotNullAndNotEmpty(value)) {
                 configuration.setEra5Collection(value);
             }
         }
 
+        final Element variableTranslationElement = rootElement.getChild("variable-translation");
+        if (variableTranslationElement != null) {
+            final String value = variableTranslationElement.getTextTrim();
+            final HashSet<String> known = new HashSet<>(Arrays.asList("off", "false", "no", "dont", "not", "do not"));
+            configuration.setTranslateVariableNameToFileAccessName(!known.contains(value.toLowerCase()));
+        }
+
+        parseGeneralizedInformation(configuration, context.getConfigDirectory());
         parseSatelliteFields(rootElement, configuration);
         parseMatchupFields(rootElement, configuration);
 
         return configuration;
     }
 
-    private static void parseSatelliteFields(Element rootElement, Configuration configuration) {
-        final Element satelliteFieldsElement = rootElement.getChild("satellite-fields");
+
+    static void parseSatelliteFields(Element rootElement, Configuration configuration) {
+        final Element satelliteFieldsElement = rootElement.getChild(TAG_NAME_SATELLITE_FIELDS);
         if (satelliteFieldsElement != null) {
-            final SatelliteFieldsConfiguration satelliteFieldsConfiguration = new SatelliteFieldsConfiguration();
+            final SatelliteFieldsConfiguration satelliteFieldsConfiguration;
+            if (configuration.getSatelliteFields() != null) {
+                satelliteFieldsConfiguration = configuration.getSatelliteFields();
+            } else {
+                satelliteFieldsConfiguration = new SatelliteFieldsConfiguration();
+            }
 
             final Element xDimElement = satelliteFieldsElement.getChild("x_dim");
             if (xDimElement != null) {
@@ -54,13 +98,8 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
             if (zDimElement != null) {
                 final Attribute nameElement = JDomUtils.getMandatoryAttribute(zDimElement, "name");
                 satelliteFieldsConfiguration.set_z_dim_name(nameElement.getValue());
-                final Attribute lengthElement = zDimElement.getAttribute("length");
-                if (lengthElement != null) {
-                    satelliteFieldsConfiguration.set_z_dim(Integer.parseInt(lengthElement.getValue()));
-                } else {
-                    // then we take all levels tb 2020-11-16
-                    satelliteFieldsConfiguration.set_z_dim(137);
-                }
+                final Attribute lengthElement = JDomUtils.getMandatoryAttribute(zDimElement, "length");
+                satelliteFieldsConfiguration.set_z_dim(Integer.parseInt(lengthElement.getValue()));
             }
 
             final Element sensorRefElement = satelliteFieldsElement.getChild("sensor-ref");
@@ -68,69 +107,12 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
                 satelliteFieldsConfiguration.setSensorRef(sensorRefElement.getValue());
             }
 
-            final Element humidityElement = satelliteFieldsElement.getChild("an_ml_q");
-            if (humidityElement != null) {
-                satelliteFieldsConfiguration.set_an_q_name(getElementValueTrimmed(humidityElement));
-            }
-
-            final Element temperatureElement = satelliteFieldsElement.getChild("an_ml_t");
-            if (temperatureElement != null) {
-                satelliteFieldsConfiguration.set_an_t_name(getElementValueTrimmed(temperatureElement));
-            }
-
-            final Element ozoneElement = satelliteFieldsElement.getChild("an_ml_o3");
-            if (ozoneElement != null) {
-                satelliteFieldsConfiguration.set_an_o3_name(getElementValueTrimmed(ozoneElement));
-            }
-
-            final Element pressureElement = satelliteFieldsElement.getChild("an_ml_lnsp");
-            if (pressureElement != null) {
-                satelliteFieldsConfiguration.set_an_lnsp_name(getElementValueTrimmed(pressureElement));
-            }
-
-            final Element temp2metersElement = satelliteFieldsElement.getChild("an_sfc_t2m");
-            if (temp2metersElement != null) {
-                satelliteFieldsConfiguration.set_an_t2m_name(getElementValueTrimmed(temp2metersElement));
-            }
-
-            final Element windUElement = satelliteFieldsElement.getChild("an_sfc_u10");
-            if (windUElement != null) {
-                satelliteFieldsConfiguration.set_an_u10_name(getElementValueTrimmed(windUElement));
-            }
-
-            final Element windVElement = satelliteFieldsElement.getChild("an_sfc_v10");
-            if (windVElement != null) {
-                satelliteFieldsConfiguration.set_an_v10_name(getElementValueTrimmed(windVElement));
-            }
-
-            final Element seaIceElement = satelliteFieldsElement.getChild("an_sfc_siconc");
-            if (seaIceElement != null) {
-                satelliteFieldsConfiguration.set_an_siconc_name(getElementValueTrimmed(seaIceElement));
-            }
-
-            final Element surfPressElement = satelliteFieldsElement.getChild("an_sfc_msl");
-            if (surfPressElement != null) {
-                satelliteFieldsConfiguration.set_an_msl_name(getElementValueTrimmed(surfPressElement));
-            }
-
-            final Element skinTempElement = satelliteFieldsElement.getChild("an_sfc_skt");
-            if (skinTempElement != null) {
-                satelliteFieldsConfiguration.set_an_skt_name(getElementValueTrimmed(skinTempElement));
-            }
-
-            final Element sstElement = satelliteFieldsElement.getChild("an_sfc_sst");
-            if (sstElement != null) {
-                satelliteFieldsConfiguration.set_an_sst_name(getElementValueTrimmed(sstElement));
-            }
-
-            final Element cloudElement = satelliteFieldsElement.getChild("an_sfc_tcc");
-            if (cloudElement != null) {
-                satelliteFieldsConfiguration.set_an_tcc_name(getElementValueTrimmed(cloudElement));
-            }
-
-            final Element waterVaporElement = satelliteFieldsElement.getChild("an_sfc_tcwv");
-            if (waterVaporElement != null) {
-                satelliteFieldsConfiguration.set_an_tcwv_name(getElementValueTrimmed(waterVaporElement));
+            final Set<String> varNameKeys = satelliteFieldsConfiguration.getVarNameKeys();
+            for (String varNameKey : varNameKeys) {
+                final Element varNameElement = satelliteFieldsElement.getChild(varNameKey);
+                if(varNameElement != null) {
+                    satelliteFieldsConfiguration.setVarName(varNameKey, getElementValueTrimmed(varNameElement));
+                }
             }
 
             final Element era5TimeElement = satelliteFieldsElement.getChild("era5_time_variable");
@@ -258,13 +240,87 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
         }
     }
 
+    // package access for testing only se 2024-02-21
+    static void parseGeneralizedInformation(Configuration config, Path configPath) {
+        final Path infoPath = configPath.resolve(ERA5_POST_PROCESSING_GENERAL_INFO_XML);
+        if (!Files.exists(infoPath)) {
+            return;
+        }
+        final SAXBuilder saxBuilder = new SAXBuilder();
+        try (InputStream inputStream = Files.newInputStream(infoPath)) {
+            final Document document = saxBuilder.build(inputStream);
+            parseGeneralizedInformation(document.getRootElement(), config);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to create input stream from " + infoPath + ".", e);
+        } catch (JDOMException e) {
+            throw new RuntimeException("XML document " + infoPath + " could not be read in.", e);
+        } catch (Throwable e) {
+            throw new RuntimeException(e.getMessage() + " in " + infoPath, e);
+        }
+    }
+
+    // package access for testing only se 2024-02-21
+    static void parseGeneralizedInformation(Element root, Configuration config) throws Throwable {
+        if (root == null || !"era5".equals(root.getName())) {
+            throw new Throwable("Root tag <era5> expected");
+        }
+        final Element satFieldsElem = root.getChild(TAG_NAME_SATELLITE_FIELDS);
+        if (satFieldsElem != null) {
+            final Map<String, TemplateVariable> templateVariables = new LinkedHashMap<>();
+            final List<Element> collections = satFieldsElem.getChildren("collection");
+            for (Element collection : collections) {
+                final String collectionName = JDomUtils.getValueFromNameAttributeMandatory(collection).trim();
+                final Element is3d_E = collection.getChild("is3d");
+                final boolean is3d = is3d_E != null && "true".equals(is3d_E.getTextTrim().toLowerCase());
+                final List<Element> variables = collection.getChildren("var");
+                for (Element var_E : variables) {
+                    final HashMap<String, String> attributes = new HashMap<>();
+                    final String varName = JDomUtils.getValueFromNameAttributeMandatory(var_E);
+                    final List<Element> attribElems = var_E.getChildren("att");
+                    for (Element attrib_E : attribElems) {
+                        final String attName = JDomUtils.getValueFromNameAttributeMandatory(attrib_E).trim();
+                        if (!KNOWN_ATTRIB_NAMES.contains(attName)) {
+                            throw new Throwable("Unknown attribute name " + attName);
+                        }
+                        final String value = attrib_E.getTextTrim();
+                        if (isNotNullAndNotEmpty(attName) && isNotNullAndNotEmpty(value)) {
+                            attributes.put(attName, value);
+                        }
+                    }
+                    final String templateKey = collectionName + "_" + varName;
+                    final TemplateVariable templateVariable = new TemplateVariable(
+                            varName,
+                            attributes.containsKey(ATT_NAME_UNITS) ? attributes.get(ATT_NAME_UNITS) : "~",
+                            attributes.get(ATT_NAME_LONG_NAME),
+                            attributes.get(ATT_NAME_STANDARD_NAME),
+                            is3d);
+                    if (attributes.containsKey(ATT_NAME_FILL_VALUE)) {
+                        templateVariable.setFill_value(Float.valueOf(attributes.get(ATT_NAME_FILL_VALUE)));
+                    }
+                    templateVariables.put(
+                            templateKey,
+                            templateVariable
+                    );
+                }
+            }
+            if (!templateVariables.isEmpty()) {
+                SatelliteFieldsConfiguration satFields = config.getSatelliteFields();
+                if (satFields == null) {
+                    satFields = new SatelliteFieldsConfiguration();
+                }
+                satFields.setGeneralizedVariables(templateVariables);
+                config.setSatelliteFields(satFields);
+            }
+        }
+    }
+
     private static String getElementValueTrimmed(Element element) {
         return element.getValue().trim();
     }
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
-        final Configuration configuration = createConfiguration(element);
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
+        final Configuration configuration = createConfiguration(element, context);
         return new Era5PostProcessing(configuration);
     }
 

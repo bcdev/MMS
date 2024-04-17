@@ -22,6 +22,7 @@ package com.bc.fiduceo.post.plugin.nwp;
 
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
 import org.jdom.Element;
@@ -368,7 +369,7 @@ public class NwpPostProcessingPlugin implements PostProcessingPlugin {
     }
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         final Configuration configuration = createConfiguration(element);
         if (configuration.verify()) {
             return new NwpPostProcessing(configuration);

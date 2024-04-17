@@ -51,14 +51,17 @@ public final class PostProcessingFactory {
         return postProcessingFactory;
     }
 
-    public PostProcessing getPostProcessing(Element element) {
+    public PostProcessing getPostProcessing(Element element, PostProcessingContext context) {
         final String name = element.getName();
 
         final PostProcessingPlugin plugin = postProcessingPluginMap.get(name);
         if (plugin == null) {
             throw new IllegalArgumentException("PostProcessing for name '" + name + "' not available.");
         }
-        return plugin.createPostProcessing(element);
+
+        final PostProcessing postProcessing = plugin.createPostProcessing(element, context);
+        postProcessing.setContext(context);
+        return postProcessing;
     }
 
     // package access for testing only se 2016-11-28

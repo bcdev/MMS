@@ -129,9 +129,8 @@ public abstract class PostProcessing {
     protected String getMatchupDimensionName() {
         String matchupDimensionName = context.getProcessingConfig().getMatchupDimensionName();
         if (StringUtils.isNullOrEmpty(matchupDimensionName)) {
-            matchupDimensionName = FiduceoConstants.MATCHUP_COUNT;
+            return FiduceoConstants.MATCHUP_COUNT;
         }
-
         return matchupDimensionName;
     }
 }

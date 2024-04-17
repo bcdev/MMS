@@ -1,7 +1,6 @@
 package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.FiduceoConstants;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.Test;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -9,13 +8,18 @@ import ucar.ma2.Index;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
-import ucar.nc2.Variable;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -26,7 +30,7 @@ public class SatelliteFieldsTest {
     public void testGetVariables() {
         final SatelliteFields satelliteFields = new SatelliteFields();
         final SatelliteFieldsConfiguration config = new SatelliteFieldsConfiguration();
-        config.set_an_skt_name("Skate");
+        config.setVarName("an_sfc_skt", "Skate");
 
         final Map<String, TemplateVariable> variables = satelliteFields.getVariables(config);
         assertEquals(13, variables.size());
@@ -43,6 +47,48 @@ public class SatelliteFieldsTest {
         assertEquals("K", template.getUnits());
         assertEquals("Skin temperature", template.getLongName());
         assertEquals("Skate", template.getName());
+        assertFalse(template.is3d());
+    }
+
+    @Test
+    public void testGetVariables_withGeneralizedVariables() {
+        //preparation
+        final SatelliteFieldsConfiguration config = new SatelliteFieldsConfiguration();
+        final TemplateVariable tempVar1 = new TemplateVariable("skt", "u1", "ln1", "sn1", true);
+        final TemplateVariable tempVar2 = new TemplateVariable("kbb", "u2", "ln2", null, false);
+        tempVar1.setFill_value(123.4f);
+        tempVar2.setFill_value(123.4e-1f);
+        final HashMap<String, TemplateVariable> generalizedVars = new HashMap<>();
+        generalizedVars.put("an_sfc_skt", tempVar1);
+        generalizedVars.put("an_sfc_kbb", tempVar2);
+        config.setGeneralizedVariables(generalizedVars);
+
+        config.setSensorRef("DerSensor");
+        config.setVarName("an_sfc_skt", "{sensor-ref}.und-skt");
+        config.setVarName("an_sfc_kbb", "{sensor-ref}.morgenrot");
+
+        final SatelliteFields satelliteFields = new SatelliteFields();
+
+        //execution
+        final Map<String, TemplateVariable> variables = satelliteFields.getVariables(config);
+
+        //verification
+        assertEquals(2, variables.size());
+
+        TemplateVariable template = variables.get("an_sfc_skt");
+        assertEquals("sn1", template.getStandardName());
+        assertEquals("u1", template.getUnits());
+        assertEquals("ln1", template.getLongName());
+        assertEquals("DerSensor.und-skt", template.getName());
+        assertThat(template.getFillValue(), is(123.4f));
+        assertTrue(template.is3d());
+
+        template = variables.get("an_sfc_kbb");
+        assertNull(template.getStandardName());
+        assertEquals("u2", template.getUnits());
+        assertEquals("ln2", template.getLongName());
+        assertEquals("DerSensor.morgenrot", template.getName());
+        assertThat(template.getFillValue(), is(12.34f));
         assertFalse(template.is3d());
     }
 

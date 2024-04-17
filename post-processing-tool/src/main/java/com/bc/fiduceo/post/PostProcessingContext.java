@@ -26,6 +26,7 @@ public final class PostProcessingContext extends ToolContext {
 
     private PostProcessingConfig processingConfig;
     private Path mmdInputDirectory;
+    private Path configDirectory;
 
     public PostProcessingConfig getProcessingConfig() {
         return processingConfig;
@@ -41,5 +42,13 @@ public final class PostProcessingContext extends ToolContext {
 
     public void setMmdInputDirectory(Path mmdInputDirectory) {
         this.mmdInputDirectory = mmdInputDirectory;
+    }
+
+    public void setConfigDirectory(Path configDirectory) {
+        this.configDirectory = configDirectory;
+    }
+
+    public Path getConfigDirectory() {
+        return configDirectory;
     }
 }

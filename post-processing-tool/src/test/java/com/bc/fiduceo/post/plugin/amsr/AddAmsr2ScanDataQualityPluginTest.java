@@ -25,8 +25,6 @@ import static org.junit.Assert.*;
 
 import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.post.PostProcessing;
-import com.bc.fiduceo.post.plugin.amsr.AddAmsr2ScanDataQuality;
-import com.bc.fiduceo.post.plugin.amsr.AddAmsr2ScanDataQualityPlugin;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.junit.*;
@@ -58,7 +56,7 @@ public class AddAmsr2ScanDataQualityPluginTest {
     public void testCreatePostProcessing() throws JDOMException, IOException {
         final Element rootElement = TestUtil.createDomElement(FULL_CONFIG);
 
-        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement);
+        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement, null);
         assertNotNull(postProcessing);
         assertTrue(postProcessing instanceof AddAmsr2ScanDataQuality);
     }

@@ -31,6 +31,7 @@ import static com.bc.fiduceo.post.plugin.point_distance.SphericalDistancePlugin.
 import static com.bc.fiduceo.post.plugin.point_distance.SphericalDistancePlugin.TAG_NAME_VAR_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -96,8 +97,10 @@ public class PostProcessingFactoryTest {
                 new Element("secondary-lon-variable").addContent("s_lon")
         ));
 
-        final PostProcessing postProcessing = postProcessingFactory.getPostProcessing(element);
+        final PostProcessingContext context = new PostProcessingContext();
+        final PostProcessing postProcessing = postProcessingFactory.getPostProcessing(element, context);
         assertNotNull(postProcessing);
+        assertSame(context, postProcessing.getContext());
         assertEquals("com.bc.fiduceo.post.plugin.point_distance.SphericalDistance", postProcessing.getClass().getName());
     }
 
@@ -106,7 +109,7 @@ public class PostProcessingFactoryTest {
         final Element element = new Element("non-existing-post-processing");
 
         try {
-            postProcessingFactory.getPostProcessing(element);
+            postProcessingFactory.getPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("PostProcessing for name 'non-existing-post-processing' not available.", expected.getMessage());

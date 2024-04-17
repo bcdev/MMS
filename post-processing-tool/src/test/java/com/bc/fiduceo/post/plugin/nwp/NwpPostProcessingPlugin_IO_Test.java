@@ -73,7 +73,7 @@ public class NwpPostProcessingPlugin_IO_Test {
                 "</nwp>";
         final Element rootElement = TestUtil.createDomElement(config);
 
-        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement);
+        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement, null);
         assertNotNull(postProcessing);
         assertTrue(postProcessing instanceof NwpPostProcessing);
     }

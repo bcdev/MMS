@@ -4,6 +4,7 @@ class Configuration {
 
     private String nwpAuxDir;
     private String era5Collection;
+    private boolean translateVariableNameToFileAccessName = true;
 
     private SatelliteFieldsConfiguration satelliteFields;
     private MatchupFieldsConfiguration matchupFields;
@@ -38,5 +39,13 @@ class Configuration {
 
     void setMatchupFields(MatchupFieldsConfiguration matchupFields) {
         this.matchupFields = matchupFields;
+    }
+
+    public boolean isTranslateVariableNameToFileAccessName() {
+        return translateVariableNameToFileAccessName;
+    }
+
+    public void setTranslateVariableNameToFileAccessName(boolean translateVariableNameToFileAccessName) {
+        this.translateVariableNameToFileAccessName = translateVariableNameToFileAccessName;
     }
 }

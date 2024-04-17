@@ -2,6 +2,7 @@ package com.bc.fiduceo.post.plugin;
 
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
 import org.esa.snap.core.util.StringUtils;
@@ -22,7 +23,7 @@ public class ElevationToSolZenAnglePlugin implements PostProcessingPlugin {
     private static final String ROOT_TAG_NAME = "elevation-to-solzen-angle";
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         final ElevationToSolZenAngle.Configuration configuration = createConfiguration(element);
         return new ElevationToSolZenAngle(configuration);
     }

@@ -30,7 +30,7 @@ public class AddLandDistancePluginTest {
     public void testCreatePostProcessing() throws JDOMException, IOException {
         final Element configElement = AddLandDistanceTest.createFullConfigElement();
 
-        final PostProcessing postProcessing = plugin.createPostProcessing(configElement);
+        final PostProcessing postProcessing = plugin.createPostProcessing(configElement, null);
         assertTrue(postProcessing instanceof AddLandDistance);
     }
 

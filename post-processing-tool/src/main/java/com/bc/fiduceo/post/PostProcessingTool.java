@@ -71,6 +71,7 @@ class PostProcessingTool {
 
         final String configValue = commandLine.getOptionValue("config", "./config");
         final Path configDirectory = Paths.get(configValue);
+        context.setConfigDirectory(configDirectory);
 
         final SystemConfig systemConfig = SystemConfig.loadFrom(configDirectory.toFile());
         context.setSystemConfig(systemConfig);
@@ -193,8 +194,7 @@ class PostProcessingTool {
         final List<PostProcessing> processings = new ArrayList<>();
         final PostProcessingFactory factory = PostProcessingFactory.get();
         for (Element processing : processingConfig.getPostProcessingElements()) {
-            final PostProcessing postProcessing = factory.getPostProcessing(processing);
-            postProcessing.setContext(context);
+            final PostProcessing postProcessing = factory.getPostProcessing(processing, context);
             processings.add(postProcessing);
         }
 

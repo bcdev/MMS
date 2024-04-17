@@ -49,7 +49,7 @@ public class AddIASISpectrumPluginTest {
     public void testCreatePostProcessing() throws JDOMException, IOException {
         final Element rootElement = AddIASISpectrumTest.createFullConfigElement();
 
-        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement);
+        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement, null);
         assertTrue(postProcessing instanceof AddIASISpectrum);
     }
 }

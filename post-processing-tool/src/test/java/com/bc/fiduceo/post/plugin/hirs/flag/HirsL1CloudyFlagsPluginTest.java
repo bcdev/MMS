@@ -78,7 +78,7 @@ public class HirsL1CloudyFlagsPluginTest {
     @Test
     public void testCreatePostProcessing() {
         plugin.setFileSystem(virtualFS);
-        final PostProcessing postProcessing = plugin.createPostProcessing(element);
+        final PostProcessing postProcessing = plugin.createPostProcessing(element, null);
 
         assertNotNull(postProcessing);
         assertEquals("com.bc.fiduceo.post.plugin.hirs.flag.HirsL1CloudyFlags", postProcessing.getClass().getTypeName());
@@ -104,7 +104,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.setName("wrong_name");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Illegal XML Element. Tagname 'hirs-l1-cloudy-flags' expected.", expected.getMessage());
@@ -116,7 +116,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_BT_11_1_uM).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_BT_11_1_uM + "' expected", expected.getMessage());
@@ -128,7 +128,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_BT_11_1_uM).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_BT_11_1_uM + "' expected", expected.getMessage());
@@ -140,7 +140,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_BT_11_1_uM);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_BT_11_1_uM + "' expected", expected.getMessage());
@@ -152,7 +152,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_BT_6_5_uM).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_BT_6_5_uM + "' expected", expected.getMessage());
@@ -164,7 +164,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_BT_6_5_uM).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_BT_6_5_uM + "' expected", expected.getMessage());
@@ -176,7 +176,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_BT_6_5_uM);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_BT_6_5_uM + "' expected", expected.getMessage());
@@ -188,7 +188,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_CLOUD_FLAGS).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_CLOUD_FLAGS + "' expected", expected.getMessage());
@@ -200,7 +200,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_CLOUD_FLAGS).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_CLOUD_FLAGS + "' expected", expected.getMessage());
@@ -212,7 +212,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_CLOUD_FLAGS);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_CLOUD_FLAGS + "' expected", expected.getMessage());
@@ -224,7 +224,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_DISTANCE_PRODUCT_FILE_PATH).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element 'point_distance-product-file-path' expected", expected.getMessage());
@@ -236,7 +236,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_DISTANCE_PRODUCT_FILE_PATH).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element 'point_distance-product-file-path' expected", expected.getMessage());
@@ -248,7 +248,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_DISTANCE_PRODUCT_FILE_PATH);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element 'point_distance-product-file-path' expected", expected.getMessage());
@@ -261,7 +261,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_LATITUDE).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_LATITUDE + "' expected", expected.getMessage());
@@ -273,7 +273,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_LATITUDE).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_LATITUDE + "' expected", expected.getMessage());
@@ -285,7 +285,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_LATITUDE);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_LATITUDE + "' expected", expected.getMessage());
@@ -297,7 +297,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_LONGITUDE).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_LONGITUDE + "' expected", expected.getMessage());
@@ -309,7 +309,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_LONGITUDE).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_LONGITUDE + "' expected", expected.getMessage());
@@ -321,7 +321,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_LONGITUDE);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_LONGITUDE + "' expected", expected.getMessage());
@@ -333,7 +333,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_SOURCE_FILE_NAME).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_SOURCE_FILE_NAME + "' expected", expected.getMessage());
@@ -345,7 +345,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_SOURCE_FILE_NAME).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_SOURCE_FILE_NAME + "' expected", expected.getMessage());
@@ -357,7 +357,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_SOURCE_FILE_NAME);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_SOURCE_FILE_NAME + "' expected", expected.getMessage());
@@ -369,7 +369,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_PROCESSING_VERSION).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_PROCESSING_VERSION + "' expected", expected.getMessage());
@@ -381,7 +381,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_PROCESSING_VERSION).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_PROCESSING_VERSION + "' expected", expected.getMessage());
@@ -393,7 +393,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_PROCESSING_VERSION);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_PROCESSING_VERSION + "' expected", expected.getMessage());
@@ -405,7 +405,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_SOURCE_X).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_SOURCE_X + "' expected", expected.getMessage());
@@ -417,7 +417,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_SOURCE_X).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_SOURCE_X + "' expected", expected.getMessage());
@@ -429,7 +429,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_SOURCE_X);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_SOURCE_X + "' expected", expected.getMessage());
@@ -441,7 +441,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_SOURCE_Y).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_SOURCE_Y + "' expected", expected.getMessage());
@@ -453,7 +453,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_SOURCE_Y).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_SOURCE_Y + "' expected", expected.getMessage());
@@ -465,7 +465,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_SOURCE_Y);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_SOURCE_Y + "' expected", expected.getMessage());
@@ -477,7 +477,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_SENSOR_NAME).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_SENSOR_NAME + "' expected", expected.getMessage());
@@ -489,7 +489,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_SENSOR_NAME).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_SENSOR_NAME + "' expected", expected.getMessage());
@@ -501,7 +501,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_SENSOR_NAME);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_SENSOR_NAME + "' expected", expected.getMessage());
@@ -513,7 +513,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_SOURCE_BT_11_1_mM).setText(null);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_SOURCE_BT_11_1_mM + "' expected", expected.getMessage());
@@ -525,7 +525,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.getChild(TAG_VAR_NAME_SOURCE_BT_11_1_mM).setText("");
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Value of element '" + TAG_VAR_NAME_SOURCE_BT_11_1_mM + "' expected", expected.getMessage());
@@ -537,7 +537,7 @@ public class HirsL1CloudyFlagsPluginTest {
         element.removeChild(TAG_VAR_NAME_SOURCE_BT_11_1_mM);
 
         try {
-            plugin.createPostProcessing(element);
+            plugin.createPostProcessing(element, null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertEquals("Child element '" + TAG_VAR_NAME_SOURCE_BT_11_1_mM + "' expected", expected.getMessage());

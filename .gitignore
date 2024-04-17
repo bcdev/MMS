@@ -6,4 +6,6 @@
 target/
 /ingestion-tool/src/temp/
 temp.txt
+temp.java
+temp.xml
 /out/

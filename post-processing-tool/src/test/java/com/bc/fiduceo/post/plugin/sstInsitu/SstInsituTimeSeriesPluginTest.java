@@ -68,7 +68,7 @@ public class SstInsituTimeSeriesPluginTest {
 
     @Test
     public void testThatPluginReturnsASstInsituTimeSeriesPostProcessing() {
-        final PostProcessing postProcessing = plugin.createPostProcessing(element);
+        final PostProcessing postProcessing = plugin.createPostProcessing(element, null);
 
         assertThat(postProcessing, is(not(nullValue())));
         assertThat(postProcessing, instanceOf(PostProcessing.class));
@@ -78,7 +78,7 @@ public class SstInsituTimeSeriesPluginTest {
     @Test
     public void createPostProcessing_throwsExceptionIfTheNameOfTheRootElementIsWrong() {
         try {
-            plugin.createPostProcessing(new Element("wrongName"));
+            plugin.createPostProcessing(new Element("wrongName"), null);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
             assertThat(expected.getMessage(), is(equalTo("Illegal XML Element. Tagname '" + plugin.getPostProcessingName() + "' expected.")));

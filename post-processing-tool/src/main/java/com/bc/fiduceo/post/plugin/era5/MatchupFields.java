@@ -1,6 +1,6 @@
 package com.bc.fiduceo.post.plugin.era5;
 
-import com.bc.fiduceo.FiduceoConstants;
+import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -9,7 +9,6 @@ import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Dimension;
 import ucar.nc2.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
@@ -68,7 +67,7 @@ class MatchupFields extends FieldsProcessor {
     }
 
     void compute(Configuration config, NetcdfFile reader, NetcdfFileWriter writer) throws IOException, InvalidRangeException {
-        final Era5Archive era5Archive = new Era5Archive(config.getNWPAuxDir(), collection);
+        final Era5Archive era5Archive = new Era5Archive(config, collection);
         final MatchupFieldsConfiguration matchupConfig = config.getMatchupFields();
 
         // allocate cache large enough to hold the time-series for one Era-5 variable
@@ -104,6 +103,7 @@ class MatchupFields extends FieldsProcessor {
 
             // iterate over matchups
             for (final String variableKey : variableKeys) {
+                final float fillValue = variables.get(variableKey).getFillValue();
                 final Array targetArray = targetArrays.get(variableKey);
                 final Index targetIndex = targetArray.getIndex();
 
@@ -114,7 +114,6 @@ class MatchupFields extends FieldsProcessor {
                     final Array latLayer = latArray.section(nwpOffset, nwpShape).copy();
 
                     final InterpolationContext interpolationContext = Era5PostProcessing.getInterpolationContext(lonLayer, latLayer);
-                    final Rectangle layerRegion = interpolationContext.getEra5Region();
 
                     // iterate over time stamps
                     for (int t = 0; t < numTimeSteps; t++) {
@@ -123,32 +122,35 @@ class MatchupFields extends FieldsProcessor {
 
                         final int timeStamp = targetTimeArray.getInt(timeIndex);
                         if (VariableUtils.isTimeFill(timeStamp)) {
-                            targetArray.setFloat(targetIndex, TemplateVariable.getFillValue());
+                            targetArray.setFloat(targetIndex, fillValue);
                             continue;
                         }
 
-                        VariableCache.CacheEntry cacheEntry = variableCache.get(variableKey, timeStamp);
+                        final Variable variable = variableCache.get(variableKey, timeStamp);
+                        final double scaleFactor = NetCDFUtils.getScaleFactor(variable);
+                        final double offset = NetCDFUtils.getOffset(variable);
+                        final boolean mustScale = ReaderUtils.mustScale(scaleFactor, offset);
 
-                        // read and get rid of fake z-dimension
-                        final Array subset = readSubset(1, layerRegion, cacheEntry);
-                        final Index subsetIndex = subset.getIndex();
                         final BilinearInterpolator bilinearInterpolator = interpolationContext.get(0, 0);
                         if (bilinearInterpolator == null) {
-                            targetArray.setFloat(targetIndex, TemplateVariable.getFillValue());
+                            targetArray.setFloat(targetIndex, fillValue);
                             continue;
                         }
 
-                        subsetIndex.set(0, 0);
-                        final float c00 = subset.getFloat(subsetIndex);
+                        final int offsetX = bilinearInterpolator.getXMin();
+                        final int offsetX1 = (offsetX + 1) % 1440;
+                        final int offsetY = bilinearInterpolator.getYMin();
 
-                        subsetIndex.set(0, 1);
-                        final float c10 = subset.getFloat(subsetIndex);
-
-                        subsetIndex.set(1, 0);
-                        final float c01 = subset.getFloat(subsetIndex);
-
-                        subsetIndex.set(1, 1);
-                        final float c11 = subset.getFloat(subsetIndex);
+                            Array leftSide = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 1}).reduce();
+                            Array rightSide = variable.read(new int[]{0, offsetY, offsetX1}, new int[]{1, 2, 1}).reduce();
+                            if (mustScale) {
+                                leftSide = NetCDFUtils.scale(leftSide, scaleFactor, offset);
+                                rightSide = NetCDFUtils.scale(rightSide, scaleFactor, offset);
+                            }
+                        final float c00 = leftSide.getFloat(0);
+                        final float c10 = rightSide.getFloat(0);
+                        final float c01 = leftSide.getFloat(1);
+                        final float c11 = rightSide.getFloat(1);
                         final double interpolated = bilinearInterpolator.interpolate(c00, c10, c01, c11);
 
                         targetArray.setFloat(targetIndex, (float) interpolated);

@@ -37,7 +37,7 @@ public class ElevationToSolZenAnglePluginTest {
     public void testCreatePostProcessing() throws JDOMException, IOException {
         final Element rootElement = TestUtil.createDomElement(FULL_CONFIG);
 
-        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement);
+        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement, null);
         assertNotNull(postProcessing);
         assertTrue(postProcessing instanceof ElevationToSolZenAngle);
     }
