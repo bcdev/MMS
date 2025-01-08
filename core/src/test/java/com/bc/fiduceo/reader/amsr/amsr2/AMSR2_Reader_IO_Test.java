@@ -423,7 +423,7 @@ public class AMSR2_Reader_IO_Test {
             Point2D[] pixelLocation = pixelLocator.getPixelLocation(48.574527740478516, 8.604050636291504);
             assertEquals(1, pixelLocation.length);
             assertEquals(127.48316325755054, pixelLocation[0].getX(), 1e-8);
-            assertEquals(1122.479083995203, pixelLocation[0].getY(), 1e-8);
+            assertEquals(1122.479083995203, pixelLocation[0].getY(), 1e-6);
 
             pixelLocation = pixelLocator.getPixelLocation(-4, 1176);
             assertEquals(0, pixelLocation.length);

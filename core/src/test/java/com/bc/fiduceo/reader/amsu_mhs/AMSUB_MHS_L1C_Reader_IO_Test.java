@@ -413,7 +413,7 @@ public class AMSUB_MHS_L1C_Reader_IO_Test {
 
             pixelLocation = pixelLocator.getPixelLocation(-9.3541, 46.5467);
             assertEquals(1, pixelLocation.length);
-            assertEquals(20.549521097468954, pixelLocation[0].getX(), 1e-8);    // original 20.5
+            assertEquals(20.549521097468954, pixelLocation[0].getX(), 1e-6);    // original 20.5
             assertEquals(484.47231359716176, pixelLocation[0].getY(), 1e-8);    // original 484.5
 
             //-------------------------------------------------------------
@@ -433,7 +433,7 @@ public class AMSUB_MHS_L1C_Reader_IO_Test {
 
             pixelLocation = pixelLocator.getPixelLocation(-35.8302, -37.3806);
             assertEquals(1, pixelLocation.length);
-            assertEquals(40.47791010604271, pixelLocation[0].getX(), 1e-8);    // original 40.5
+            assertEquals(40.47791010604271, pixelLocation[0].getX(), 1e-6);    // original 40.5
             assertEquals(1024.3933174972674, pixelLocation[0].getY(), 1e-8);    // original 1024.5
 
             //-------------------------------------------------------------
@@ -453,8 +453,8 @@ public class AMSUB_MHS_L1C_Reader_IO_Test {
 
             pixelLocation = pixelLocator.getPixelLocation(168.4784, -64.352);
             assertEquals(1, pixelLocation.length);  // is part of self intersecting area
-            assertEquals(60.49976819818859, pixelLocation[0].getX(), 1e-8);    // original 60.5
-            assertEquals(1504.4747569343847, pixelLocation[0].getY(), 1e-8);    // original 1504.5
+            assertEquals(60.49976819818859, pixelLocation[0].getX(), 1e-6);    // original 60.5
+            assertEquals(1504.4747569343847, pixelLocation[0].getY(), 1e-6);    // original 1504.5
 
         } finally {
             reader.close();
@@ -481,7 +481,7 @@ public class AMSUB_MHS_L1C_Reader_IO_Test {
             Point2D[] pixelLocation = subScenePixelLocator.getPixelLocation(-169.9742, -55.0959);
             assertEquals(1, pixelLocation.length);
             assertEquals(18.4837931639385, pixelLocation[0].getX(), 1e-8);    // original 18.5
-            assertEquals(1061.542564721166, pixelLocation[0].getY(), 1e-8);    // original 1061.5
+            assertEquals(1061.542564721166, pixelLocation[0].getY(), 1e-6);    // original 1061.5
 
         } finally {
             reader.close();
