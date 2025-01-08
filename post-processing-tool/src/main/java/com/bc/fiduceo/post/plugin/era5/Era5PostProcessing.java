@@ -9,7 +9,6 @@ import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
 
-import java.awt.*;
 import java.io.IOException;
 
 class Era5PostProcessing extends PostProcessing {
@@ -37,8 +36,8 @@ class Era5PostProcessing extends PostProcessing {
 
     static int getEra5LonMin(float lonMin) {
         final double normLonMin = (lonMin + 360.0) % 360.0;
-        final double scaledLonMin = Math.floor(normLonMin * 4) / 4;
-        return (int) (scaledLonMin * 4);
+        final double xIndex = Math.floor(normLonMin * 4);  // lon index
+        return (int) xIndex;
     }
 
     // package access for testing only tb 2020-11-20
@@ -47,7 +46,7 @@ class Era5PostProcessing extends PostProcessing {
         if (shape.length == 2) {
             return createInterpolationContext_2D(lonArray, latArray, shape);
         } else if (shape.length == 0) {
-            return createInterpolationContext_1D(lonArray, latArray);
+            return createInterpolationContext_0D(lonArray, latArray);
         }
 
         throw new IllegalStateException("Unsupported dimensionality of geolocation data");
@@ -58,10 +57,6 @@ class Era5PostProcessing extends PostProcessing {
 
         final Index lonIdx = lonArray.getIndex();
         final Index latIdx = latArray.getIndex();
-        int xMin = Integer.MAX_VALUE;
-        int xMax = Integer.MIN_VALUE;
-        int yMin = Integer.MAX_VALUE;
-        int yMax = Integer.MIN_VALUE;
         for (int y = 0; y < shape[0]; y++) {
             for (int x = 0; x < shape[1]; x++) {
                 lonIdx.set(y, x);
@@ -81,26 +76,10 @@ class Era5PostProcessing extends PostProcessing {
                 // + store to context at (x, y)
                 final int era5_X_min = getEra5LonMin(lon);
                 final int era5_Y_min = getEra5LatMin(lat);
-                if (era5_X_min < xMin) {
-                    xMin = era5_X_min;
-                }
-                if (era5_X_min > xMax) {
-                    xMax = era5_X_min;
-                }
-                if (era5_Y_min < yMin) {
-                    yMin = era5_Y_min;
-                }
-                if (era5_Y_min > yMax) {
-                    yMax = era5_Y_min;
-                }
 
                 final BilinearInterpolator interpolator = createInterpolator(lon, lat, era5_X_min, era5_Y_min);
                 context.set(x, y, interpolator);
             }
-
-            // add 2 to width and height to have always 4 points for the interpolation tb 2020-11-30
-            final Rectangle era5Rect = new Rectangle(xMin, yMin, xMax - xMin + 2, yMax - yMin + 2);
-            context.setEra5Region(era5Rect);
         }
         return context;
     }
@@ -119,7 +98,7 @@ class Era5PostProcessing extends PostProcessing {
         return new BilinearInterpolator(lonDelta, latDelta, era5_X_min, era5_Y_min);
     }
 
-    private static InterpolationContext createInterpolationContext_1D(Array lonArray, Array latArray) {
+    private static InterpolationContext createInterpolationContext_0D(Array lonArray, Array latArray) {
         final InterpolationContext context = new InterpolationContext(1, 1);
 
         final float lon = lonArray.getFloat(0);
@@ -130,9 +109,6 @@ class Era5PostProcessing extends PostProcessing {
 
         final BilinearInterpolator interpolator = createInterpolator(lon, lat, era5_X_min, era5_Y_min);
         context.set(0, 0, interpolator);
-
-        final Rectangle era5Rect = new Rectangle(era5_X_min, era5_Y_min, 2, 2);
-        context.setEra5Region(era5Rect);
 
         return context;
     }

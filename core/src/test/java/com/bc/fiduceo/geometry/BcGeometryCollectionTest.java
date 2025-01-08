@@ -2,10 +2,9 @@ package com.bc.fiduceo.geometry;
 
 import com.bc.fiduceo.geometry.s2.BcS2GeometryFactory;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class BcGeometryCollectionTest {
     @Test
@@ -38,10 +37,10 @@ public class BcGeometryCollectionTest {
     public void testIsValid_valid() {
         final GeometryCollection geometryCollection = new BcGeometryCollection();
         final Geometry[] geometries = new Geometry[2];
-        geometries[0] = mock(Geometry.class);
-        when(geometries[0].isValid()).thenReturn(true);
-        geometries[1] = mock(Geometry.class);
-        when(geometries[1].isValid()).thenReturn(true);
+        geometries[0] = Mockito.mock(Geometry.class);
+        Mockito.when(geometries[0].isValid()).thenReturn(true);
+        geometries[1] = Mockito.mock(Geometry.class);
+        Mockito.when(geometries[1].isValid()).thenReturn(true);
         geometryCollection.setGeometries(geometries);
 
         assertTrue(geometryCollection.isValid());
@@ -51,10 +50,10 @@ public class BcGeometryCollectionTest {
     public void testIsValid_invalid() {
         final GeometryCollection geometryCollection = new BcGeometryCollection();
         final Geometry[] geometries = new Geometry[2];
-        geometries[0] = mock(Geometry.class);
-        when(geometries[0].isValid()).thenReturn(false);
-        geometries[1] = mock(Geometry.class);
-        when(geometries[1].isValid()).thenReturn(true);
+        geometries[0] = Mockito.mock(Geometry.class);
+        Mockito.when(geometries[0].isValid()).thenReturn(false);
+        geometries[1] = Mockito.mock(Geometry.class);
+        Mockito.when(geometries[1].isValid()).thenReturn(true);
         geometryCollection.setGeometries(geometries);
 
         assertFalse(geometryCollection.isValid());

@@ -7,6 +7,7 @@ import com.bc.fiduceo.util.NetCDFUtils;
 import org.jdom.Element;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.IndexIterator;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
@@ -17,6 +18,8 @@ import ucar.nc2.Variable;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+
+import static com.bc.fiduceo.post.util.PPUtils.convertToFitTheRangeMinus180to180;
 
 
 class AddLandDistance extends PostProcessing {
@@ -54,6 +57,7 @@ class AddLandDistance extends PostProcessing {
         final Variable lonVariable = NetCDFUtils.getVariable(reader, configuration.lonVariableName);
         final Variable latVariable = NetCDFUtils.getVariable(reader, configuration.latVariableName);
         final Array lonArray = NetCDFUtils.readAndScaleIfNecessary(lonVariable);
+        convertToFitTheRangeMinus180to180(lonArray);
         final Array latArray = NetCDFUtils.readAndScaleIfNecessary(latVariable);
 
         initDistanceToLandMap();

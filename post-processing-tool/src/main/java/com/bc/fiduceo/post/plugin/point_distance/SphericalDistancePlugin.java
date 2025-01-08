@@ -20,6 +20,7 @@
 package com.bc.fiduceo.post.plugin.point_distance;
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
 import org.jdom.Element;
@@ -40,7 +41,7 @@ public class SphericalDistancePlugin implements PostProcessingPlugin {
     private static final String OFFSET_ATTR_NAME = "offsetAttrName";
 
     @Override
-    public PostProcessing createPostProcessing(final Element element) {
+    public PostProcessing createPostProcessing(final Element element, PostProcessingContext context) {
         if (!getPostProcessingName().equals(element.getName())) {
             throw new RuntimeException("Illegal XML Element. Tagname '" + getPostProcessingName() + "' expected.");
         }

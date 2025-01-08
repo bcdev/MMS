@@ -1,3 +1,30 @@
+### Updates from version 1.5.8 to 1.6.0
+* The VariableCache now uses an LRU cache with a listener to automatically free the oldest cached, no longer
+  needed variables and file handles when the maximum cache size is reached.* fix wrong corner point order of 
+  era5 interpolation in SatelliteFields
+* Instead, the four era5 interpolation vertices are read directly from the variable
+* Remove reading of subset from entire era5 variable array and remove to read the entire era5 variable in VariableCache
+* Remove creation of rectangles for InterpolationContext and remove field era5Region in InterpolationContext
+* era5 post processing .. can now also handle satellite longitude data which not fits the range [-180 to 180].
+  In such cases (e.g. Windsat-Coriolis [0 to 360]), longitude data will be converted so that it fits into the
+  required range of [-180 to 180] to be able to create correct interpolation of era5 data.
+* era5 post processing .. In era5-post-processing-general-info.xml a fill value per
+  variable can be defined.
+* era5 post processing .. can now load generalized information from an optional
+  era5-post-processing-general-info.xml in the config directory.
+  A general info file can contain variable definition for satellite-fields. 
+* Upgrade Mockito to version 4.11.0 and also include artifact mockito-inline for static mocking
+* era5 post processing .. setter and getter of variable names in class SatelliteFieldsConfiguration was
+  generalized. E.g. config.set_an_ml_q_name("abcde") was replaced by config.setVarName("an_ml_q", "abcde")  
+* era5 post processing .. "length" attribute of tag <satellite-fields><z_dim name='up' length='???' />" is no
+  longer optional. 
+* era5 post processing .. The translation of variable name to variable name for file access has been made
+  switchable. 
+* post processing .. added PostProcessingContext to method PostProcessingPlugin.createPostProcessing(...).
+  Now plugins can perform extended initializations. E.g. by loading extra files from config directory. 
+* post processing .. the config directory has been added to the PostProcessingContext so that plugins can load 
+  additional generalized information required for the plugin from this directory.
+
 ### Updates from version 1.5.7 to 1.5.8
 * added support for SMAP Salinity L2C data  
 * added functionality to configure several global attributes before computing MMD files.

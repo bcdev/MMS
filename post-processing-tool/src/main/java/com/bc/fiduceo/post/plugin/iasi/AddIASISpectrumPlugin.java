@@ -21,13 +21,14 @@
 package com.bc.fiduceo.post.plugin.iasi;
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import org.jdom.Element;
 
 public class AddIASISpectrumPlugin implements PostProcessingPlugin {
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         final AddIASISpectrum.Configuration configuration = AddIASISpectrum.createConfiguration(element);
         return new AddIASISpectrum(configuration);
     }

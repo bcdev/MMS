@@ -1,11 +1,10 @@
 package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.util.TimeUtils;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 
 import static junit.framework.TestCase.assertEquals;
@@ -14,10 +13,18 @@ import static org.junit.Assert.fail;
 public class Era5ArchiveTest {
 
     private static final String SEP = File.separator;
+    private Configuration config;
+
+    @Before
+    public void setUp() throws Exception {
+        config = new Configuration();
+    }
 
     @Test
-    public void testConstructAndGet() {
-        final Era5Archive era5Archive = new Era5Archive("archive" + SEP + "era5", Era5Collection.ERA_5);
+    public void testConstructAndGet_translateVariableNameToFileAccessName_true() {
+        config.setNWPAuxDir("archive" + SEP + "era5");
+        config.setTranslateVariableNameToFileAccessName(true); // default is true
+        final Era5Archive era5Archive = new Era5Archive(config, Era5Collection.ERA_5);
 
         // Friday, 30. May 2008 11:00:00
         // 1212145200
@@ -40,20 +47,49 @@ public class Era5ArchiveTest {
     }
 
     @Test
+    public void testConstructAndGet_translateVariableNameToFileAccessName_false() {
+        config.setNWPAuxDir("archive" + SEP + "era5");
+        config.setTranslateVariableNameToFileAccessName(false);
+        final Era5Archive era5Archive = new Era5Archive(config, Era5Collection.ERA_5);
+
+        // Friday, 30. May 2008 11:00:00
+        // 1212145200
+        String expected = assemblePath("archive", "era5", "an_ml", "2008", "05", "30", "ecmwf-era5_oper_an_ml_200805301100.q.nc");
+        assertEquals(expected, era5Archive.get("an_ml_q", 1212145200));
+
+        expected = assemblePath("archive", "era5", "an_sfc", "2008", "05", "30", "ecmwf-era5_oper_an_sfc_200805301100.t2m.nc");
+        assertEquals(expected, era5Archive.get("an_sfc_t2m", 1212145200));
+
+        expected = assemblePath("archive", "era5", "fc_sfc", "2008", "05", "30", "ecmwf-era5_oper_fc_sfc_2008053006005.msnlwrf.nc");
+        assertEquals(expected, era5Archive.get("fc_sfc_msnlwrf", 1212145200));
+
+        // Monday, 2. June 2008 10:00:00
+        // 1212400800
+        expected = assemblePath("archive", "era5", "an_ml", "2008", "06", "02", "ecmwf-era5_oper_an_ml_200806021000.t.nc");
+        assertEquals(expected, era5Archive.get("an_ml_t", 1212400800));
+
+        expected = assemblePath("archive", "era5", "fc_sfc", "2008", "06", "02", "ecmwf-era5_oper_fc_sfc_2008060206004.mslhf.nc");
+        assertEquals(expected, era5Archive.get("fc_sfc_mslhf", 1212400800));
+    }
+
+    @Test
     public void testGetFileName_era5() {
-        final Era5Archive archive = new Era5Archive("whatever", Era5Collection.ERA_5);
+        config.setNWPAuxDir("whatever");
+        final Era5Archive archive = new Era5Archive(config, Era5Collection.ERA_5);
         assertEquals("ecmwf-era5_oper_an_ml_201108231900.q.nc", archive.getFileName("an_ml", "q", "201108231900"));
     }
 
     @Test
     public void testGetFileName_era5t() {
-        final Era5Archive archive = new Era5Archive("whatever", Era5Collection.ERA_5T);
+        config.setNWPAuxDir("whatever");
+        final Era5Archive archive = new Era5Archive(config, Era5Collection.ERA_5T);
         assertEquals("ecmwf-era5t_oper_an_ml_201108232000.q.nc", archive.getFileName("an_ml", "q", "201108232000"));
     }
 
     @Test
     public void testGetFileName_era51() {
-        final Era5Archive archive = new Era5Archive("whatever", Era5Collection.ERA_51);
+        config.setNWPAuxDir("whatever");
+        final Era5Archive archive = new Era5Archive(config, Era5Collection.ERA_51);
         assertEquals("ecmwf-era51_oper_an_fc_201108232000.q.nc", archive.getFileName("an_fc", "q", "201108232000"));
     }
 

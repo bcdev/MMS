@@ -1,117 +1,127 @@
 package com.bc.fiduceo.post.plugin.era5;
 
-import org.esa.snap.core.util.io.FileUtils;
-import ucar.ma2.Array;
+import org.apache.commons.lang.StringUtils;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 class VariableCache {
 
     private final Era5Archive archive;
-    private final HashMap<String, CacheContainer> cache;
-    private final int cacheSize;
 
+    // We use a LRUCacheWithListener here so that the oldest entry will be removed automatically.
+    // This requires a listener to be added to this LRUCache.
+    private final LRUCacheWithListener<Integer, Map<String,CacheContainer>> cacheTimeStamp;
 
     VariableCache(Era5Archive archive, int cacheSize) {
         this.archive = archive;
-        this.cacheSize = cacheSize;
-        cache = new HashMap<>();
+        cacheTimeStamp = new LRUCacheWithListener<>(cacheSize);
+        cacheTimeStamp.setListener((key, value) -> freeContainers(value));
     }
 
-    CacheEntry get(String variableKey, int era5TimeStamp) throws IOException {
+    Variable get(String variableKey, int era5TimeStamp) throws IOException {
         final CacheContainer cacheContainer = getCacheContainer(variableKey, era5TimeStamp);
-        return cacheContainer.cacheEntry;
+        if (cacheContainer == null) {
+            return createCacheContainer(variableKey, era5TimeStamp).variable;
+        }
+        return cacheContainer.variable;
     }
 
     private CacheContainer getCacheContainer(String variableKey, int era5TimeStamp) throws IOException {
+        final Map<String, CacheContainer> cacheContainer = cacheTimeStamp.get(era5TimeStamp);
+        if (cacheContainer != null) {
+            return cacheContainer.get(variableKey);
+        }
+        return null;
+    }
+
+    private CacheContainer createCacheContainer(String variableKey, int era5TimeStamp) throws IOException {
         final String filePath = archive.get(variableKey, era5TimeStamp);
         final String variableName = getVariableName(variableKey);
-        final String key = FileUtils.getFilenameWithoutExtension(new File(filePath));
 
-        CacheContainer cacheContainer = cache.get(key);
-        if (cacheContainer == null) {
-            final NetcdfFile netcdfFile = NetcdfFile.open(filePath);
-            final Variable variable = netcdfFile.findVariable(variableName);
-            if (variable == null) {
-                throw new IOException("variable not found: " + variableName + "  " + filePath);
-            }
-            if (cache.size() == cacheSize) {
-                removeOldest();
-            }
-            final Array array = variable.read().reduce();
-
-            cacheContainer = new CacheContainer(variable, netcdfFile, array, System.currentTimeMillis());
-            cache.put(key, cacheContainer);
+        final NetcdfFile netcdfFile = NetcdfFile.open(filePath);
+        final Variable variable = netcdfFile.findVariable(variableName);
+        if (variable == null) {
+            throw new IOException("variable not found: " + variableName + "  " + filePath);
         }
 
-        cacheContainer.lastAccess = System.currentTimeMillis();
+        CacheContainer cacheContainer = new CacheContainer(variable, netcdfFile);
+        final Map<String, CacheContainer> cacheContainerMap;
+        if (cacheTimeStamp.containsKey(era5TimeStamp)) {
+            cacheContainerMap = cacheTimeStamp.get(era5TimeStamp);
+        } else {
+            cacheContainerMap = new HashMap<>();
+            cacheTimeStamp.put(era5TimeStamp, cacheContainerMap);
+        }
+        cacheContainerMap.put(variableKey, cacheContainer);
         return cacheContainer;
     }
 
-    void close() throws IOException {
-        final Collection<CacheContainer> cacheEntries = cache.values();
-        for (CacheContainer cacheContainer : cacheEntries) {
-            cacheContainer.netcdfFile.close();
-            cacheContainer.netcdfFile = null;
+    void close() {
+        for (Map<String, CacheContainer> cacheContainerMap : cacheTimeStamp.values()) {
+            freeContainers(cacheContainerMap);
         }
-
-        cache.clear();
+        cacheTimeStamp.clear();
     }
 
     private String getVariableName(String variableKey) {
-        final int cutPoint = variableKey.lastIndexOf("_");
-        return variableKey.substring(cutPoint + 1, variableKey.length());
+        final int cutPoint = StringUtils.ordinalIndexOf(variableKey, "_", 2);
+        return variableKey.substring(cutPoint + 1);
     }
 
-    private void removeOldest() throws IOException {
-        long minTime = Long.MAX_VALUE;
-        String toRemove = null;
-        CacheContainer entryToRemove = null;
-        final Set<Map.Entry<String, CacheContainer>> cacheEntries = cache.entrySet();
-        for (Map.Entry<String, CacheContainer> cacheMapEntry : cacheEntries) {
-            final CacheContainer cacheContainer = cacheMapEntry.getValue();
-            if (cacheContainer.lastAccess < minTime) {
-                minTime = cacheContainer.lastAccess;
-                toRemove = cacheMapEntry.getKey();
-                entryToRemove = cacheContainer;
+    private void freeContainers(Map<String, CacheContainer> cacheContainers) {
+        for (CacheContainer container : cacheContainers.values()) {
+            container.variable = null;
+            try {
+                container.netcdfFile.close();
+                container.netcdfFile = null;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
-
-        if (entryToRemove != null) {
-            entryToRemove.cacheEntry = null;
-            entryToRemove.netcdfFile.close();
-
-            cache.remove(toRemove);
-        }
+        cacheContainers.clear();
     }
 
-    static class CacheEntry {
+    private static class LRUCacheWithListener<K,V> extends LinkedHashMap<K,V> {
+        private int capacity;
+        private RemovalListener<K, V> listener;
+        private boolean listenerWasSet = false;
 
-        final Variable variable;
-        final Array array;
+        public LRUCacheWithListener(int capacity) {
+            super(capacity + 1, 1.0f, true); // Pass 'true' for accessOrder.
+            this.capacity = capacity;
+        }
 
-        CacheEntry(Variable variable, Array array) {
-            this.variable = variable;
-            this.array = array;
+        public interface RemovalListener<K, V> {
+            void onRemove(K key, V value);
+        }
+
+        public void setListener(RemovalListener<K, V> listener) {
+            this.listener = listener;
+            listenerWasSet = listener != null;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+            boolean shouldRemove = this.size() > capacity;
+            if (listenerWasSet && shouldRemove) {
+                listener.onRemove(eldest.getKey(), eldest.getValue());
+            }
+            return shouldRemove;
         }
     }
 
     private static class CacheContainer {
-        CacheEntry cacheEntry;
+        Variable variable;
         NetcdfFile netcdfFile;
-        long lastAccess;
 
-        CacheContainer(Variable variable, NetcdfFile netcdfFile, Array array, long lastAccess) {
-            this.cacheEntry = new CacheEntry(variable, array);
+        CacheContainer(Variable variable, NetcdfFile netcdfFile) {
+            this.variable = variable;
             this.netcdfFile = netcdfFile;
-            this.lastAccess = lastAccess;
         }
     }
 }

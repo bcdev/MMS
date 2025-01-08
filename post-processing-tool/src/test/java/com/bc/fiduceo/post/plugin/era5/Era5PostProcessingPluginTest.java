@@ -2,22 +2,27 @@ package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.*;
 
 public class Era5PostProcessingPluginTest {
 
     private Era5PostProcessingPlugin plugin;
+    private PostProcessingContext context;
 
     @Before
     public void setUp() {
         plugin = new Era5PostProcessingPlugin();
+        context = new PostProcessingContext();
+        context.setConfigDirectory(Paths.get(".config"));
     }
 
     @Test
@@ -32,7 +37,7 @@ public class Era5PostProcessingPluginTest {
         final Element rootElement = TestUtil.createDomElement(XML);
 
         try {
-            Era5PostProcessingPlugin.createConfiguration(rootElement);
+            Era5PostProcessingPlugin.createConfiguration(rootElement, context);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
         }
@@ -45,7 +50,7 @@ public class Era5PostProcessingPluginTest {
                 "</era5>";
         final Element rootElement = TestUtil.createDomElement(XML);
 
-        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement);
+        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement, context);
         assertEquals("/where/the/data/is", configuration.getNWPAuxDir());
     }
 
@@ -80,25 +85,25 @@ public class Era5PostProcessingPluginTest {
                 "</era5>";
         final Element rootElement = TestUtil.createDomElement(XML);
 
-        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement);
+        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement, context);
         assertEquals("The-One", configuration.getEra5Collection());
 
         final SatelliteFieldsConfiguration satConfig = configuration.getSatelliteFields();
         assertNotNull(satConfig);
 
-        assertEquals("Kjuh", satConfig.get_an_q_name());
-        assertEquals("tea", satConfig.get_an_t_name());
-        assertEquals("ozone", satConfig.get_an_o3_name());
-        assertEquals("pressure", satConfig.get_an_lnsp_name());
-        assertEquals("tempi", satConfig.get_an_t2m_name());
-        assertEquals("blowUp", satConfig.get_an_u10_name());
-        assertEquals("blowVert", satConfig.get_an_v10_name());
-        assertEquals("concentrate", satConfig.get_an_siconc_name());
-        assertEquals("meanPress", satConfig.get_an_msl_name());
-        assertEquals("skinTemp", satConfig.get_an_skt_name());
-        assertEquals("ozeanTemp", satConfig.get_an_sst_name());
-        assertEquals("cloudy", satConfig.get_an_tcc_name());
-        assertEquals("steam!", satConfig.get_an_tcwv_name());
+        assertEquals("Kjuh", satConfig.getVarName("an_ml_q"));
+        assertEquals("tea", satConfig.getVarName("an_ml_t"));
+        assertEquals("ozone", satConfig.getVarName("an_ml_o3"));
+        assertEquals("pressure", satConfig.getVarName("an_ml_lnsp"));
+        assertEquals("tempi", satConfig.getVarName("an_sfc_t2m") );
+        assertEquals("blowUp", satConfig.getVarName("an_sfc_u10")  );
+        assertEquals("blowVert", satConfig.getVarName("an_sfc_v10")  );
+        assertEquals("concentrate", satConfig.getVarName("an_sfc_siconc")  );
+        assertEquals("meanPress", satConfig.getVarName("an_sfc_msl"));
+        assertEquals("skinTemp", satConfig.getVarName("an_sfc_skt"));
+        assertEquals("ozeanTemp", satConfig.getVarName("an_sfc_sst"));
+        assertEquals("cloudy", satConfig.getVarName("an_sfc_tcc"));
+        assertEquals("steam!", satConfig.getVarName("an_sfc_tcwv"));
 
         assertEquals(5, satConfig.get_x_dim());
         assertEquals("left", satConfig.get_x_dim_name());
@@ -145,25 +150,25 @@ public class Era5PostProcessingPluginTest {
                 "</era5>";
         final Element rootElement = TestUtil.createDomElement(XML);
 
-        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement);
+        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement, context);
         assertEquals("The-One", configuration.getEra5Collection());
 
         final SatelliteFieldsConfiguration satConfig = configuration.getSatelliteFields();
         assertNotNull(satConfig);
 
-        assertEquals("hirs-n08_Kjuh", satConfig.get_an_q_name());
-        assertEquals("hirs-n08_tea", satConfig.get_an_t_name());
-        assertEquals("hirs-n08_ozone", satConfig.get_an_o3_name());
-        assertEquals("hirs-n08_pressure", satConfig.get_an_lnsp_name());
-        assertEquals("hirs-n08_tempi", satConfig.get_an_t2m_name());
-        assertEquals("hirs-n08_blowUp", satConfig.get_an_u10_name());
-        assertEquals("hirs-n08_blowVert", satConfig.get_an_v10_name());
-        assertEquals("hirs-n08_concentrate", satConfig.get_an_siconc_name());
-        assertEquals("hirs-n08_meanPress", satConfig.get_an_msl_name());
-        assertEquals("hirs-n08_skinTemp", satConfig.get_an_skt_name());
-        assertEquals("hirs-n08_ozeanTemp", satConfig.get_an_sst_name());
-        assertEquals("hirs-n08_cloudy", satConfig.get_an_tcc_name());
-        assertEquals("hirs-n08_steam!", satConfig.get_an_tcwv_name());
+        assertEquals("hirs-n08_Kjuh", satConfig.getVarName("an_ml_q"));
+        assertEquals("hirs-n08_tea", satConfig.getVarName("an_ml_t"));
+        assertEquals("hirs-n08_ozone", satConfig.getVarName("an_ml_o3"));
+        assertEquals("hirs-n08_pressure", satConfig.getVarName("an_ml_lnsp"));
+        assertEquals("hirs-n08_tempi", satConfig.getVarName("an_sfc_t2m") );
+        assertEquals("hirs-n08_blowUp", satConfig.getVarName("an_sfc_u10")  );
+        assertEquals("hirs-n08_blowVert", satConfig.getVarName("an_sfc_v10")  );
+        assertEquals("hirs-n08_concentrate", satConfig.getVarName("an_sfc_siconc")  );
+        assertEquals("hirs-n08_meanPress", satConfig.getVarName("an_sfc_msl"));
+        assertEquals("hirs-n08_skinTemp", satConfig.getVarName("an_sfc_skt"));
+        assertEquals("hirs-n08_ozeanTemp", satConfig.getVarName("an_sfc_sst"));
+        assertEquals("hirs-n08_cloudy", satConfig.getVarName("an_sfc_tcc"));
+        assertEquals("hirs-n08_steam!", satConfig.getVarName("an_sfc_tcwv"));
 
         assertEquals(5, satConfig.get_x_dim());
         assertEquals("left", satConfig.get_x_dim_name());
@@ -178,6 +183,9 @@ public class Era5PostProcessingPluginTest {
         assertEquals("sensor_clock", satConfig.get_time_variable_name());
     }
 
+    // todo sabine .. done 2021-02-20
+    // The "length" attribute of tag <satellite-fields><z_dim ... />" is no longer optional.
+/*
     @Test
     public void testCreateConfiguration_satelliteFields_zDimNotSet() throws JDOMException, IOException {
         final String XML = "<era5>" +
@@ -186,7 +194,7 @@ public class Era5PostProcessingPluginTest {
                 "    <satellite-fields>" +
                 "        <x_dim name='left' length='5' />" +
                 "        <y_dim name='right' length='7' />" +
-                "        <z_dim name='up'  />" +
+                "        <z_dim name='up' length='137' />" +
                 "        <era5_time_variable>era5-time</era5_time_variable>" +
                 "        <longitude_variable>along_way</longitude_variable>" +
                 "        <latitude_variable>alattemacchiato</latitude_variable>" +
@@ -195,9 +203,10 @@ public class Era5PostProcessingPluginTest {
                 "</era5>";
         final Element rootElement = TestUtil.createDomElement(XML);
 
-        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement);
+        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement, null);
         assertEquals(137, configuration.getSatelliteFields().get_z_dim());
     }
+*/
 
     @Test
     public void testCreateConfiguration_matchupFields() throws JDOMException, IOException {
@@ -226,7 +235,7 @@ public class Era5PostProcessingPluginTest {
                 "</era5>";
         final Element rootElement = TestUtil.createDomElement(XML);
 
-        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement);
+        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement, context);
         final MatchupFieldsConfiguration matchupConfig = configuration.getMatchupFields();
         assertNotNull(matchupConfig);
 
@@ -278,7 +287,7 @@ public class Era5PostProcessingPluginTest {
                 "</era5>";
         final Element rootElement = TestUtil.createDomElement(XML);
 
-        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement);
+        final Configuration configuration = Era5PostProcessingPlugin.createConfiguration(rootElement, context);
         final MatchupFieldsConfiguration matchupConfig = configuration.getMatchupFields();
         assertNotNull(matchupConfig);
 
@@ -311,7 +320,7 @@ public class Era5PostProcessingPluginTest {
                 "</era5>";
         final Element rootElement = TestUtil.createDomElement(XML);
 
-        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement);
+        final PostProcessing postProcessing = plugin.createPostProcessing(rootElement, context);
         assertNotNull(postProcessing);
         assertTrue(postProcessing instanceof Era5PostProcessing);
     }

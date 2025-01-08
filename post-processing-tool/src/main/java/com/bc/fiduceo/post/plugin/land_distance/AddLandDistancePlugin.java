@@ -2,6 +2,7 @@ package com.bc.fiduceo.post.plugin.land_distance;
 
 
 import com.bc.fiduceo.post.PostProcessing;
+import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import org.jdom.Element;
 
@@ -10,7 +11,7 @@ public class AddLandDistancePlugin implements PostProcessingPlugin {
     static final String POST_PROCESSING_NAME = "add-distance-to-land";
 
     @Override
-    public PostProcessing createPostProcessing(Element element) {
+    public PostProcessing createPostProcessing(Element element, PostProcessingContext context) {
         final AddLandDistance.Configuration configuration = AddLandDistance.createConfiguration(element);
         return new AddLandDistance(configuration);
     }

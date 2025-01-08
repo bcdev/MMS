@@ -357,10 +357,14 @@ public class NetCDFUtils {
         final double scaleFactor = NetCDFUtils.getScaleFactor(variable);
         final double offset = NetCDFUtils.getOffset(variable);
         if (ReaderUtils.mustScale(scaleFactor, offset)) {
-            final MAMath.ScaleOffset scaleOffset = new MAMath.ScaleOffset(scaleFactor, offset);
-            array = MAMath.convert2Unpacked(array, scaleOffset);
+            array = scale(array, scaleFactor, offset);
         }
         return array;
+    }
+
+    public static Array scale(Array array, double scaleFactor, double offset) {
+        final MAMath.ScaleOffset scaleOffset = new MAMath.ScaleOffset(scaleFactor, offset);
+        return MAMath.convert2Unpacked(array, scaleOffset);
     }
 
     public static Attribute getGlobalAttributeSafe(String attributeName, NetcdfFile netcdfFile) {

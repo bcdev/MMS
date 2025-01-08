@@ -22,6 +22,7 @@ public class VariableUtilsTest {
         verify(variable, times(1)).addAttribute(new Attribute("long_name", "a_long_name"));
         verify(variable, times(1)).addAttribute(new Attribute("standard_name", "a_standard_name"));
         verify(variable, times(1)).addAttribute(new Attribute("_FillValue", 9.96921E36f));
+        verify(variable, times(1)).addAttribute(new Attribute("missing_value", 9.96921E36f));
         verifyNoMoreInteractions(variable);
     }
 
@@ -35,6 +36,7 @@ public class VariableUtilsTest {
         verify(variable, times(1)).addAttribute(new Attribute("units", "gramm"));
         verify(variable, times(1)).addAttribute(new Attribute("long_name", "Heffalump"));
         verify(variable, times(1)).addAttribute(new Attribute("_FillValue", 9.96921E36f));
+        verify(variable, times(1)).addAttribute(new Attribute("missing_value", 9.96921E36f));
         verifyNoMoreInteractions(variable);
     }
 

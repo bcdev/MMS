@@ -2,23 +2,14 @@ package com.bc.fiduceo.post.plugin.era5;
 
 import org.esa.snap.core.util.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 class SatelliteFieldsConfiguration extends FieldsConfiguration {
 
     private static final String SENSOR_REF = "{sensor-ref}";
-
-    private String an_q_name;
-    private String an_t_name;
-    private String an_o3_name;
-    private String an_lnsp_name;
-    private String an_siconc_name;
-    private String an_t2m_name;
-    private String an_u10_name;
-    private String an_v10_name;
-    private String an_msl_name;
-    private String an_skt_name;
-    private String an_sst_name;
-    private String an_tcc_name;
-    private String an_tcwv_name;
+    private final HashMap<String, String> variableNames;
 
     private int x_dim;
     private int y_dim;
@@ -33,21 +24,23 @@ class SatelliteFieldsConfiguration extends FieldsConfiguration {
     private String time_variable_name;
 
     private String sensorRef;
+    private Map<String, TemplateVariable> generalizedVariables;
 
     SatelliteFieldsConfiguration() {
-        an_q_name = "nwp_q";
-        an_t_name = "nwp_t";
-        an_o3_name = "nwp_o3";
-        an_lnsp_name = "nwp_lnsp";
-        an_siconc_name = "nwp_siconc";
-        an_t2m_name = "nwp_t2m";
-        an_u10_name = "nwp_u10";
-        an_v10_name = "nwp_v10";
-        an_msl_name = "nwp_msl";
-        an_skt_name = "nwp_skt";
-        an_sst_name = "nwp_sst";
-        an_tcc_name = "nwp_tcc";
-        an_tcwv_name = "nwp_tcwv";
+        variableNames = new HashMap<>();
+        variableNames.put("an_ml_q", "nwp_q");
+        variableNames.put("an_ml_t", "nwp_t");
+        variableNames.put("an_ml_o3", "nwp_o3");
+        variableNames.put("an_ml_lnsp", "nwp_lnsp");
+        variableNames.put("an_sfc_siconc", "nwp_siconc");
+        variableNames.put("an_sfc_t2m", "nwp_t2m");
+        variableNames.put("an_sfc_u10", "nwp_u10");
+        variableNames.put("an_sfc_v10", "nwp_v10");
+        variableNames.put("an_sfc_msl", "nwp_msl");
+        variableNames.put("an_sfc_skt", "nwp_skt");
+        variableNames.put("an_sfc_sst", "nwp_sst");
+        variableNames.put("an_sfc_tcc", "nwp_tcc");
+        variableNames.put("an_sfc_tcwv", "nwp_tcwv");
 
         sensorRef = null;
 
@@ -56,108 +49,16 @@ class SatelliteFieldsConfiguration extends FieldsConfiguration {
         z_dim = -1;
     }
 
-    String get_an_q_name() {
-        return expand(an_q_name);
+    Set<String> getVarNameKeys() {
+        return variableNames.keySet();
     }
 
-    void set_an_q_name(String an_q_name) {
-        this.an_q_name = an_q_name;
+    String getVarName(String key) {
+        return expand(variableNames.get(key));
     }
 
-    String get_an_t_name() {
-        return expand(an_t_name);
-    }
-
-    void set_an_t_name(String an_t_name) {
-        this.an_t_name = an_t_name;
-    }
-
-    String get_an_o3_name() {
-        return expand(an_o3_name);
-    }
-
-    void set_an_o3_name(String an_o3_name) {
-        this.an_o3_name = an_o3_name;
-    }
-
-    String get_an_lnsp_name() {
-        return expand(an_lnsp_name);
-    }
-
-    void set_an_lnsp_name(String an_lnsp_name) {
-        this.an_lnsp_name = an_lnsp_name;
-    }
-
-    String get_an_t2m_name() {
-        return expand(an_t2m_name);
-    }
-
-    void set_an_t2m_name(String an_t2m_name) {
-        this.an_t2m_name = an_t2m_name;
-    }
-
-    String get_an_siconc_name() {
-        return expand(an_siconc_name);
-    }
-
-    void set_an_siconc_name(String an_siconc_name) {
-        this.an_siconc_name = an_siconc_name;
-    }
-
-    String get_an_u10_name() {
-        return expand(an_u10_name);
-    }
-
-    void set_an_u10_name(String an_u10_name) {
-        this.an_u10_name = an_u10_name;
-    }
-
-    String get_an_v10_name() {
-        return expand(an_v10_name);
-    }
-
-    void set_an_v10_name(String an_v10_name) {
-        this.an_v10_name = an_v10_name;
-    }
-
-    String get_an_msl_name() {
-        return expand(an_msl_name);
-    }
-
-    void set_an_msl_name(String an_msl_name) {
-        this.an_msl_name = an_msl_name;
-    }
-
-    String get_an_skt_name() {
-        return expand(an_skt_name);
-    }
-
-    void set_an_skt_name(String an_skt_name) {
-        this.an_skt_name = an_skt_name;
-    }
-
-    String get_an_sst_name() {
-        return expand(an_sst_name);
-    }
-
-    void set_an_sst_name(String an_sst_name) {
-        this.an_sst_name = an_sst_name;
-    }
-
-    String get_an_tcc_name() {
-        return expand(an_tcc_name);
-    }
-
-    void set_an_tcc_name(String an_tcc_name) {
-        this.an_tcc_name = an_tcc_name;
-    }
-
-    String get_an_tcwv_name() {
-        return expand(an_tcwv_name);
-    }
-
-    void set_an_tcwv_name(String an_tcwv_name) {
-        this.an_tcwv_name = an_tcwv_name;
+    void setVarName(String key, String name) {
+        variableNames.put(key, name);
     }
 
     int get_x_dim() {
@@ -262,8 +163,13 @@ class SatelliteFieldsConfiguration extends FieldsConfiguration {
             throw new IllegalArgumentException("y dimension name not configured");
         }
 
-        if (StringUtils.isNullOrEmpty(z_dim_name)) {
-            throw new IllegalArgumentException("z dimension name not configured");
+        if (z_dim_name != null) {
+            if (StringUtils.isNullOrEmpty(z_dim_name)) {
+                throw new IllegalArgumentException("z dimension name not configured");
+            }
+            if (z_dim < 1) {
+                throw new IllegalArgumentException("dimension incorrect: z:" + z_dim);
+            }
         }
 
         if (StringUtils.isNullOrEmpty(nwp_time_variable_name)) {
@@ -284,6 +190,17 @@ class SatelliteFieldsConfiguration extends FieldsConfiguration {
     }
 
     private String expand(String variableName) {
-        return expand(variableName, SENSOR_REF, sensorRef);
+        return expand(variableName, SENSOR_REF, getSensorRef());
+    }
+
+    public void setGeneralizedVariables(Map<String, TemplateVariable> generalizedVariables) {
+        this.generalizedVariables = generalizedVariables;
+        for (String key : generalizedVariables.keySet()) {
+            setVarName(key, "nwp_" + generalizedVariables.get(key).getName());
+        }
+    }
+
+    public Map<String, TemplateVariable> getGeneralizedVariables() {
+        return generalizedVariables;
     }
 }

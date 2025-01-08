@@ -36,12 +36,6 @@ public class Era5PostProcessingTest {
         interpolator = context.get(2, 1);
         assertEquals(834, interpolator.getXMin());
         assertEquals(247, interpolator.getYMin());
-
-        final Rectangle era5Region = context.getEra5Region();
-        assertEquals(834, era5Region.x);
-        assertEquals(247, era5Region.y);
-        assertEquals(3, era5Region.width);
-        assertEquals(3, era5Region.height);
     }
 
     @Test
@@ -58,12 +52,6 @@ public class Era5PostProcessingTest {
         BilinearInterpolator interpolator = context.get(0, 0);
         assertEquals(835, interpolator.getXMin());
         assertEquals(247, interpolator.getYMin());
-
-        final Rectangle era5Region = context.getEra5Region();
-        assertEquals(835, era5Region.x);
-        assertEquals(247, era5Region.y);
-        assertEquals(2, era5Region.width);
-        assertEquals(2, era5Region.height);
     }
 
     @Test

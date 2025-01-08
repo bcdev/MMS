@@ -119,7 +119,7 @@ public class PostProcessingConfig {
 
         final Element processingsElem = JDomUtils.getMandatoryChild(rootElement, TAG_NAME_POST_PROCESSINGS);
         postProcessingElements = processingsElem.getChildren();
-        if (postProcessingElements.size() == 0) {
+        if (postProcessingElements.isEmpty()) {
             throw new RuntimeException("Empty list of post processings.");
         }
     }
