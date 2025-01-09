@@ -23,7 +23,7 @@ import com.bc.fiduceo.matchup.condition.DistanceConditionPlugin;
 import com.bc.fiduceo.matchup.condition.OverlapRemoveConditionPlugin;
 import com.bc.fiduceo.matchup.condition.TimeDeltaConditionPlugin;
 import org.esa.snap.core.util.StringUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import static com.bc.fiduceo.core.UseCaseConfig.load;
 import static com.bc.fiduceo.util.JDomUtils.setNameAttribute;

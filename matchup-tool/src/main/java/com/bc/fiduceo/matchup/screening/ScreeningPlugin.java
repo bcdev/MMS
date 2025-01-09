@@ -21,7 +21,7 @@
 package com.bc.fiduceo.matchup.screening;
 
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 interface ScreeningPlugin {
 

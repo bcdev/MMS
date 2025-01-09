@@ -5,7 +5,7 @@ import com.bc.fiduceo.post.PostProcessing;
 import com.bc.fiduceo.reader.insitu.gruan_uleic.GruanUleicInsituReader;
 import com.bc.fiduceo.util.JDomUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;

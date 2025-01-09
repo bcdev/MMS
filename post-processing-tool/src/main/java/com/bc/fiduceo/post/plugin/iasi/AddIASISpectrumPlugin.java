@@ -23,7 +23,7 @@ package com.bc.fiduceo.post.plugin.iasi;
 import com.bc.fiduceo.post.PostProcessing;
 import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 public class AddIASISpectrumPlugin implements PostProcessingPlugin {
 

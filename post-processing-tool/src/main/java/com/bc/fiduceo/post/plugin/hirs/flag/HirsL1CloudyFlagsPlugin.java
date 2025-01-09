@@ -24,7 +24,7 @@ import com.bc.fiduceo.post.PostProcessing;
 import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.post.util.DistanceToLandMap;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.nio.file.FileSystem;
 import java.nio.file.Path;

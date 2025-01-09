@@ -5,9 +5,7 @@ import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.util.NetCDFUtils;
 import org.junit.Before;
 import org.junit.Test;
-import sun.nio.ch.Net;
 import ucar.ma2.Array;
-import ucar.ma2.DataType;
 
 import java.io.IOException;
 
