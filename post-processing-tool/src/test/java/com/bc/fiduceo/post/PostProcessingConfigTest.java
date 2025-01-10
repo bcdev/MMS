@@ -210,7 +210,7 @@ public class PostProcessingConfigTest {
             PostProcessingConfig.load(inputStream);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
-            assertEquals("org.jdom.input.JDOMParseException", expected.getCause().getClass().getTypeName());
+            assertEquals("org.jdom2.input.JDOMParseException", expected.getCause().getClass().getTypeName());
             assertTrue(expected.getMessage().matches("Unable to initialize post processing configuration: .*"));
         }
     }
