@@ -22,7 +22,7 @@ package com.bc.fiduceo.post;
 import com.bc.ceres.core.ServiceRegistry;
 import com.bc.ceres.core.ServiceRegistryManager;
 import org.esa.snap.core.util.ServiceLoader;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -7,7 +7,7 @@ import com.bc.fiduceo.post.PostProcessing;
 import com.bc.fiduceo.reader.fiduceo_fcdr.AVHRR_FCDR_Reader;
 import com.bc.fiduceo.util.JDomUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 import ucar.ma2.*;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;

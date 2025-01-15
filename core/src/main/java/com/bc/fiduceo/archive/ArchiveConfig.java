@@ -42,11 +42,11 @@ package com.bc.fiduceo.archive;
 
 
 import com.bc.fiduceo.util.JDomUtils;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

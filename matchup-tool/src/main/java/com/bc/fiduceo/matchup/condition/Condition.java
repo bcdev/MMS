@@ -23,7 +23,7 @@ package com.bc.fiduceo.matchup.condition;
 
 import com.bc.fiduceo.matchup.MatchupSet;
 
-interface Condition {
+public interface Condition {
 
     void apply(MatchupSet matchupSet, ConditionEngineContext context);
 }

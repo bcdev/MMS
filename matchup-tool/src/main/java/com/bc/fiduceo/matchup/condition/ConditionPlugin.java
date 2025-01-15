@@ -21,9 +21,9 @@
 package com.bc.fiduceo.matchup.condition;
 
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
-interface ConditionPlugin {
+public interface ConditionPlugin {
 
     Condition createCondition(Element element);
 

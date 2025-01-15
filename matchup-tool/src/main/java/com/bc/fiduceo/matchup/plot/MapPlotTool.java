@@ -68,7 +68,7 @@ public class MapPlotTool {
                 samplingPoints.add(new SamplingPoint(lon, lat, time));
             }
 
-            final String fileName = FileUtils.getFileNameFromPath(filePath);
+            final String fileName = FileUtils.getFilenameFromPath(filePath);
             final String pngFileName = FileUtils.exchangeExtension(fileName, ".png");
             final String outputDir = new File(filePath).getParent();
             //final File targetFile = new File(outputDir, args[4]);

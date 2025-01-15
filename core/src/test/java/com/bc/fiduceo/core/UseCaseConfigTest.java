@@ -20,7 +20,7 @@
 
 package com.bc.fiduceo.core;
 
-import org.jdom.JDOMException;
+import org.jdom2.JDOMException;
 import org.junit.Before;
 import org.junit.Test;
 

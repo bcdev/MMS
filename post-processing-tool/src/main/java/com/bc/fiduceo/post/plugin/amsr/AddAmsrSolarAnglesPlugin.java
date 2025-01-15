@@ -24,8 +24,8 @@ import com.bc.fiduceo.post.PostProcessing;
 import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /* The XML template for this post processing class looks like:
 

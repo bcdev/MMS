@@ -39,13 +39,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.esa.s3tbx</groupId>
-            <artifactId>s3tbx-avhrr-reader</artifactId>
+            <groupId>eu.esa.opt</groupId>
+            <artifactId>opttbx-avhrr-reader</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.esa.s3tbx</groupId>
-            <artifactId>s3tbx-sentinel3-reader</artifactId>
+            <groupId>eu.esa.opt</groupId>
+            <artifactId>opttbx-sentinel3-reader</artifactId>
         </dependency>
 
         <dependency>
@@ -89,14 +89,10 @@
             <artifactId>netcdfAll</artifactId>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>edu.ucar</groupId>-->
-            <!--<artifactId>netcdf4</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>edu.ucar</groupId>-->
-        <!--<artifactId>cdm</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -110,7 +106,7 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
+            <artifactId>hamcrest</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -25,7 +25,7 @@ import com.bc.fiduceo.post.PostProcessing;
 import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 // @todo 2 tb/tb add example XML config as comment here 2017-03-20
 

@@ -2,8 +2,8 @@ package com.bc.fiduceo.reader.slstr_subset;
 
 import com.bc.fiduceo.reader.Reader;
 import com.bc.fiduceo.reader.ReaderContext;
-import org.esa.s3tbx.dataio.s3.Manifest;
-import org.esa.s3tbx.dataio.s3.XfduManifest;
+import eu.esa.opt.dataio.s3.Manifest;
+import eu.esa.opt.dataio.s3.XfduManifest;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;

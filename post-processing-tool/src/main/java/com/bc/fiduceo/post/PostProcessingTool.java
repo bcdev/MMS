@@ -34,7 +34,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.esa.snap.core.util.StringUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.*;
 import ucar.nc2.constants.DataFormatType;

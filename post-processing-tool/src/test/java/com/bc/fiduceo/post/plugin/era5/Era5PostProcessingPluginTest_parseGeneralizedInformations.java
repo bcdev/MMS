@@ -2,11 +2,11 @@ package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.TestUtil;
 import com.google.common.jimfs.Jimfs;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.JDOMParseException;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.JDOMParseException;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;

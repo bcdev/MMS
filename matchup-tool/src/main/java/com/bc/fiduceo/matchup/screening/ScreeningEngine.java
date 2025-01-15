@@ -25,7 +25,7 @@ import com.bc.fiduceo.core.UseCaseConfig;
 import com.bc.fiduceo.matchup.MatchupSet;
 import com.bc.fiduceo.reader.Reader;
 import com.bc.fiduceo.tool.ToolContext;
-import org.jdom.Element;
+import org.jdom2.Element;
 import ucar.ma2.InvalidRangeException;
 
 import java.io.IOException;

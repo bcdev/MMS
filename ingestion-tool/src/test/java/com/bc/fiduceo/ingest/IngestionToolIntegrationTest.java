@@ -49,6 +49,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.List;
 
+import static com.bc.fiduceo.geometry.GeometryTestUtils.assertSameGeometry;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -182,18 +183,22 @@ public class IngestionToolIntegrationTest {
         final MultiPolygon multiPolygon = (MultiPolygon) geoBounds;
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
-        assertEquals(TestData.AVHRR_GAC_N10_GEOMETRIES_v013[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.AVHRR_GAC_N10_GEOMETRIES_v013[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.AVHRR_GAC_N10_GEOMETRIES_v013[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N10_GEOMETRIES_v013[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(1988, 3, 18, 0, 9, 17, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(1988, 3, 18, 1, 6, 16, 0, timeAxes[0].getEndTime());
-        assertEquals(TestData.AVHRR_GAC_N10_AXIS_GEOMETRIES_v013[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N10_AXIS_GEOMETRIES_v013[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(1988, 3, 18, 1, 6, 16, 0, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(1988, 3, 18, 2, 3, 15, 0, timeAxes[1].getEndTime());
-        assertEquals(TestData.AVHRR_GAC_N10_AXIS_GEOMETRIES_v013[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N10_AXIS_GEOMETRIES_v013[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -221,18 +226,22 @@ public class IngestionToolIntegrationTest {
         final MultiPolygon multiPolygon = (MultiPolygon) geoBounds;
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
-        assertEquals(TestData.AVHRR_GAC_N11_GEOMETRIES_v013[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.AVHRR_GAC_N11_GEOMETRIES_v013[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.AVHRR_GAC_N11_GEOMETRIES_v013[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N11_GEOMETRIES_v013[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(1991, 5, 9, 7, 51, 46, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(1991, 5, 9, 8, 48, 43, 500, timeAxes[0].getEndTime());
-        assertEquals(TestData.AVHRR_GAC_N11_AXIS_GEOMETRIES_v013[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N11_AXIS_GEOMETRIES_v013[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(1991, 5, 9, 8, 48, 43, 500, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(1991, 5, 9, 9, 45, 41, 0, timeAxes[1].getEndTime());
-        assertEquals(TestData.AVHRR_GAC_N11_AXIS_GEOMETRIES_v013[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N11_AXIS_GEOMETRIES_v013[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -260,18 +269,22 @@ public class IngestionToolIntegrationTest {
         final MultiPolygon multiPolygon = (MultiPolygon) geoBounds;
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
-        assertEquals(TestData.AVHRR_GAC_N17_GEOMETRIES_v014_CSPP[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.AVHRR_GAC_N17_GEOMETRIES_v014_CSPP[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.AVHRR_GAC_N17_GEOMETRIES_v014_CSPP[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N17_GEOMETRIES_v014_CSPP[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2009, 10, 25, 8, 7, 39, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2009, 10, 25, 9, 4, 9, 0, timeAxes[0].getEndTime());
-        assertEquals(TestData.AVHRR_GAC_N17_AXIS_GEOMETRIES_v014_CSPP[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N17_AXIS_GEOMETRIES_v014_CSPP[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(2009, 10, 25, 9, 4, 9, 0, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(2009, 10, 25, 10, 0, 39, 0, timeAxes[1].getEndTime());
-        assertEquals(TestData.AVHRR_GAC_N17_AXIS_GEOMETRIES_v014_CSPP[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.AVHRR_GAC_N17_AXIS_GEOMETRIES_v014_CSPP[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -298,18 +311,22 @@ public class IngestionToolIntegrationTest {
         final MultiPolygon multiPolygon = (MultiPolygon) geoBounds;
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
-        assertEquals(TestData.AMSUB_N15_GEOMETRIES[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.AMSUB_N15_GEOMETRIES[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.AMSUB_N15_GEOMETRIES[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.AMSUB_N15_GEOMETRIES[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2007, 8, 22, 16, 40, 37, 120, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2007, 8, 22, 17, 32, 45, 119, timeAxes[0].getEndTime());
-        assertEquals(TestData.AMSUB_N15_AXIS_GEOMETRIES[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.AMSUB_N15_AXIS_GEOMETRIES[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(2007, 8, 22, 17, 32, 45, 119, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(2007, 8, 22, 18, 24, 53, 119, timeAxes[1].getEndTime());
-        assertEquals(TestData.AMSUB_N15_AXIS_GEOMETRIES[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.AMSUB_N15_AXIS_GEOMETRIES[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -348,18 +365,22 @@ public class IngestionToolIntegrationTest {
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
 
-        assertEquals(TestData.MHS_N18_GEOMETRIES[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.MHS_N18_GEOMETRIES[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.MHS_N18_GEOMETRIES[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.MHS_N18_GEOMETRIES[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2007, 8, 22, 11, 51, 27, 277, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2007, 8, 22, 12, 44, 29, 943, timeAxes[0].getEndTime());
-        assertEquals(TestData.MHS_N18_AXIS_GEOMETRIES[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.MHS_N18_AXIS_GEOMETRIES[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(2007, 8, 22, 12, 44, 29, 943, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(2007, 8, 22, 13, 37, 32, 610, timeAxes[1].getEndTime());
-        assertEquals(TestData.MHS_N18_AXIS_GEOMETRIES[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.MHS_N18_AXIS_GEOMETRIES[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -388,18 +409,22 @@ public class IngestionToolIntegrationTest {
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
 
-        assertEquals(TestData.HIRS_TN_GEOMETRIES[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.HIRS_TN_GEOMETRIES[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.HIRS_TN_GEOMETRIES[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.HIRS_TN_GEOMETRIES[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(1979, 10, 14, 16, 23, 59, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(1979, 10, 14, 17, 15, 46, 0, timeAxes[0].getEndTime());
-        assertEquals(TestData.HIRS_TN_AXIS_GEOMETRIES[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.HIRS_TN_AXIS_GEOMETRIES[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(1979, 10, 14, 17, 15, 46, 0, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(1979, 10, 14, 18, 7, 33, 0, timeAxes[1].getEndTime());
-        assertEquals(TestData.HIRS_TN_AXIS_GEOMETRIES[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.HIRS_TN_AXIS_GEOMETRIES[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -428,18 +453,22 @@ public class IngestionToolIntegrationTest {
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
 
-        assertEquals(TestData.HIRS_N10_GEOMETRIES[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.HIRS_N10_GEOMETRIES[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.HIRS_N10_GEOMETRIES[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.HIRS_N10_GEOMETRIES[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(1989, 3, 17, 6, 12, 16, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(1989, 3, 17, 7, 7, 9, 0, timeAxes[0].getEndTime());
-        assertEquals(TestData.HIRS_N10_AXIS_GEOMETRIES[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.HIRS_N10_AXIS_GEOMETRIES[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(1989, 3, 17, 7, 7, 9, 0, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(1989, 3, 17, 8, 2, 2, 0, timeAxes[1].getEndTime());
-        assertEquals(TestData.HIRS_N10_AXIS_GEOMETRIES[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.HIRS_N10_AXIS_GEOMETRIES[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -468,18 +497,22 @@ public class IngestionToolIntegrationTest {
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
 
-        assertEquals(TestData.HIRS_MA_GEOMETRIES[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.HIRS_MA_GEOMETRIES[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.HIRS_MA_GEOMETRIES[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.HIRS_MA_GEOMETRIES[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2011, 8, 23, 16, 41, 52, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2011, 8, 23, 17, 32, 16, 0, timeAxes[0].getEndTime());
-        assertEquals(TestData.HIRS_MA_AXIS_GEOMETRIES[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.HIRS_MA_AXIS_GEOMETRIES[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(2011, 8, 23, 17, 32, 16, 0, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(2011, 8, 23, 18, 22, 40, 0, timeAxes[1].getEndTime());
-        assertEquals(TestData.HIRS_MA_AXIS_GEOMETRIES[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.HIRS_MA_AXIS_GEOMETRIES[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -505,13 +538,15 @@ public class IngestionToolIntegrationTest {
         final Geometry geoBounds = observation.getGeoBounds();
         assertTrue(geoBounds instanceof Polygon);
 
-        assertEquals(TestData.ATSR1_GEOMETRY, geometryFactory.format(geoBounds));
+        Geometry expected = geometryFactory.parse(TestData.ATSR1_GEOMETRY);
+        assertSameGeometry(expected, geoBounds);
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(1, timeAxes.length);
         TestUtil.assertCorrectUTCDate(1993, 8, 5, 21, 0, 30, 240, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(1993, 8, 5, 22, 41, 8, 490, timeAxes[0].getEndTime());
-        assertEquals(TestData.ATSR1_AXIS_GEOMETRY, geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.ATSR1_AXIS_GEOMETRY);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
     }
 
     @Test
@@ -537,13 +572,15 @@ public class IngestionToolIntegrationTest {
         final Geometry geoBounds = observation.getGeoBounds();
         assertTrue(geoBounds instanceof Polygon);
 
-        assertEquals(TestData.ATSR2_GEOMETRY, geometryFactory.format(geoBounds));
+        Geometry expected = geometryFactory.parse(TestData.ATSR2_GEOMETRY);
+        assertSameGeometry(expected, geoBounds);
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(1, timeAxes.length);
         TestUtil.assertCorrectUTCDate(1998, 4, 24, 5, 57, 54, 720, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(1998, 4, 24, 7, 38, 32, 970, timeAxes[0].getEndTime());
-        assertEquals(TestData.ATSR2_AXIS_GEOMETRY, geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.ATSR2_AXIS_GEOMETRY);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
     }
 
     @Test
@@ -569,13 +606,15 @@ public class IngestionToolIntegrationTest {
         final Geometry geoBounds = observation.getGeoBounds();
         assertTrue(geoBounds instanceof Polygon);
 
-        assertEquals(TestData.AATSR_GEOMETRY, geometryFactory.format(geoBounds));
+        Geometry expected = geometryFactory.parse(TestData.AATSR_GEOMETRY);
+        assertSameGeometry(expected, geoBounds);
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(1, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2006, 2, 15, 7, 8, 52, 812, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2006, 2, 15, 8, 57, 40, 662, timeAxes[0].getEndTime());
-        assertEquals(TestData.AATSR_AXIS_GEOMETRY, geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.AATSR_AXIS_GEOMETRY);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
     }
 
     @Test
@@ -601,13 +640,15 @@ public class IngestionToolIntegrationTest {
         final Geometry geoBounds = observation.getGeoBounds();
         assertTrue(geoBounds instanceof Polygon);
 
-        assertEquals(TestData.AMSRE_GEOMETRY, geometryFactory.format(geoBounds));
+        Geometry expected = geometryFactory.parse(TestData.AMSRE_GEOMETRY);
+        assertSameGeometry(expected, geoBounds);
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(1, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2005, 2, 17, 5, 36, 6, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2005, 2, 17, 6, 25, 56, 0, timeAxes[0].getEndTime());
-        assertEquals(TestData.AMSRE_AXIS_GEOMETRY, geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.AMSRE_AXIS_GEOMETRY);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
     }
 
     @Test
@@ -632,13 +673,16 @@ public class IngestionToolIntegrationTest {
 
         final Geometry geoBounds = observation.getGeoBounds();
         assertTrue(geoBounds instanceof Polygon);
-        assertEquals(TestData.SSMT2_GEOMETRY, geometryFactory.format(geoBounds));
+
+        Geometry expected = geometryFactory.parse(TestData.SSMT2_GEOMETRY);
+        assertSameGeometry(expected, geoBounds);
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(1, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2001, 6, 14, 12, 29, 4, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2001, 6, 14, 14, 10, 58, 0, timeAxes[0].getEndTime());
-        assertEquals(TestData.SSMT2_AXIS_GEOMETRY, geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.SSMT2_AXIS_GEOMETRY);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
     }
 
     @Test
@@ -742,18 +786,22 @@ public class IngestionToolIntegrationTest {
         final MultiPolygon multiPolygon = (MultiPolygon) geoBounds;
         final List<Polygon> polygons = multiPolygon.getPolygons();
         assertEquals(2, polygons.size());
-        assertEquals(TestData.IASI_MA_GEOMETRIES[0], geometryFactory.format(polygons.get(0)));
-        assertEquals(TestData.IASI_MA_GEOMETRIES[1], geometryFactory.format(polygons.get(1)));
+        Geometry expected = geometryFactory.parse(TestData.IASI_MA_GEOMETRIES[0]);
+        assertSameGeometry(expected, polygons.get(0));
+        expected = geometryFactory.parse(TestData.IASI_MA_GEOMETRIES[1]);
+        assertSameGeometry(expected, polygons.get(1));
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(2, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2016, 1, 1, 12, 47, 54, 870, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2016, 1, 1, 13, 37, 26, 642, timeAxes[0].getEndTime());
-        assertEquals(TestData.IASI_MA_AXIS_GEOMETRIES[0], geometryFactory.format(timeAxes[0].getGeometry()));
+        expected = geometryFactory.parse(TestData.IASI_MA_AXIS_GEOMETRIES[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
 
         TestUtil.assertCorrectUTCDate(2016, 1, 1, 13, 37, 26, 642, timeAxes[1].getStartTime());
         TestUtil.assertCorrectUTCDate(2016, 1, 1, 14, 26, 58, 414, timeAxes[1].getEndTime());
-        assertEquals(TestData.IASI_MA_AXIS_GEOMETRIES[1], geometryFactory.format(timeAxes[1].getGeometry()));
+        expected = geometryFactory.parse(TestData.IASI_MA_AXIS_GEOMETRIES[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
     }
 
     @Test
@@ -776,16 +824,18 @@ public class IngestionToolIntegrationTest {
         assertEquals(NodeType.UNDEFINED, observation.getNodeType());
         assertEquals("v006", observation.getVersion());
 
-        final Geometry geoBounds = observation.getGeoBounds();
-        assertTrue(geoBounds instanceof Polygon);
+        final Geometry actualBounds = observation.getGeoBounds();
+        assertTrue(actualBounds instanceof Polygon);
 
-        assertEquals(TestData.MYD06_AQUA_GEOMETRY, geometryFactory.format(geoBounds));
+        Geometry expectedBounds = geometryFactory.parse(TestData.MYD06_AQUA_GEOMETRY);
+        assertSameGeometry(expectedBounds, actualBounds);
 
         final TimeAxis[] timeAxes = observation.getTimeAxes();
         assertEquals(1, timeAxes.length);
         TestUtil.assertCorrectUTCDate(2009, 5, 13, 10, 35, 0, 0, timeAxes[0].getStartTime());
         TestUtil.assertCorrectUTCDate(2009, 5, 13, 10, 40, 0, 0, timeAxes[0].getEndTime());
-        assertEquals(TestData.MYD06_AQUA_AXIS_GEOMETRY, geometryFactory.format(timeAxes[0].getGeometry()));
+        expectedBounds = geometryFactory.parse(TestData.MYD06_AQUA_AXIS_GEOMETRY);
+        assertSameGeometry(expectedBounds, timeAxes[0].getGeometry());
     }
 
     @Test
@@ -957,8 +1007,10 @@ public class IngestionToolIntegrationTest {
         assertEquals("v61", observation.getVersion());
 
         final Geometry geoBounds = observation.getGeoBounds();
-        assertEquals(TestData.MYD012KM_AQ_GEOMETRY, geometryFactory.format(geoBounds));
-        assertEquals(TestData.MYD021KM_AQ_AXIS_GEOMETRY, geometryFactory.format(observation.getTimeAxes()[0].getGeometry()));
+        Geometry expected = geometryFactory.parse(TestData.MYD012KM_AQ_GEOMETRY);
+        assertSameGeometry(expected, geoBounds);
+        expected = geometryFactory.parse(TestData.MYD021KM_AQ_AXIS_GEOMETRY);
+        assertSameGeometry(expected, observation.getTimeAxes()[0].getGeometry());
     }
 
     @Test
@@ -982,8 +1034,10 @@ public class IngestionToolIntegrationTest {
         assertEquals("v61", observation.getVersion());
 
         final Geometry geoBounds = observation.getGeoBounds();
-        assertEquals(TestData.MOD35_TE_GEOMETRY, geometryFactory.format(geoBounds));
-        assertEquals(TestData.MOD35_TE_AXIS_GEOMETRY, geometryFactory.format(observation.getTimeAxes()[0].getGeometry()));
+        Geometry expected = geometryFactory.parse(TestData.MOD35_TE_GEOMETRY);
+        assertSameGeometry(expected, geoBounds);
+        expected = geometryFactory.parse(TestData.MOD35_TE_AXIS_GEOMETRY);
+        assertSameGeometry(expected, observation.getTimeAxes()[0].getGeometry());
     }
 
     @Test
@@ -1007,8 +1061,10 @@ public class IngestionToolIntegrationTest {
         assertEquals("v1", observation.getVersion());
 
         final Geometry geoBounds = observation.getGeoBounds();
-        assertEquals(TestData.AVHRR_FRAC_MB_GEOMETRY, geometryFactory.format(geoBounds));
-        assertEquals(TestData.AVHRR_FRAC_MB_AXIS_GEOMETRY, geometryFactory.format(observation.getTimeAxes()[0].getGeometry()));
+        Geometry expected = geometryFactory.parse(TestData.AVHRR_FRAC_MB_GEOMETRY);
+        assertSameGeometry(expected, geoBounds);
+        expected = geometryFactory.parse(TestData.AVHRR_FRAC_MB_AXIS_GEOMETRY);
+        assertSameGeometry(expected, observation.getTimeAxes()[0].getGeometry());
     }
 
     @Test
@@ -1185,7 +1241,7 @@ public class IngestionToolIntegrationTest {
 
         final Geometry geoBounds = observation.getGeoBounds();
         assertEquals("POLYGON((-179.9690856933594 -86.61936950683594,179.9915313720703 -86.61936950683594,179.9915313720703 86.40787506103517,-179.9690856933594 86.40787506103517,-179.9690856933594 -86.61936950683594))",
-                     geometryFactory.format(geoBounds));
+                geometryFactory.format(geoBounds));
         final Geometry intersection = geoBounds.getIntersection(geometryFactory.createPoint(0, 0));
         assertEquals(geometryFactory.createPoint(0, 0), intersection);
         final TimeAxis timeAxis = observation.getTimeAxes()[0];

@@ -3,8 +3,8 @@ package com.bc.fiduceo.post.plugin;
 
 import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.post.PostProcessing;
-import org.jdom.Element;
-import org.jdom.JDOMException;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.junit.Before;
 import org.junit.Test;
 

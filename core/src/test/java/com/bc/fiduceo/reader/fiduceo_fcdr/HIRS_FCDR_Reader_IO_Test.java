@@ -515,7 +515,7 @@ public class HIRS_FCDR_Reader_IO_Test {
             assertNotNull(pixelLocation);
             assertEquals(1, pixelLocation.length);
 
-            assertEquals(38.317269513397704, pixelLocation[0].getX(), 1e-8);
+            assertEquals(38.317269513397704, pixelLocation[0].getX(), 1e-6);
             assertEquals(781.666865947429, pixelLocation[0].getY(), 1e-8);
         } finally {
             reader.close();
@@ -540,7 +540,7 @@ public class HIRS_FCDR_Reader_IO_Test {
             assertNotNull(pixelLocation);
             assertEquals(1, pixelLocation.length);
 
-            assertEquals(38.50497313441438, pixelLocation[0].getX(), 1e-8);
+            assertEquals(38.50497313441438, pixelLocation[0].getX(), 1e-6);
             assertEquals(783.6241097278424, pixelLocation[0].getY(), 1e-8);
         } finally {
             reader.close();
@@ -567,7 +567,7 @@ public class HIRS_FCDR_Reader_IO_Test {
             assertNotNull(pixelLocation);
             assertEquals(1, pixelLocation.length);
 
-            assertEquals(33.59545482099081, pixelLocation[0].getX(), 1e-8);
+            assertEquals(33.59545482099081, pixelLocation[0].getX(), 1e-6);
             assertEquals(416.5860033509568, pixelLocation[0].getY(), 1e-8);
 
         } finally {

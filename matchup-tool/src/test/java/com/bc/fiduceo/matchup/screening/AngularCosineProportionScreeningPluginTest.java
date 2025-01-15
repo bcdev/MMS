@@ -21,7 +21,7 @@
 package com.bc.fiduceo.matchup.screening;
 
 import com.bc.fiduceo.util.JDomUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
 

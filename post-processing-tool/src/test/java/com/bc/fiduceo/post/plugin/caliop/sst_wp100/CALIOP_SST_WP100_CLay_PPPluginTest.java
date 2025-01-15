@@ -21,7 +21,7 @@
 package com.bc.fiduceo.post.plugin.caliop.sst_wp100;
 
 import com.bc.fiduceo.post.PostProcessing;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
 

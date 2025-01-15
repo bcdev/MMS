@@ -28,7 +28,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 import org.esa.snap.core.datamodel.ProductData;
 import org.esa.snap.core.util.io.FileUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 import com.bc.fiduceo.post.PostProcessing;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.junit.*;
 
 import java.nio.file.FileSystem;
