@@ -87,7 +87,7 @@ public class S2WKTWriter {
         final StringBuilder builder = new StringBuilder();
         builder.append("POINT(");
         builder.append(geometry.lngDegrees());
-        builder.append(",");
+        builder.append(" ");
         builder.append(geometry.latDegrees());
         builder.append(")");
         return builder.toString();

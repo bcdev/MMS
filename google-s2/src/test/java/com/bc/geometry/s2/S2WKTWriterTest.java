@@ -62,7 +62,7 @@ public class S2WKTWriterTest {
         final S2Point s2Point = createS2Point(-18.7, 45.9);
 
         final String wkt = S2WKTWriter.write(s2Point);
-        assertEquals("POINT(-18.7,45.9)", wkt);
+        assertEquals("POINT(-18.7 45.9)", wkt);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class S2WKTWriterTest {
         final S2LatLng s2LatLng = new S2LatLng(s2Point);
 
         final String wkt = S2WKTWriter.write(s2LatLng);
-        assertEquals("POINT(-19.800000000000004,45.99999999999999)", wkt);
+        assertEquals("POINT(-19.800000000000004 45.99999999999999)", wkt);
     }
 
     @Test
