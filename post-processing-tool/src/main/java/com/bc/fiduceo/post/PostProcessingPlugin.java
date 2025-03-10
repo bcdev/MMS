@@ -19,7 +19,7 @@
 
 package com.bc.fiduceo.post;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 public interface PostProcessingPlugin {
 

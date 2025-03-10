@@ -21,7 +21,7 @@
 package com.bc.fiduceo.post.plugin.caliop.flag;
 
 import com.bc.fiduceo.post.PostProcessing;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.junit.Before;
 import org.junit.Test;
 

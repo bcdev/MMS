@@ -1,4 +1,5 @@
 ### Updates from version 1.5.8 to 1.6.0
+* Migrated to SNAP 11, several refactorings and library updates
 * The VariableCache now uses an LRU cache with a listener to automatically free the oldest cached, no longer
   needed variables and file handles when the maximum cache size is reached.* fix wrong corner point order of 
   era5 interpolation in SatelliteFields

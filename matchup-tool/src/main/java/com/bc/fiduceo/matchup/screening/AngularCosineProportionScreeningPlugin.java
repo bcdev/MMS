@@ -22,7 +22,7 @@ package com.bc.fiduceo.matchup.screening;
 
 import static com.bc.fiduceo.util.JDomUtils.*;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /* The XML template for this screening class looks like:
 

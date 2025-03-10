@@ -20,10 +20,10 @@
 package com.bc.fiduceo.post;
 
 import com.bc.fiduceo.post.plugin.DummyPostProcessingPlugin;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -210,7 +210,7 @@ public class PostProcessingConfigTest {
             PostProcessingConfig.load(inputStream);
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
-            assertEquals("org.jdom.input.JDOMParseException", expected.getCause().getClass().getTypeName());
+            assertEquals("org.jdom2.input.JDOMParseException", expected.getCause().getClass().getTypeName());
             assertTrue(expected.getMessage().matches("Unable to initialize post processing configuration: .*"));
         }
     }

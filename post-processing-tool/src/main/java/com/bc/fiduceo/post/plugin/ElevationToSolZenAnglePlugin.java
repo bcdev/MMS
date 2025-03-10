@@ -6,7 +6,7 @@ import com.bc.fiduceo.post.PostProcessingContext;
 import com.bc.fiduceo.post.PostProcessingPlugin;
 import com.bc.fiduceo.util.JDomUtils;
 import org.esa.snap.core.util.StringUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.List;
 

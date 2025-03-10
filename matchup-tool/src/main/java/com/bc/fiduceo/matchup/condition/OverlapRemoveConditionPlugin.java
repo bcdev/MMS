@@ -23,7 +23,7 @@ package com.bc.fiduceo.matchup.condition;
 
 import com.bc.fiduceo.matchup.SampleSet;
 import com.bc.fiduceo.util.JDomUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.stream.Stream;
 

@@ -26,7 +26,7 @@ import com.bc.fiduceo.core.UseCaseConfig;
 import com.bc.fiduceo.matchup.MatchupSet;
 import com.bc.fiduceo.matchup.SampleSet;
 import com.bc.fiduceo.tool.ToolContext;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;

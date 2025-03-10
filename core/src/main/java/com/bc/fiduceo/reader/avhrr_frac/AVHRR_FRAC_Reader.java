@@ -9,7 +9,7 @@ import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.reader.snap.SNAP_Reader;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import com.bc.fiduceo.util.NetCDFUtils;
-import org.esa.s3tbx.dataio.avhrr.AvhrrConstants;
+import eu.esa.opt.dataio.avhrr.AvhrrConstants;
 import org.esa.snap.core.datamodel.ProductData;
 import org.esa.snap.core.datamodel.RasterDataNode;
 import org.esa.snap.core.datamodel.VirtualBand;

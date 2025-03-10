@@ -23,7 +23,7 @@ package com.bc.fiduceo.matchup.condition;
 import static com.bc.fiduceo.util.JDomUtils.*;
 import static org.esa.snap.core.util.StringUtils.isNullOrEmpty;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.HashSet;

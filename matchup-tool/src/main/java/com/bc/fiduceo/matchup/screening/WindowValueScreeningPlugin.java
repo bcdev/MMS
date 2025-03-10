@@ -25,7 +25,7 @@ import com.bc.fiduceo.matchup.screening.WindowValueScreening.Configuration;
 import com.bc.fiduceo.matchup.screening.WindowValueScreening.Evaluate;
 import com.bc.fiduceo.matchup.screening.WindowValueScreening.SecondaryConfiguration;
 import com.bc.fiduceo.util.JDomUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;

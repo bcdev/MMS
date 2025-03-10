@@ -25,7 +25,7 @@ import static com.bc.fiduceo.util.JDomUtils.*;
 import com.bc.fiduceo.matchup.SampleSet;
 import com.bc.fiduceo.util.JDomUtils;
 import org.esa.snap.core.util.StringUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 import java.util.ArrayList;
 import java.util.List;

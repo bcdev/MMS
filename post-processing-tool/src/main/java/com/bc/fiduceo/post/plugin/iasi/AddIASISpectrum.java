@@ -26,7 +26,7 @@ import com.bc.fiduceo.reader.iasi.EpsMetopConstants;
 import com.bc.fiduceo.reader.iasi.IASI_Reader;
 import com.bc.fiduceo.util.JDomUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
-import org.jdom.Element;
+import org.jdom2.Element;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.DataType;

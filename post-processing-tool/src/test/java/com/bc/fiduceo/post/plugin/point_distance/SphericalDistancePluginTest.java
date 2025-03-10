@@ -23,7 +23,7 @@ import static com.bc.fiduceo.post.plugin.point_distance.SphericalDistancePlugin.
 import static org.junit.Assert.*;
 
 import com.bc.fiduceo.post.PostProcessing;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.junit.*;
 
 import java.util.Arrays;

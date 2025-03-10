@@ -120,7 +120,7 @@ public class BcS2GeometryFactoryTest {
         final Point point = factory.createPoint(34.8, -72.44);
 
         final String wkt = factory.format(point);
-        assertEquals("POINT(34.8,-72.44)", wkt);
+        assertEquals("POINT(34.8 -72.44)", wkt);
     }
 
     @Test
@@ -267,7 +267,7 @@ public class BcS2GeometryFactoryTest {
         final Geometry point = factory.parse("POINT(-22.5 67.23)");
 
         final byte[] storageFormat = factory.toStorageFormat(point);
-        assertEquals("POINT(-22.500000000000004,67.23)", new String(storageFormat));
+        assertEquals("POINT(-22.500000000000004 67.23)", new String(storageFormat));
     }
 
     @Test
