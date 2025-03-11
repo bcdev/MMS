@@ -11,10 +11,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
@@ -103,7 +100,7 @@ public class Era5PostProcessingPluginTest_parseGeneralizedInformations {
             fail("RuntimeException expected");
         } catch (Throwable e) {
             assertThat(e.getClass(), is(equalTo(RuntimeException.class)));
-            assertEquals("Root tag <era5> expected in config\\era5-post-processing-general-info.xml", e.getMessage());
+            assertEquals("Root tag <era5> expected in config"+ File.separator + "era5-post-processing-general-info.xml", e.getMessage());
             final Throwable cause = e.getCause();
             assertThat(cause.getClass(), is(equalTo(Throwable.class)));
             assertEquals("Root tag <era5> expected", cause.getMessage());
