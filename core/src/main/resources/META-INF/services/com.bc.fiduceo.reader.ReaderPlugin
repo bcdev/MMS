@@ -30,6 +30,7 @@ com.bc.fiduceo.reader.insitu.sirds_sst.SirdsCtdInsituReaderPlugin
 com.bc.fiduceo.reader.insitu.sirds_sst.SirdsDrifterCmemsInsituReaderPlugin
 com.bc.fiduceo.reader.insitu.sirds_sst.SirdsDrifterInsituReaderPlugin
 com.bc.fiduceo.reader.insitu.sirds_sst.SirdsGtmbaInsituReaderPlugin
+com.bc.fiduceo.reader.insitu.sirds_sst.SirdsGtmba2InsituReaderPlugin
 com.bc.fiduceo.reader.insitu.sirds_sst.SirdsMbtInsituReaderPlugin
 com.bc.fiduceo.reader.insitu.sirds_sst.SirdsMooringInsituReaderPlugin
 com.bc.fiduceo.reader.insitu.sirds_sst.SirdsShipInsituReaderPlugin

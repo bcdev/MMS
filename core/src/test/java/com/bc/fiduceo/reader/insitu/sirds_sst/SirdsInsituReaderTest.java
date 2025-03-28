@@ -52,6 +52,27 @@ public class SirdsInsituReaderTest {
     }
 
     @Test
+    public void testGetRegEx_gtmba2() {
+        final SirdsInsituReader insituReader = new SirdsInsituReader("gtmba2-sirds");
+        final String expected = "SSTCCI2_refdata_gtmba2_\\d{6}.nc";
+
+        assertEquals(expected, insituReader.getRegEx());
+        final Pattern pattern = java.util.regex.Pattern.compile(expected);
+
+        Matcher matcher = pattern.matcher("SSTCCI2_refdata_gtmba2_200012.nc");
+        assertTrue(matcher.matches());
+
+        matcher = pattern.matcher("SSTCCI2_refdata_gtmba_200801.nc");
+        assertFalse(matcher.matches());
+
+        matcher = pattern.matcher("insitu_5_WMOID_5901880_20100514_20100627.nc");
+        assertFalse(matcher.matches());
+
+        matcher = pattern.matcher("NSS.HIRX.TN.D79287.S1623.E1807.B0516566.GC.nc");
+        assertFalse(matcher.matches());
+    }
+
+    @Test
     public void testGetLongitudeVariableName() {
         final SirdsInsituReader insituReader = new SirdsInsituReader("whatever");
 
