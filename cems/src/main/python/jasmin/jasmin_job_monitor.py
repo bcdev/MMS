@@ -48,6 +48,8 @@ class JasminJobMonitor:
                 return  LSFInterface()
             elif scheduler_name == "SLURM":
                 return SLURMInterface()
+            elif scheduler_name == "SLURM_2":
+                return SLURMInterface()
             else:
                 raise ValueError("Environment variable 'SCHEDULER' invalid")
         else:
