@@ -2,8 +2,8 @@ import os
 import io
 import unittest
 
-from jasmin.jasmin_job_monitor import JasminJobMonitor, LSFInterface, SLURMInterface
-from jasmin.status_codes import StatusCodes
+from jasmin_job_monitor import JasminJobMonitor, LSFInterface, SLURMInterface
+from status_codes import StatusCodes
 
 
 class JasminJobMonitorTest(unittest.TestCase):
@@ -61,6 +61,25 @@ class JasminJobMonitorTest(unittest.TestCase):
             self.assertEqual(StatusCodes.FAILED, job_status_dict["14839281"])
         finally:
             del os.environ["MMS_USER"]
+
+    def test_parse_job_status_SLURM_2(self):
+        output = "   JOBID PARTIT       QOS                 NAME       USER NODE  CPUS ST         TIME    TIME_LEFT PRIORITY NODELIST(REASON)\n" \
+                 "8466477 standa     short ingest-slstr-s3a-uor   tblock01    1     1  R         0:37      3:59:23    77911 (NonZeroExitCode)\n" \
+               "8466478 standa     short ingest-slstr-s3a-uor   tblock01    1     1  F         0:37      3:59:23    77911 (NonZeroExitCode)"
+
+
+        try:
+            os.environ["MMS_USER"] = "HarryPotter"
+            os.environ["SCHEDULER"] = "SLURM_2"
+
+            scheduler = SLURMInterface()
+            job_status_dict = scheduler.parse_jobs_call(output)
+            self.assertEqual(2, len(job_status_dict))
+            self.assertEqual(StatusCodes.RUNNING, job_status_dict["8466477"])
+            self.assertEqual(StatusCodes.FAILED, job_status_dict["8466478"])
+        finally:
+            del os.environ["MMS_USER"]
+            del os.environ["SCHEDULER"]
 
     def test_status_to_enum_LSF(self):
         scheduler = LSFInterface()

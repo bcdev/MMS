@@ -51,7 +51,7 @@ class JasminJobMonitor:
             elif scheduler_name == "SLURM_2":
                 return SLURMInterface()
             else:
-                raise ValueError("Environment variable 'SCHEDULER' invalid")
+                raise ValueError("Environment variable 'SCHEDULER' invalid" + scheduler_name)
         else:
             raise ValueError("Environment variable 'SCHEDULER' is not set")
 
@@ -190,10 +190,13 @@ class LSFInterface:
 class SLURMInterface:
 
     user_name = None
+    scheduler_name = None
 
     def __init__(self):
         if "MMS_USER" in os.environ:
             self.user_name = os.environ["MMS_USER"]
+            if "SCHEDULER" in os.environ:
+                self.scheduler_name = os.environ["SCHEDULER"]
         else:
             raise RuntimeError("Missing environment variable 'MMS_USER'")
 
@@ -226,7 +229,12 @@ class SLURMInterface:
         if len(tokens) < 7:
             raise ValueError("unable to handle 'squeue' result: " + line)
 
-        status_code = self._status_to_enum(tokens[4])
+        if self.scheduler_name == "SLURM_2":
+            status_token = tokens[7]
+        else:
+            status_token = tokens[4]
+
+        status_code = self._status_to_enum(status_token)
         return {tokens[0]: status_code}
 
     @staticmethod
