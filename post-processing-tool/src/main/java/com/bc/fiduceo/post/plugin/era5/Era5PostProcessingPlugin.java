@@ -14,14 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import static org.esa.snap.core.util.StringUtils.isNotNullAndNotEmpty;
 
@@ -98,8 +91,10 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
             if (zDimElement != null) {
                 final Attribute nameElement = JDomUtils.getMandatoryAttribute(zDimElement, "name");
                 satelliteFieldsConfiguration.set_z_dim_name(nameElement.getValue());
-                final Attribute lengthElement = JDomUtils.getMandatoryAttribute(zDimElement, "length");
-                satelliteFieldsConfiguration.set_z_dim(Integer.parseInt(lengthElement.getValue()));
+                final Attribute lengthElement = zDimElement.getAttribute("length");
+                if (lengthElement != null) {
+                    satelliteFieldsConfiguration.set_z_dim(Integer.parseInt(lengthElement.getValue()));
+                }
             }
 
             final Element sensorRefElement = satelliteFieldsElement.getChild("sensor-ref");
@@ -110,7 +105,7 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
             final Set<String> varNameKeys = satelliteFieldsConfiguration.getVarNameKeys();
             for (String varNameKey : varNameKeys) {
                 final Element varNameElement = satelliteFieldsElement.getChild(varNameKey);
-                if(varNameElement != null) {
+                if (varNameElement != null) {
                     satelliteFieldsConfiguration.setVarName(varNameKey, getElementValueTrimmed(varNameElement));
                 }
             }
@@ -271,7 +266,7 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
             for (Element collection : collections) {
                 final String collectionName = JDomUtils.getValueFromNameAttributeMandatory(collection).trim();
                 final Element is3d_E = collection.getChild("is3d");
-                final boolean is3d = is3d_E != null && "true".equals(is3d_E.getTextTrim().toLowerCase());
+                final boolean is3d = is3d_E != null && "true".equalsIgnoreCase(is3d_E.getTextTrim());
                 final List<Element> variables = collection.getChildren("var");
                 for (Element var_E : variables) {
                     final HashMap<String, String> attributes = new HashMap<>();
