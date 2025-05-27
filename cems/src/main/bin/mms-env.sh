@@ -15,7 +15,7 @@ export MMS_ENV_NAME=mms-env.sh
 
 # Java and Python runtime definitions
 # -----------------------------------
-export MMS_JAVA_EXEC='/gws/nopw/j04/esacci_sst/mms_new/software/jdk1.8.0_202/bin/java'
+export MMS_JAVA_EXEC='/gws/nopw/j04/esacci_sst/mms_new/software/openjdk-11.0.26'
 
 export PM_EXE_DIR=/gws/nopw/j04/esacci_sst/mms_new/bin
 export PM_PYTHON_EXEC='/gws/nopw/j04/esacci_sst/mms_new/software/conda_envs/sst-cci-mms/bin/python'
