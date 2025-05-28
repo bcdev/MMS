@@ -155,8 +155,13 @@ class SatelliteFieldsConfiguration extends FieldsConfiguration {
             throw new IllegalArgumentException("dimensions incorrect: x:" + x_dim + " y:" + y_dim);
         }
 
-        if (StringUtils.isNullOrEmpty(z_dim_name)) {
-            throw new IllegalArgumentException("z dimension name not configured");
+        if (z_dim_name != null) {
+            if (z_dim_name.isEmpty()) {
+                throw new IllegalArgumentException("z dimension name not configured");
+            }
+            if (z_dim < 1) {
+                throw new IllegalArgumentException("dimension incorrect: z:" + z_dim);
+            }
         }
 
         if (StringUtils.isNullOrEmpty(x_dim_name)) {
