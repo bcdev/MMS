@@ -35,6 +35,7 @@ class NdbcSMReader extends NdbcReader {
     private static final String REG_EX_SM = "\\w{5}h\\d{4}.txt";
 
     private static final String WVHT = "WVHT";
+    private static final String WTMP = "WTMP";
     private static final String DPD = "DPD";
     private static final String APD = "APD";
     private static final String MWD = "MWD";
@@ -151,6 +152,8 @@ class NdbcSMReader extends NdbcReader {
                 return createResultArray(record.gustSpeed, 99.f, DataType.FLOAT, interval);
             case WVHT:
                 return createResultArray(record.waveHeight, 99.f, DataType.FLOAT, interval);
+            case WTMP:
+                return createResultArray(record.seaSurfTemp, 999.f, DataType.FLOAT, interval);
             case DPD:
                 return createResultArray(record.domWavePeriod, 99.f, DataType.FLOAT, interval);
             case APD:

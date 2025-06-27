@@ -226,6 +226,10 @@ public class NdbcSMReader_IO_Test {
             assertEquals(DataType.SHORT, array.getDataType());
             assertEquals(38, array.getShort(0));
 
+            array = reader.readRaw(8, 2013, new Interval(1, 1), "WTMP");
+            assertEquals(DataType.FLOAT, array.getDataType());
+            assertEquals(999.f, array.getFloat(0), 1e-8);
+
             array = reader.readRaw(8, 2014, new Interval(1, 1), "WVHT");
             assertEquals(DataType.FLOAT, array.getDataType());
             assertEquals(99.f, array.getFloat(0), 1e-8);
@@ -264,6 +268,10 @@ public class NdbcSMReader_IO_Test {
             array = reader.readRaw(15, 2020, new Interval(1, 1), "WSPD");
             assertEquals(DataType.FLOAT, array.getDataType());
             assertEquals(5.2f, array.getFloat(0), 1e-8);
+
+            array = reader.readRaw(15, 2020, new Interval(1, 1), "WTMP");
+            assertEquals(DataType.FLOAT, array.getDataType());
+            assertEquals(999.f, array.getFloat(0), 1e-8);
         } finally {
             reader.close();
         }
