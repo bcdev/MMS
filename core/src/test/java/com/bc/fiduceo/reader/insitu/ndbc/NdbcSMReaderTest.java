@@ -94,7 +94,7 @@ public class NdbcSMReaderTest {
     public void testGetVariables() throws InvalidRangeException, IOException {
         final List<Variable> variables = reader.getVariables();
 
-        assertEquals(22, variables.size());
+        assertEquals(23, variables.size());
         Variable variable = variables.get(0);
         assertEquals("station_id", variable.getShortName());
         assertEquals(DataType.STRING, variable.getDataType());
@@ -121,21 +121,26 @@ public class NdbcSMReaderTest {
         assertEquals("wind_from_direction", variable.findAttribute(CF_STANDARD_NAME).getStringValue());
 
         variable = variables.get(13);
+        assertEquals("WTMP", variable.getShortName());
+        assertEquals(DataType.FLOAT, variable.getDataType());
+        assertEquals("Sea surface temperature (Celsius). For buoys the depth is referenced to the hull's waterline. For fixed platforms it varies with tide, but is referenced to, or near Mean Lower Low Water (MLLW).", variable.findAttribute(CF_LONG_NAME).getStringValue());
+
+        variable = variables.get(14);
         assertEquals("WVHT", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
         assertEquals("Significant wave height (meters) is calculated as the average of the highest one-third of all of the wave heights during the 20-minute sampling period.", variable.findAttribute(CF_LONG_NAME).getStringValue());
 
-        variable = variables.get(16);
+        variable = variables.get(17);
         assertEquals("MWD", variable.getShortName());
         assertEquals(DataType.SHORT, variable.getDataType());
         assertEquals("degT", variable.findAttribute(CF_UNITS_NAME).getStringValue());
 
-        variable = variables.get(19);
+        variable = variables.get(20);
         assertEquals("DEWP", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
         assertEquals(999.f, variable.findAttribute(CF_FILL_VALUE_NAME).getNumericValue().floatValue(), 1e-8);
 
-        variable = variables.get(21);
+        variable = variables.get(22);
         assertEquals("TIDE", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
         assertEquals("The water level in feet above or below Mean Lower Low Water (MLLW).", variable.findAttribute(CF_LONG_NAME).getStringValue());

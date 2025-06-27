@@ -220,6 +220,13 @@ class NdbcSMReader extends NdbcReader {
         createGustSpeedVariable(variables, "Peak 5 or 8 second gust speed (m/s) measured during the eight-minute or two-minute period. The 5 or 8 second period can be determined by payload.");
 
         attributes = new ArrayList<>();
+        attributes.add(new Attribute(CF_UNITS_NAME, "degC"));
+        attributes.add(new Attribute(CF_FILL_VALUE_NAME, 999.f));
+        attributes.add(new Attribute(CF_STANDARD_NAME, "sea_surface_temperature"));
+        attributes.add(new Attribute(CF_LONG_NAME, "Sea surface temperature (Celsius). For buoys the depth is referenced to the hull's waterline. For fixed platforms it varies with tide, but is referenced to, or near Mean Lower Low Water (MLLW)."));
+        variables.add(new VariableProxy(WTMP, DataType.FLOAT, attributes));
+
+        attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_UNITS_NAME, "m"));
         attributes.add(new Attribute(CF_FILL_VALUE_NAME, 99.f));
         attributes.add(new Attribute(CF_STANDARD_NAME, "sea_surface_wave_significant_height"));

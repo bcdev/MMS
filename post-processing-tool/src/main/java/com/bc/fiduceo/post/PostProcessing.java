@@ -120,8 +120,10 @@ public abstract class PostProcessing {
 
     protected static String getSourceFileName(Variable fileNameVar, int position, int filenameSize, final String fileNamePattern) throws IOException, InvalidRangeException {
         final String sourceFileName = NetCDFUtils.readString(fileNameVar, position, filenameSize);
-        if (!sourceFileName.matches(fileNamePattern)) {
-            throw new RuntimeException("The file name '" + sourceFileName + "' does not match the regular expression '" + fileNamePattern + "'");
+        if (StringUtils.isNotNullAndNotEmpty(fileNamePattern)) {
+            if (!sourceFileName.matches(fileNamePattern)) {
+                throw new RuntimeException("The file name '" + sourceFileName + "' does not match the regular expression '" + fileNamePattern + "'");
+            }
         }
         return sourceFileName;
     }

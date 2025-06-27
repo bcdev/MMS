@@ -53,7 +53,7 @@ public class MatchupToolIntegrationTest_SMOSL1_ndbc_sm extends AbstractUsecaseIn
             NCTestUtils.assert3DVariable("ndbc-sm-cs_PRES", 0, 0, 3, 1009.4f, mmd);
             NCTestUtils.assert3DVariable("ndbc-sm-cs_VIS", 0, 0, 4, 99.f, mmd);
             NCTestUtils.assert3DVariable("ndbc-sm-cs_WSPD", 0, 0, 5, 5.5f, mmd);
-            NCTestUtils.assert3DVariable("ndbc-sm-cs_WTMP", 0, 0, 5, 13.1f, mmd);
+            NCTestUtils.assert3DVariable("ndbc-sm-cs_WTMP", 0, 0, 3, 26.9f, mmd);
             NCTestUtils.assert3DVariable("ndbc-sm-cs_acquisition_time", 0, 0, 6, 1465042320L, mmd);
             NCTestUtils.assert3DVariable("ndbc-sm-cs_anemometer_height", 0, 0, 7, 10.f, mmd);
             NCTestUtils.assert3DVariable("ndbc-sm-cs_latitude", 0, 0, 8, 27.297f, mmd);

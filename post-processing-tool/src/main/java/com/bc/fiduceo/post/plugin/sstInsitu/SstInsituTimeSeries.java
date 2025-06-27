@@ -42,6 +42,7 @@ import static com.bc.fiduceo.util.TimeUtils.secondsSince1978;
 class SstInsituTimeSeries extends PostProcessing {
 
     private static final String FILE_NAME_PATTERN_D8_D8_NC = ".*_\\d{8}_\\d{8}.nc";
+    private static final String FILE_NAME_PATTERN_SIRDS = "SSTCCI2_refdata_\\w*_\\d{6}.nc";
     static final String INSITU_NTIME = "insitu.ntime";
 
     private final Configuration configuration;
@@ -65,7 +66,11 @@ class SstInsituTimeSeries extends PostProcessing {
         String matchupDimensionName = getMatchupDimensionName();
         matchupCount = NetCDFUtils.getDimensionLength(matchupDimensionName, reader);
 
-        final String insituFileName = getSourceFileName(fileNameVariable, 0, filenameFieldSize, FILE_NAME_PATTERN_D8_D8_NC);
+
+        final String insituFileName = getSourceFileName(fileNameVariable, 0, filenameFieldSize, null);
+        if (!nameMatches(insituFileName)) {
+            throw new IOException("The file name '" + insituFileName + "' does not match the regular expressions.");
+        }
 
         final Reader insituReader = readerCache.getReaderFor(sensorType, Paths.get(insituFileName), configuration.processingVersion);
         addInsituVariables(writer, insituReader);
@@ -230,6 +235,11 @@ class SstInsituTimeSeries extends PostProcessing {
         final Variable dtimeVariable = writer.addVariable(null, "insitu.dtime", DataType.INT, dimString);
         dtimeVariable.addAttribute(new Attribute(CF_UNITS_NAME, "seconds from matchup.time"));
         dtimeVariable.addAttribute(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(int.class)));
+    }
+
+    // package access for testing only tb 2025-06-27
+    static boolean nameMatches(String fileName) {
+        return fileName.matches(FILE_NAME_PATTERN_D8_D8_NC) || fileName.matches(FILE_NAME_PATTERN_SIRDS);
     }
 
     static class Range {

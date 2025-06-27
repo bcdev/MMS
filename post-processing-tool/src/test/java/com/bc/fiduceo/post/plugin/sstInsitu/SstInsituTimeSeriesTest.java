@@ -203,4 +203,15 @@ public class SstInsituTimeSeriesTest {
         verify(newVar, times(3)).addAttribute(any(Attribute.class));
         verifyNoMoreInteractions(writer, insituReader, newVar, v3, v2);
     }
+
+    @Test
+    public void testFileNameMatches() {
+        assertTrue(SstInsituTimeSeries.nameMatches("insitu_0_WMOID_42531_19960904_19960909.nc"));
+        assertTrue(SstInsituTimeSeries.nameMatches("insitu_0_WMOID_46942_19951026_19951027.nc"));
+        assertTrue(SstInsituTimeSeries.nameMatches("SSTCCI2_refdata_gtmba2_201204.nc"));
+        assertTrue(SstInsituTimeSeries.nameMatches("SSTCCI2_refdata_drifter_201701.nc"));
+
+        assertFalse(SstInsituTimeSeries.nameMatches("PIRATA_0N35W_sss_2016-10.txt"));
+        assertFalse(SstInsituTimeSeries.nameMatches("ASCAT-vs-AMSR2-vs-ERA5-vs-DMISIC0-2016-N.text"));
+    }
 }
