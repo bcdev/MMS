@@ -95,7 +95,10 @@ class SstInsituTimeSeries extends PostProcessing {
         final Variable dtimeVar2D = writer.findVariable(NetCDFUtils.escapeVariableName("insitu.dtime"));
 
         for (int i = 0; i < matchupCount; i++) {
-            final String insituFileName = getSourceFileName(fileNameVariable, i, filenameFieldSize, FILE_NAME_PATTERN_D8_D8_NC);
+            final String insituFileName = getSourceFileName(fileNameVariable, i, filenameFieldSize, null);
+            if (!nameMatches(insituFileName)) {
+                throw new RuntimeException("File name '" + insituFileName + "' does not match the regular expressions.");
+            }
             final SSTInsituReader insituReader = (SSTInsituReader) readerCache.getReaderFor(sensorType, Paths.get(insituFileName), configuration.processingVersion);
             Range range = computeInsituRange(y1D[i], insituReader);
             final int[] origin1D = {range.min};
