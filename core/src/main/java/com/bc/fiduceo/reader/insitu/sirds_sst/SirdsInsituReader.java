@@ -6,6 +6,7 @@ import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
+import com.bc.fiduceo.reader.insitu.InsituReader;
 import com.bc.fiduceo.reader.insitu.UniqueIdVariable;
 import com.bc.fiduceo.reader.netcdf.NetCDFReader;
 import com.bc.fiduceo.reader.netcdf.StringVariable;
@@ -19,6 +20,7 @@ import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Variable;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -26,7 +28,7 @@ import java.util.Locale;
 
 import static com.bc.fiduceo.reader.insitu.InsituUtils.getResultArray;
 
-public class SirdsInsituReader extends NetCDFReader {
+public class SirdsInsituReader extends InsituReader {
 
     private static final String REGEX_1 = "SSTCCI2_refdata_";
     private static final String REGEX_2 = "_\\d{6}.nc";
@@ -103,6 +105,11 @@ public class SirdsInsituReader extends NetCDFReader {
     public TimeLocator getTimeLocator() throws IOException {
         ensureSensingTimesAvailable();
         return (x, y) -> sensingTimes.getLong(y) * 1000L;
+    }
+
+    @Override
+    public Array getSourceArray(String variableName) throws IOException {
+        return arrayCache.get(variableName);
     }
 
     @Override

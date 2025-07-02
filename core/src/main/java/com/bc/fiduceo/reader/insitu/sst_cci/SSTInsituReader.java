@@ -25,6 +25,7 @@ import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
+import com.bc.fiduceo.reader.insitu.InsituReader;
 import com.bc.fiduceo.reader.insitu.UniqueIdVariable;
 import com.bc.fiduceo.reader.netcdf.NetCDFReader;
 import com.bc.fiduceo.reader.time.TimeLocator;
@@ -48,7 +49,7 @@ import static com.bc.fiduceo.util.NetCDFUtils.CF_FILL_VALUE_NAME;
 import static com.bc.fiduceo.util.TimeUtils.millisSince1978;
 import static com.bc.fiduceo.util.TimeUtils.secondsSince1978;
 
-public class SSTInsituReader extends NetCDFReader {
+public class SSTInsituReader extends InsituReader {
 
     private final Map<String, Number> fillValueMap = new HashMap<>();
     private final Map<String, Array> arrayMap = new HashMap<>();

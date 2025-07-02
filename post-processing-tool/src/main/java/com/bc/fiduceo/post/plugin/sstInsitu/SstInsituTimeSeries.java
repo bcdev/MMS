@@ -22,7 +22,7 @@ package com.bc.fiduceo.post.plugin.sstInsitu;
 import com.bc.fiduceo.FiduceoConstants;
 import com.bc.fiduceo.post.PostProcessing;
 import com.bc.fiduceo.reader.Reader;
-import com.bc.fiduceo.reader.insitu.sst_cci.SSTInsituReader;
+import com.bc.fiduceo.reader.insitu.InsituReader;
 import com.bc.fiduceo.util.NetCDFUtils;
 import org.esa.snap.core.util.StringUtils;
 import ucar.ma2.Array;
@@ -99,7 +99,7 @@ public class SstInsituTimeSeries extends PostProcessing {
             if (!nameMatches(insituFileName)) {
                 throw new RuntimeException("File name '" + insituFileName + "' does not match the regular expressions.");
             }
-            final SSTInsituReader insituReader = (SSTInsituReader) readerCache.getReaderFor(sensorType, Paths.get(insituFileName), configuration.processingVersion);
+            final InsituReader insituReader = (InsituReader) readerCache.getReaderFor(sensorType, Paths.get(insituFileName), configuration.processingVersion);
             Range range = computeInsituRange(y1D[i], insituReader);
             final int[] origin1D = {range.min};
             final int timeSeriesLength = getTimeSeriesLength(range);
@@ -164,7 +164,7 @@ public class SstInsituTimeSeries extends PostProcessing {
         return NetCDFUtils.getVariable(reader, configuration.yVariableName);
     }
 
-    Range computeInsituRange(final int matchupPos, SSTInsituReader insituReader) {
+    Range computeInsituRange(final int matchupPos, InsituReader insituReader) throws IOException {
         final String name = "insitu.time";
         final Array sourceArray = insituReader.getSourceArray(name);
         final int[] times = (int[]) sourceArray.getStorage();
