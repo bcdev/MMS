@@ -39,7 +39,7 @@ import static com.bc.fiduceo.util.NetCDFUtils.CF_FILL_VALUE_NAME;
 import static com.bc.fiduceo.util.NetCDFUtils.CF_UNITS_NAME;
 import static com.bc.fiduceo.util.TimeUtils.secondsSince1978;
 
-class SstInsituTimeSeries extends PostProcessing {
+public class SstInsituTimeSeries extends PostProcessing {
 
     private static final String FILE_NAME_PATTERN_D8_D8_NC = ".*_\\d{8}_\\d{8}.nc";
     private static final String FILE_NAME_PATTERN_SIRDS = "SSTCCI2_refdata_\\w*_\\d{6}.nc";
@@ -52,7 +52,7 @@ class SstInsituTimeSeries extends PostProcessing {
     private Variable fileNameVariable;
     private int filenameFieldSize;
 
-    SstInsituTimeSeries(Configuration configuration) {
+    public SstInsituTimeSeries(Configuration configuration) {
         this.configuration = configuration;
     }
 
