@@ -34,6 +34,7 @@ public class SstInsituTimeSeriesPlugin implements PostProcessingPlugin {
     static final String TAG_NAME_INSITU_SENSOR = "insitu-sensor";
     static final String TAG_NAME_FILE_NAME_VARIABLE = "file-name-variable";
     static final String TAG_NAME_Y_VARIABLE = "y-variable";
+    static final String TAG_NAME_INSITU_TIME_VARIABLE = "insitu-matchup-time-variable";
     static final String TAG_NAME_SECONDARY_SENSOR_MATCHUP_TIME_VARIABLE = "secondary-sensor-matchup-time-variable";
 
     @Override
@@ -63,6 +64,7 @@ public class SstInsituTimeSeriesPlugin implements PostProcessingPlugin {
         final String seriesSize = JDomUtils.getMandatoryChildMandatoryTextTrim(element, TAG_NAME_TIME_SERIES_SIZE);
         configuration.timeSeriesSize = Integer.parseInt(seriesSize);
 
+        configuration.insituTimeVarName = JDomUtils.getMandatoryChildMandatoryTextTrim(element, TAG_NAME_INSITU_TIME_VARIABLE);
         configuration.matchupTimeVarName = JDomUtils.getMandatoryChildMandatoryTextTrim(element, TAG_NAME_SECONDARY_SENSOR_MATCHUP_TIME_VARIABLE);
 
         final Element insituSensorElement = element.getChild(TAG_NAME_INSITU_SENSOR);

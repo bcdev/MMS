@@ -165,8 +165,7 @@ public class SstInsituTimeSeries extends PostProcessing {
     }
 
     Range computeInsituRange(final int matchupPos, InsituReader insituReader) throws IOException {
-        final String name = "insitu.time";
-        final Array sourceArray = insituReader.getSourceArray(name);
+        final Array sourceArray = insituReader.getSourceArray(configuration.insituTimeVarName);
         final int[] times = (int[]) sourceArray.getStorage();
         final int matchupTime = times[matchupPos];
         final int minTime_ = matchupTime - (configuration.timeRangeSeconds / 2);
@@ -261,6 +260,7 @@ public class SstInsituTimeSeries extends PostProcessing {
         int timeRangeSeconds;
         int timeSeriesSize;
         String matchupTimeVarName;
+        String insituTimeVarName;
         String insituSensorName;
         String fileNameVariableName;
         String yVariableName;

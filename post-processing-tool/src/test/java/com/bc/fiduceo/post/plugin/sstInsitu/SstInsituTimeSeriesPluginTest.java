@@ -27,14 +27,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_FILE_NAME_VARIABLE;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_INSITU_SENSOR;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_SECONDARY_SENSOR_MATCHUP_TIME_VARIABLE;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_SST_INSITU_TIME_SERIES;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_TIME_RANGE_SECONDS;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_TIME_SERIES_SIZE;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_VERSION;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_Y_VARIABLE;
+import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -57,6 +50,7 @@ public class SstInsituTimeSeriesPluginTest {
                 new Element(TAG_NAME_VERSION).addContent("v03.3"),
                 new Element(TAG_NAME_TIME_RANGE_SECONDS).addContent("" + 36 * 60 * 60),
                 new Element(TAG_NAME_TIME_SERIES_SIZE).addContent("96"),
+                new Element(TAG_NAME_INSITU_TIME_VARIABLE).addContent("drifter-sirds.acquisition_time"),
                 new Element(TAG_NAME_SECONDARY_SENSOR_MATCHUP_TIME_VARIABLE).addContent("amsre.acquisition_time")
         ));
     }
@@ -92,6 +86,7 @@ public class SstInsituTimeSeriesPluginTest {
         assertEquals(36 * 60 * 60, configuration.timeRangeSeconds);
         assertEquals(96, configuration.timeSeriesSize);
         assertEquals("amsre.acquisition_time", configuration.matchupTimeVarName);
+        assertEquals("drifter-sirds.acquisition_time", configuration.insituTimeVarName);
         assertNull(configuration.insituSensorName);
     }
 

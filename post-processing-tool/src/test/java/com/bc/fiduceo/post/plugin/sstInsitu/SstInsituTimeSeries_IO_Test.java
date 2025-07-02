@@ -56,11 +56,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_SECONDARY_SENSOR_MATCHUP_TIME_VARIABLE;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_SST_INSITU_TIME_SERIES;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_TIME_RANGE_SECONDS;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_TIME_SERIES_SIZE;
-import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.TAG_NAME_VERSION;
+import static com.bc.fiduceo.post.plugin.sstInsitu.SstInsituTimeSeriesPlugin.*;
 import static com.bc.fiduceo.util.NetCDFUtils.CF_FILL_VALUE_NAME;
 import static com.bc.fiduceo.util.NetCDFUtils.CF_LONG_NAME;
 import static com.bc.fiduceo.util.NetCDFUtils.CF_UNITS_NAME;
@@ -144,6 +140,7 @@ public class SstInsituTimeSeries_IO_Test {
         configuration.timeRangeSeconds = 124;
         configuration.timeSeriesSize = 16;
         configuration.matchupTimeVarName = "matchupTimeVarName";
+        configuration.insituTimeVarName = "insituTimeVarName";
         final SstInsituTimeSeries insituTimeSeries = new SstInsituTimeSeries(configuration);
         insituTimeSeries.setContext(context);
 
@@ -208,6 +205,7 @@ public class SstInsituTimeSeries_IO_Test {
         configuration.timeRangeSeconds = seconds;
         configuration.timeSeriesSize = 300;
         configuration.matchupTimeVarName = "matchupTimeVarName";
+        configuration.insituTimeVarName = "insitu.time";
         final SstInsituTimeSeries insituTimeSeries = new SstInsituTimeSeries(configuration);
 
         final ReaderFactory readerFactory = ReaderFactory.create(new GeometryFactory("S2"), null, null, null); // we don't need temp file support here tb 2018-01-23
@@ -260,6 +258,7 @@ public class SstInsituTimeSeries_IO_Test {
                                             new Element(TAG_NAME_VERSION).addContent("v03.3"),
                                             new Element(TAG_NAME_TIME_RANGE_SECONDS).addContent("" + 80000),
                                             new Element(TAG_NAME_TIME_SERIES_SIZE).addContent("10"),
+                                            new Element(TAG_NAME_INSITU_TIME_VARIABLE).addContent("insitu.time"),
                                             new Element(TAG_NAME_SECONDARY_SENSOR_MATCHUP_TIME_VARIABLE).addContent("amsre.acquisition_time")
                                     ))
                             )
