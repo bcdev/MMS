@@ -82,5 +82,23 @@ public class BilinearInterpolatorTest {
 
         assertEquals(62, interpolator.getXMin());
         assertEquals(129, interpolator.getYMin());
+        assertEquals(Integer.MIN_VALUE, interpolator.getRelXMin());
+        assertEquals(Integer.MIN_VALUE, interpolator.getRelYMin());
+    }
+
+    @Test
+    public void testSetGetRelXMin() {
+        final BilinearInterpolator interpolator = new BilinearInterpolator(0.0, 0.0, 63, 130);
+
+        interpolator.setRelXMin(5);
+        assertEquals(5, interpolator.getRelXMin());
+    }
+
+    @Test
+    public void testSetGetRelYMin() {
+        final BilinearInterpolator interpolator = new BilinearInterpolator(0.0, 0.0, 63, 130);
+
+        interpolator.setRelYMin(6);
+        assertEquals(6, interpolator.getRelYMin());
     }
 }

@@ -1,8 +1,7 @@
 package com.bc.fiduceo.post.plugin.era5;
 
+import com.bc.fiduceo.core.IntRange;
 import org.junit.Test;
-
-import java.awt.*;
 
 import static org.junit.Assert.*;
 
@@ -85,18 +84,108 @@ public class InterpolationContextTest {
     }
 
     @Test
-    public void testGetMinMaxY() {
-        final InterpolationContext interpolationContext = new InterpolationContext(3, 3);
-        interpolationContext.set(0, 0, new BilinearInterpolator(0, 0, 0, 121));
-//        interpolationContext.set(1, 0, new BilinearInterpolator(0, 0, 0, 128));
-        interpolationContext.set(2, 0, new BilinearInterpolator(0, 0, 0, 118));
-        interpolationContext.set(0, 1, new BilinearInterpolator(0, 0, 0, 313));
-        interpolationContext.set(1, 1, new BilinearInterpolator(0, 0, 0, 215));
-//        interpolationContext.set(2, 1, new BilinearInterpolator(0, 0, 0, 256));
-        interpolationContext.set(0, 2, new BilinearInterpolator(0, 0, 0, 244));
-//        interpolationContext.set(1, 2, new BilinearInterpolator(0, 0, 0, 170));
-        interpolationContext.set(2, 2, new BilinearInterpolator(0, 0, 0, 199));
+    public void testGetXRanges_emptyContext() {
+        final InterpolationContext context = new InterpolationContext(5, 3);
 
-        assertArrayEquals(new int[]{118, 314}, interpolationContext.getMinMaxY());
+        final IntRange[] xRanges = context.getXRanges();
+        assertEquals(1, xRanges.length);
+        assertEquals(Integer.MAX_VALUE, xRanges[0].getMin());
+        assertEquals(Integer.MIN_VALUE, xRanges[0].getMax());
+    }
+
+    @Test
+    public void testGetXRanges_oneInterpolator() {
+        final InterpolationContext context = new InterpolationContext(4, 5);
+
+        final BilinearInterpolator interpolator = new BilinearInterpolator(0.3, 0.5, 6, 7);
+        context.set(0, 0, interpolator);
+
+        final IntRange[] xRanges = context.getXRanges();
+        assertEquals(1, xRanges.length);
+        assertEquals(6, xRanges[0].getMin());
+        assertEquals(7, xRanges[0].getMax());
+
+        assertEquals(0, interpolator.getRelXMin());
+        assertEquals(0, interpolator.getRelYMin());
+    }
+
+    @Test
+    public void testGetXRanges_threeInterpolators() {
+        final InterpolationContext context = new InterpolationContext(4, 5);
+
+        BilinearInterpolator interpolator = new BilinearInterpolator(0.3, 0.5, 6, 7);
+        context.set(0, 0, interpolator);
+
+        interpolator = new BilinearInterpolator(0.3, 0.5, 7, 8);
+        context.set(1, 1, interpolator);
+
+        interpolator = new BilinearInterpolator(0.3, 0.5, 8, 9);
+        context.set(2, 2, interpolator);
+
+        final IntRange[] xRanges = context.getXRanges();
+        assertEquals(1, xRanges.length);
+        assertEquals(6, xRanges[0].getMin());
+        assertEquals(9, xRanges[0].getMax());
+    }
+
+    @Test
+    public void testGetXRanges_threeInterpolators_antimeridianCase() {
+        final InterpolationContext context = new InterpolationContext(4, 5);
+
+        BilinearInterpolator interpolator = new BilinearInterpolator(0.3, 0.5, 1438, 7);
+        context.set(0, 0, interpolator);
+
+        interpolator = new BilinearInterpolator(0.3, 0.5, 1439, 8);
+        context.set(1, 1, interpolator);
+
+        interpolator = new BilinearInterpolator(0.3, 0.5, 0, 9);
+        context.set(2, 2, interpolator);
+
+        final IntRange[] xRanges = context.getXRanges();
+        assertEquals(2, xRanges.length);
+        assertEquals(1438, xRanges[0].getMin());
+        assertEquals(1439, xRanges[0].getMax());
+
+        assertEquals(0, xRanges[1].getMin());
+        assertEquals(1, xRanges[1].getMax());
+    }
+
+    @Test
+    public void testGetYRange_emptyContext() {
+        final InterpolationContext context = new InterpolationContext(5, 3);
+
+        final IntRange yRange = context.getYRange();
+        assertEquals(Integer.MAX_VALUE, yRange.getMin());
+        assertEquals(Integer.MIN_VALUE, yRange.getMax());
+    }
+
+    @Test
+    public void testGetYRange_oneInterpolator() {
+        final InterpolationContext context = new InterpolationContext(4, 5);
+
+        final BilinearInterpolator interpolator = new BilinearInterpolator(0.3, 0.5, 6, 7);
+        context.set(0, 0, interpolator);
+
+        final IntRange yRange = context.getYRange();
+        assertEquals(7, yRange.getMin());
+        assertEquals(8, yRange.getMax());
+    }
+
+    @Test
+    public void testGetYRange_threeInterpolators() {
+        final InterpolationContext context = new InterpolationContext(4, 5);
+
+        BilinearInterpolator interpolator = new BilinearInterpolator(0.3, 0.5, 6, 7);
+        context.set(0, 0, interpolator);
+
+        interpolator = new BilinearInterpolator(0.3, 0.5, 7, 7);
+        context.set(1, 0, interpolator);
+
+        interpolator = new BilinearInterpolator(0.3, 0.5, 7, 8);
+        context.set(1, 1, interpolator);
+
+        final IntRange yRange = context.getYRange();
+        assertEquals(7, yRange.getMin());
+        assertEquals(9, yRange.getMax());
     }
 }
