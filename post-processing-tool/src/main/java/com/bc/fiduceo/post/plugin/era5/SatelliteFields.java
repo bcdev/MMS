@@ -210,33 +210,40 @@ class SatelliteFields extends FieldsProcessor {
         final IntRange[] xRanges = interpolationContext.getXRanges();
         final IntRange yRange = interpolationContext.getYRange();
         if (xRanges.length == 1) {
-            final int rank = variable.getRank();
-            final int[] offsets;
-            final int[] shape;
+            return readFullEra5Array(variable, numLayers, yRange, xRanges[0], scaleFactor, offset);
+        } else {
+            final Array left = readFullEra5Array(variable, numLayers, yRange, xRanges[0], scaleFactor, offset);
+            final Array right = readFullEra5Array(variable, numLayers, yRange, xRanges[1], scaleFactor, offset);
 
-            final int yMin = yRange.getMin();
-            final int xMin = xRanges[0].getMin();
-            int yLength = yRange.getLength() + 1;
-            int xlength = xRanges[0].getLength() + 1;
+            return ArrayUtils.mergeAlongX(left, right);
+        }
+    }
 
-            if (rank == 3) {
-                offsets = new int[]{0, yMin, xMin};
-                shape = new int[]{1, yLength, xlength};
-            } else if (rank == 4) {
-                offsets = new int[]{0, 0, yMin, xMin};
-                shape = new int[]{1, numLayers, yLength, xlength};
-            } else {
-                throw new IllegalStateException("unsupport input data rank");
-            }
+    private static Array readFullEra5Array(Variable variable, int numLayers, IntRange yRange, IntRange xRange, double scaleFactor, double offset) throws IOException, InvalidRangeException {
+        final int rank = variable.getRank();
+        final int[] offsets;
+        final int[] shape;
 
-            Array era5Data = variable.read(offsets, shape);
-            if (ReaderUtils.mustScale(scaleFactor, offset)) {
-                era5Data = NetCDFUtils.scale(era5Data, scaleFactor, offset);
-            }
-            return era5Data;
+        final int yMin = yRange.getMin();
+        final int xMin = xRange.getMin();
+        int yLength = yRange.getLength() + 1;
+        int xlength = xRange.getLength() + 1;
+
+        if (rank == 3) {
+            offsets = new int[]{0, yMin, xMin};
+            shape = new int[]{1, yLength, xlength};
+        } else if (rank == 4) {
+            offsets = new int[]{0, 0, yMin, xMin};
+            shape = new int[]{1, numLayers, yLength, xlength};
         } else {
             throw new IllegalStateException("unsupport input data rank");
         }
+
+        Array era5Data = variable.read(offsets, shape);
+        if (ReaderUtils.mustScale(scaleFactor, offset)) {
+            era5Data = NetCDFUtils.scale(era5Data, scaleFactor, offset);
+        }
+        return era5Data;
     }
 
     private void addTimeVariable(SatelliteFieldsConfiguration satFieldsConfig, NetcdfFileWriter writer) {
