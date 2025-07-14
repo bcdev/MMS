@@ -1,7 +1,7 @@
 package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.FiduceoConstants;
-import com.bc.fiduceo.post.util.PPUtils;
+import com.bc.fiduceo.core.IntRange;
 import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
 import ucar.ma2.Array;
@@ -9,11 +9,9 @@ import ucar.ma2.DataType;
 import ucar.ma2.Index;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.*;
-import ucar.nc2.Dimension;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 import static com.bc.fiduceo.post.plugin.era5.VariableUtils.*;
 import static com.bc.fiduceo.post.util.PPUtils.convertToFitTheRangeMinus180to180;
@@ -111,11 +109,10 @@ class SatelliteFields extends FieldsProcessor {
                     final Array targetArray = targetArrays.get(variableKey);
                     final Index targetIndex = targetArray.getIndex();
 
-                    final double scaleFactor = NetCDFUtils.getScaleFactor(variable);
-                    final double offset = NetCDFUtils.getOffset(variable);
-                    final boolean mustScale = ReaderUtils.mustScale(scaleFactor, offset);
-
                     final int rank = variable.getRank();
+                    final Array era5Data = loadEra5Data(variable, interpolationContext, numLayers);
+                    final Index era5Index = era5Data.getIndex();
+
                     if (rank == 3) {
                         for (int y = 0; y < height; y++) {
                             for (int x = 0; x < width; x++) {
@@ -130,20 +127,19 @@ class SatelliteFields extends FieldsProcessor {
                                     targetArray.setFloat(targetIndex, fillValue);
                                     continue;
                                 }
-                                final int offsetX = interpolator.getXMin();
-                                final int offsetX1 = (offsetX + 1) % 1440;
-                                final int offsetY = interpolator.getYMin();
 
-                                Array leftSide = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 1});
-                                Array rightSide = variable.read(new int[]{0, offsetY, offsetX1}, new int[]{1, 2, 1});
-                                if (mustScale) {
-                                    leftSide = NetCDFUtils.scale(leftSide, scaleFactor, offset);
-                                    rightSide = NetCDFUtils.scale(rightSide, scaleFactor, offset);
-                                }
-                                final float c00 = leftSide.getFloat(0);
-                                final float c10 = rightSide.getFloat(0);
-                                final float c01 = leftSide.getFloat(1);
-                                final float c11 = rightSide.getFloat(1);
+                                // calculate offsets into era5 data
+                                final int era5X = interpolator.getRelXMin();
+                                final int era5Y = interpolator.getRelYMin();
+                                // read c00 -> c11 directly from era5 data array
+                                era5Index.set(0, era5Y, era5X);
+                                final float c00 = era5Data.getFloat(era5Index);
+                                era5Index.set(0, era5Y, era5X + 1);
+                                final float c10 = era5Data.getFloat(era5Index);
+                                era5Index.set(0, era5Y + 1, era5X);
+                                final float c01 = era5Data.getFloat(era5Index);
+                                era5Index.set(0, era5Y + 1, era5X + 1);
+                                final float c11 = era5Data.getFloat(era5Index);
 
                                 final double interpolate = interpolator.interpolate(c00, c10, c01, c11);
 
@@ -167,20 +163,18 @@ class SatelliteFields extends FieldsProcessor {
                                         continue;
                                     }
 
-                                    final int offsetX = interpolator.getXMin();
-                                    final int offsetX1 = (offsetX + 1) % 1440;
-                                    final int offsetY = interpolator.getYMin();
-
-                                    Array leftSide = variable.read(new int[]{0, z, offsetY, offsetX}, new int[]{1, 1, 2, 1});
-                                    Array rightSide = variable.read(new int[]{0, z, offsetY, offsetX1}, new int[]{1, 1, 2, 1});
-                                    if (mustScale) {
-                                        leftSide = NetCDFUtils.scale(leftSide, scaleFactor, offset);
-                                        rightSide = NetCDFUtils.scale(rightSide, scaleFactor, offset);
-                                    }
-                                    final float c00 = leftSide.getFloat(0);
-                                    final float c10 = rightSide.getFloat(0);
-                                    final float c01 = leftSide.getFloat(1);
-                                    final float c11 = rightSide.getFloat(1);
+                                    // calculate offsets into era5 data
+                                    final int era5X = interpolator.getRelXMin();
+                                    final int era5Y = interpolator.getRelYMin();
+                                    // read c00 -> c11 directly from era5 data array
+                                    era5Index.set(0, z, era5Y, era5X);
+                                    final float c00 = era5Data.getFloat(era5Index);
+                                    era5Index.set(0, z, era5Y, era5X + 1);
+                                    final float c10 = era5Data.getFloat(era5Index);
+                                    era5Index.set(0, z, era5Y + 1, era5X);
+                                    final float c01 = era5Data.getFloat(era5Index);
+                                    era5Index.set(0, z, era5Y + 1, era5X + 1);
+                                    final float c11 = era5Data.getFloat(era5Index);
 
                                     final double interpolate = interpolator.interpolate(c00, c10, c01, c11);
 
@@ -205,6 +199,51 @@ class SatelliteFields extends FieldsProcessor {
         } finally {
             variableCache.close();
         }
+    }
+
+    static Array loadEra5Data(Variable variable, InterpolationContext interpolationContext, int numLayers) throws InvalidRangeException, IOException {
+        // load the required ERA5 variable data
+        final double scaleFactor = NetCDFUtils.getScaleFactor(variable);
+        final double offset = NetCDFUtils.getOffset(variable);
+
+        // request xRanges
+        final IntRange[] xRanges = interpolationContext.getXRanges();
+        final IntRange yRange = interpolationContext.getYRange();
+        if (xRanges.length == 1) {
+            return readFullEra5Array(variable, numLayers, yRange, xRanges[0], scaleFactor, offset);
+        } else {
+            final Array left = readFullEra5Array(variable, numLayers, yRange, xRanges[0], scaleFactor, offset);
+            final Array right = readFullEra5Array(variable, numLayers, yRange, xRanges[1], scaleFactor, offset);
+
+            return ArrayUtils.mergeAlongX(left, right);
+        }
+    }
+
+    private static Array readFullEra5Array(Variable variable, int numLayers, IntRange yRange, IntRange xRange, double scaleFactor, double offset) throws IOException, InvalidRangeException {
+        final int rank = variable.getRank();
+        final int[] offsets;
+        final int[] shape;
+
+        final int yMin = yRange.getMin();
+        final int xMin = xRange.getMin();
+        int yLength = yRange.getLength() + 1;
+        int xlength = xRange.getLength() + 1;
+
+        if (rank == 3) {
+            offsets = new int[]{0, yMin, xMin};
+            shape = new int[]{1, yLength, xlength};
+        } else if (rank == 4) {
+            offsets = new int[]{0, 0, yMin, xMin};
+            shape = new int[]{1, numLayers, yLength, xlength};
+        } else {
+            throw new IllegalStateException("unsupport input data rank");
+        }
+
+        Array era5Data = variable.read(offsets, shape);
+        if (ReaderUtils.mustScale(scaleFactor, offset)) {
+            era5Data = NetCDFUtils.scale(era5Data, scaleFactor, offset);
+        }
+        return era5Data;
     }
 
     private void addTimeVariable(SatelliteFieldsConfiguration satFieldsConfig, NetcdfFileWriter writer) {
