@@ -17,7 +17,7 @@ public class MmdQCToolTest {
 
         MmdQCTool.printUsageTo(outputStream);
 
-        assertEquals("mmd-qc-tool version 1.6.0" + ls +
+        assertEquals("mmd-qc-tool version 1.6.1-SNAPSHOT" + ls +
                 ls +
                 "usage: mmd-qc-tool <options>" + ls +
                 "Valid options are:" + ls +
