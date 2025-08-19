@@ -54,7 +54,7 @@ public class AMSUB_MHS_L1C_ReaderPluginTest {
     }
 
     @Test
-    public void testGetSupportedSensorKey() {
+    public void testGetSupportedSensorKeys() {
         final String[] expected = {"amsub-n15", "amsub-n16", "amsub-n17", "mhs-n18", "mhs-n19", "mhs-ma", "mhs-mb"};
 
         final String[] sensorKeys = plugin.getSupportedSensorKeys();
