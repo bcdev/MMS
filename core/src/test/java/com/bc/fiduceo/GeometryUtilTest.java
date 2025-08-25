@@ -24,6 +24,8 @@ package com.bc.fiduceo;
 import com.bc.fiduceo.geometry.*;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -66,6 +68,68 @@ public class GeometryUtilTest {
                 "  </Placemark>\n" +
                 "</Document>\n" +
                 "</kml>", GeometryUtil.toKml(polygon));
+    }
+
+    @Test
+    public void testToKml_multiPolygon() {
+        final GeometryFactory geometryFactory = new GeometryFactory(GeometryFactory.Type.S2);
+        final Polygon polygon1 = (Polygon) geometryFactory.parse("POLYGON((0 0, 0 1, 1 1, 1 0, 0 0))");
+        final Polygon polygon2 = (Polygon) geometryFactory.parse("POLYGON((2 2, 2 3, 3 3, 3 2, 2 2))");
+
+        final MultiPolygon multiPolygon = geometryFactory.createMultiPolygon(Arrays.asList(polygon1, polygon2));
+
+        final String expectedKml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                        "<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n" +
+                        "<Document>\n" +
+                        "  <Style id=\"polygonStyle\">\n" +
+                        "    <LineStyle>\n" +
+                        "      <color>7f00ffff</color>\n" +
+                        "      <width>1</width>\n" +
+                        "    </LineStyle>\n" +
+                        "    <PolyStyle>\n" +
+                        "      <color>7f00ff00</color>\n" +
+                        "    </PolyStyle>\n" +
+                        "  </Style>\n" +
+                        "  <Placemark>\n" +
+                        "  <name>part_1</name>\n" +
+                        "  <styleUrl>#polygonStyle</styleUrl>\n" +
+                        "  <Polygon>\n" +
+                        "    <altitudeMode>clampToGround</altitudeMode>\n" +
+                        "    <outerBoundaryIs>\n" +
+                        "      <LinearRing>\n" +
+                        "        <coordinates>\n" +
+                        "          0.0,0.0,0\n" +
+                        "          0.0,1.0,0\n" +
+                        "          0.9999999999999998,1.0,0\n" +
+                        "          1.0,0.0,0\n" +
+                        "          0.0,0.0,0\n" +
+                        "        </coordinates>\n" +
+                        "      </LinearRing>\n" +
+                        "    </outerBoundaryIs>\n" +
+                        "  </Polygon>\n" +
+                        "  </Placemark>\n" +
+                        "  <Placemark>\n" +
+                        "  <name>part_2</name>\n" +
+                        "  <styleUrl>#polygonStyle</styleUrl>\n" +
+                        "  <Polygon>\n" +
+                        "    <altitudeMode>clampToGround</altitudeMode>\n" +
+                        "    <outerBoundaryIs>\n" +
+                        "      <LinearRing>\n" +
+                        "        <coordinates>\n" +
+                        "          2.0,1.9999999999999996,0\n" +
+                        "          1.9999999999999996,3.0000000000000004,0\n" +
+                        "          3.0000000000000004,3.000000000000001,0\n" +
+                        "          3.0000000000000004,2.0,0\n" +
+                        "          2.0,1.9999999999999996,0\n" +
+                        "        </coordinates>\n" +
+                        "      </LinearRing>\n" +
+                        "    </outerBoundaryIs>\n" +
+                        "  </Polygon>\n" +
+                        "  </Placemark>\n" +
+                        "</Document>\n" +
+                        "</kml>";
+        assertEquals(expectedKml, GeometryUtil.toKml(multiPolygon));
     }
 
     @Test

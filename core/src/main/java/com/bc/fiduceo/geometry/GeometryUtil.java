@@ -127,6 +127,54 @@ public class GeometryUtil {
         return builder.toString();
     }
 
+    public static String toKml(MultiPolygon multiPolygon) {
+        final StringBuilder builder = new StringBuilder();
+
+        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        builder.append("<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n");
+        builder.append("<Document>\n");
+        builder.append("  <Style id=\"polygonStyle\">\n");
+        builder.append("    <LineStyle>\n");
+        builder.append("      <color>7f00ffff</color>\n");
+        builder.append("      <width>1</width>\n");
+        builder.append("    </LineStyle>\n");
+        builder.append("    <PolyStyle>\n");
+        builder.append("      <color>7f00ff00</color>\n");
+        builder.append("    </PolyStyle>\n");
+        builder.append("  </Style>\n");
+
+        int index = 1;
+        for (Polygon polygon : multiPolygon.getPolygons()) {
+            builder.append("  <Placemark>\n");
+            builder.append("  <name>part_" + index + "</name>\n");
+            builder.append("  <styleUrl>#polygonStyle</styleUrl>\n");
+            builder.append("  <Polygon>\n");
+            builder.append("    <altitudeMode>clampToGround</altitudeMode>\n");
+            builder.append("    <outerBoundaryIs>\n");
+            builder.append("      <LinearRing>\n");
+            builder.append("        <coordinates>\n");
+            final Point[] coordinates = polygon.getCoordinates();
+            for (final Point coordinate : coordinates) {
+                builder.append("          ");
+                builder.append(coordinate.getLon());
+                builder.append(",");
+                builder.append(coordinate.getLat());
+                builder.append(",0\n");
+            }
+            builder.append("        </coordinates>\n");
+            builder.append("      </LinearRing>\n");
+            builder.append("    </outerBoundaryIs>\n");
+            builder.append("  </Polygon>\n");
+            builder.append("  </Placemark>\n");
+            index++;
+        }
+
+        builder.append("</Document>\n");
+        builder.append("</kml>");
+
+        return builder.toString();
+    }
+
     public static String toKml(float[] lats, float[] lons) {
         final StringBuilder builder = new StringBuilder();
         builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
