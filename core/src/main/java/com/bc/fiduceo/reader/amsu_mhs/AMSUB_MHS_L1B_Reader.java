@@ -3,16 +3,17 @@ package com.bc.fiduceo.reader.amsu_mhs;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
-import com.bc.fiduceo.geometry.Polygon;
+import com.bc.fiduceo.geometry.*;
 import com.bc.fiduceo.location.PixelLocator;
-import com.bc.fiduceo.reader.AcquisitionInfo;
-import com.bc.fiduceo.reader.Reader;
+import com.bc.fiduceo.reader.*;
+import com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants;
 import com.bc.fiduceo.reader.amsu_mhs.nat.Record;
 import com.bc.fiduceo.reader.amsu_mhs.nat.RecordFactory;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Variable;
@@ -20,13 +21,22 @@ import ucar.nc2.Variable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AMSUB_MHS_L1B_Reader implements Reader {
 
+    private static final int NUM_SPLITS = 2;
     private FileInputStream fileInputStream;
+
+    private final GeometryFactory geometryFactory;
+
+    AMSUB_MHS_L1B_Reader(ReaderContext readerContext) {
+        this.geometryFactory = readerContext.getGeometryFactory();
+    }
 
     @Override
     public void open(File file) throws IOException {
@@ -57,16 +67,18 @@ public class AMSUB_MHS_L1B_Reader implements Reader {
         Date sensingStart = recordMPHR.getDate("SENSING_START");
         Date sensingEnd = recordMPHR.getDate("SENSING_END");
 
-        // todo bl: boundingGeometry
-        // todo bl: timeAxes
-
         acquisitionInfo.setSensingStart(sensingStart);
         acquisitionInfo.setSensingStop(sensingEnd);
         acquisitionInfo.setNodeType(NodeType.UNDEFINED);
 
+        List<Array> coordinates = extractCoordinates(recordsMDR);
+        final Geometries geometries = extractGeometries(coordinates.get(0), coordinates.get(1));
+
+        acquisitionInfo.setBoundingGeometry(geometries.getBoundingGeometry());
+        ReaderUtils.setTimeAxes(acquisitionInfo, geometries.getTimeAxesGeometry(), geometryFactory);
+
         return acquisitionInfo;
     }
-
 
     @Override
     public String getRegEx() {
@@ -126,5 +138,60 @@ public class AMSUB_MHS_L1B_Reader implements Reader {
     @Override
     public String getLatitudeVariableName() {
         throw new RuntimeException("not implemented");
+    }
+
+
+    private BoundingPolygonCreator getBoundingPolygonCreator() {
+        return new BoundingPolygonCreator(new Interval(10, 20), geometryFactory);
+    }
+
+    private Geometries extractGeometries(Array longitudes, Array latitudes) throws IOException {
+        final Geometries geometries = new Geometries();
+        final BoundingPolygonCreator boundingPolygonCreator = getBoundingPolygonCreator();
+
+        Geometry boundingGeometry = boundingPolygonCreator.createBoundingGeometryClockwise(longitudes, latitudes);
+        Geometry timeAxisGeometry;
+
+        if (!boundingGeometry.isValid()) {
+            boundingGeometry = boundingPolygonCreator.createBoundingGeometrySplitted(longitudes, latitudes, NUM_SPLITS, true);
+            if (!boundingGeometry.isValid()) {
+                throw new RuntimeException("Invalid bounding geometry detected");
+            }
+            timeAxisGeometry = boundingPolygonCreator.createTimeAxisGeometrySplitted(longitudes, latitudes, NUM_SPLITS);
+        } else {
+            timeAxisGeometry = boundingPolygonCreator.createTimeAxisGeometry(longitudes, latitudes);
+        }
+
+        geometries.setBoundingGeometry(boundingGeometry);
+        geometries.setTimeAxesGeometry(timeAxisGeometry);
+
+        return geometries;
+    }
+
+    private List<Array> extractCoordinates(List<MDR> recordsMDR) {
+        List<Array> coordinates = new ArrayList<>();
+
+        int numScanLines = recordsMDR.size();
+
+        Array longitudes = new ArrayDouble.D2(numScanLines, EPS_Constants.MHS_FOV_COUNT);
+        Array latitudes = new ArrayDouble.D2(numScanLines, EPS_Constants.MHS_FOV_COUNT);
+
+        for (int ii = 0; ii < numScanLines; ii++) {
+            MDR mdr = recordsMDR.get(ii);
+            byte[] locationBytes = new byte[EPS_Constants.MHS_EARTH_LOCATIONS_TOTAL_BYTE_SIZE];
+            System.arraycopy(mdr.getPayload(), EPS_Constants.MHS_L1B_EARTH_LOCATIONS_OFFSET, locationBytes, 0, EPS_Constants.MHS_EARTH_LOCATIONS_TOTAL_BYTE_SIZE);
+            final ByteBuffer byteBuffer = ByteBuffer.wrap(locationBytes);
+
+            for (int jj = 0; jj < EPS_Constants.MHS_FOV_COUNT; jj++) {
+                int lat = byteBuffer.getInt();
+                int lon = byteBuffer.getInt();
+                latitudes.setDouble((ii * EPS_Constants.MHS_FOV_COUNT) + jj, (double) lat / EPS_Constants.MHS_EARTH_LOCATIONS_SCALE_FACTOR);
+                longitudes.setDouble((ii * EPS_Constants.MHS_FOV_COUNT) + jj, (double) lon / EPS_Constants.MHS_EARTH_LOCATIONS_SCALE_FACTOR);
+            }
+        }
+
+        coordinates.add(longitudes);
+        coordinates.add(latitudes);
+        return coordinates;
     }
 }

@@ -11,7 +11,7 @@ public class AMSUB_MHS_L1B_ReaderPlugin implements ReaderPlugin {
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
-        return new AMSUB_MHS_L1B_Reader();
+        return new AMSUB_MHS_L1B_Reader(readerContext);
     }
 
     @Override
