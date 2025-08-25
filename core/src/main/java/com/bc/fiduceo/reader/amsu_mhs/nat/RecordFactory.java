@@ -25,9 +25,8 @@ public class RecordFactory {
                 continue;
             }
 
-            int payloadSize = recordSize - 20;
-            byte[] payload = new byte[payloadSize];
-            System.arraycopy(allBytes, index + 20, payload, 0, payloadSize);
+            byte[] payload = new byte[recordSize];
+            System.arraycopy(allBytes, index, payload, 0, recordSize);
 
             Record record = createRecord(header, payload);
             records.add(record);

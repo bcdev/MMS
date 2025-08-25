@@ -46,6 +46,8 @@ public class RecordFactoryTest {
         assertTrue(recordMPHR instanceof MPHR);
         assertTrue(recordMDR instanceof MDR);
         assertTrue(!(recordDefault instanceof MPHR) && !(recordDefault instanceof MDR));
+
+        assertEquals(payload.length, recordMPHR.getPayload().length);
     }
 
     private byte[] createDummyRecord(RECORD_CLASS recordClass, int size, byte fillValue) {
