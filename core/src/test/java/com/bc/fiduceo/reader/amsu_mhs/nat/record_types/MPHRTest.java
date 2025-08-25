@@ -12,61 +12,66 @@ public class MPHRTest {
 
     @Test
     public void testExtractStartAndEndTime() throws IOException {
-        String times = "SENSING_START                 = 20250820060350Z\n" +
-                       "SENSING_END                   = 20250820074550Z\n";
-        byte[] payload = createDummyPayload(times);
-        MPHR mphr = new MPHR(null, payload);
+        final byte[] payLoad = new byte[3307];
+        String sensingStart = "SENSING_START                 = 20250820060350Z";
+        String sensingEnd = "SENSING_END                   = 20250820074550Z";
 
-        Date sensingStart = mphr.getDate("SENSING_START");
-        Date sensingEnd = mphr.getDate("SENSING_END");
+        System.arraycopy(sensingStart.getBytes(), 0, payLoad, 700, sensingStart.getBytes().length);
+        System.arraycopy(sensingEnd.getBytes(), 0, payLoad, 748, sensingStart.getBytes().length);
+        MPHR mphr = new MPHR(null, payLoad);
 
-        assertNotNull(sensingStart);
-        assertNotNull(sensingEnd);
-        assertTrue(sensingStart.before(sensingEnd));
+        Date sensingStartDate = mphr.getDate("SENSING_START");
+        Date sensingEndDate = mphr.getDate("SENSING_END");
+
+        assertEquals(1755669830000L, sensingStartDate.getTime());
+        assertEquals(1755675950000L, sensingEndDate.getTime());
+        assertTrue(sensingStartDate.before(sensingEndDate));
     }
 
     @Test
     public void testParseError() {
-        String times = "SENSING_START                 = 20250820060350X\n" +
-                       "SENSING_END                   = 20250820074550X\n";
-        byte[] payload = createDummyPayload(times);
-        MPHR mphr = new MPHR(null, payload);
+        final byte[] payLoad = new byte[3307];
+        String sensingStart = "SENSING_START                 = 20250820060350X";
+        String sensingEnd = "SENSING_END                   = 20250820074550X";
+
+        System.arraycopy(sensingStart.getBytes(), 0, payLoad, 700, sensingStart.getBytes().length);
+        System.arraycopy(sensingEnd.getBytes(), 0, payLoad, 748, sensingStart.getBytes().length);
+        MPHR mphr = new MPHR(null, payLoad);
 
         Exception ex = assertThrows(IOException.class, () -> mphr.getDate("SENSING_START"));
-        assertEquals("Could not parse SENSING_START time: 20250820060350X", ex.getMessage());
+        assertEquals("Could not parse time: 20250820060350X", ex.getMessage());
+    }
+
+    @Test
+    public void testGetDate_invalidKey() {
+        final byte[] payLoad = new byte[3307];
+        MPHR mphr = new MPHR(null, payLoad);
+
+        try {
+            mphr.getDate("FANCY_DATE");
+            fail("IllegalStateException expected");
+        } catch (IllegalStateException | IOException expected) {
+        }
     }
 
     @Test
     public void testInvalidPayload() {
-        byte[] payload = createDummyPayload("");
-        MPHR mphr = new MPHR(null, payload);
+        final byte[] payLoad = new byte[3307];
+        MPHR mphr = new MPHR(null, payLoad);
 
-        Exception ex = assertThrows(IOException.class, () -> mphr.getDate("SENSING_START"));
-        assertEquals("SENSING_START not found in MPHR payload", ex.getMessage());
+        Exception ex = assertThrows(IllegalStateException.class, () -> mphr.getDate("SENSING_START"));
+        assertEquals("Invalid attribute formatting: ", ex.getMessage());
     }
 
-    private byte[] createDummyPayload(String times) {
-        String payloadText =
-                "INSTRUMENT_MODEL              =   1\n" +
-                        "PRODUCT_TYPE                  = xxx\n" +
-                        "PROCESSING_LEVEL              = 1B\n" +
-                        "SPACECRAFT_ID                 = M03\n" +
-                         times +
-                        "SENSING_START_THEORETICAL     = 20250820060300Z\n" +
-                        "SENSING_END_THEORETICAL       = 20250820074500Z\n" +
-                        "PROCESSING_CENTRE             = CGS1\n" +
-                        "PROCESSOR_MAJOR_VERSION       =     1\n" +
-                        "PROCESSOR_MINOR_VERSION       =     0\n" +
-                        "FORMAT_MAJOR_VERSION          =    10\n" +
-                        "FORMAT_MINOR_VERSION          =     0\n" +
-                        "PROCESSING_TIME_START         = 20250820074043Z\n" +
-                        "PROCESSING_TIME_END           = 20250820092115Z\n" +
-                        "PROCESSING_MODE               = N\n" +
-                        "DISPOSITION_MODE              = O\n" +
-                        "RECEIVING_GROUND_STATION      = SVL\n" +
-                        "RECEIVE_TIME_START            = 20250820073741Z\n" +
-                        "RECEIVE_TIME_END              = 20250820091905Z\n";
+    @Test
+    public void testGetProductName() {
+        final byte[] payLoad = new byte[3307];
+        final String productName = "PRODUCT_NAME                  = The_thing_how_we_call_it_version7";
+        // @todo 2 tb/tb speaking constants! 2025-08-25
+        byte[] productNameBytes = productName.getBytes();
+        System.arraycopy(productNameBytes, 0, payLoad, 20, productNameBytes.length);
+        final MPHR mphr = new MPHR(null, payLoad);
 
-        return payloadText.getBytes(StandardCharsets.US_ASCII);
+        assertEquals("The_thing_how_we_call_it_version7", mphr.getProductName());
     }
 }

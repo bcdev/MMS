@@ -2,12 +2,15 @@ package com.bc.fiduceo.reader.amsu_mhs;
 
 import com.bc.fiduceo.IOTestRunner;
 import com.bc.fiduceo.TestUtil;
+import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(IOTestRunner.class)
 public class AMSUA_L1B_Reader_IO_Test {
@@ -20,7 +23,15 @@ public class AMSUA_L1B_Reader_IO_Test {
         try {
             reader.open(file);
 
-            AcquisitionInfo acquisitionInfo = reader.read();
+            final AcquisitionInfo acquisitionInfo = reader.read();
+            assertEquals("Sat Jan 02 00:49:24 CET 2016", acquisitionInfo.getSensingStart().toString());
+            assertEquals("Sat Jan 02 02:31:24 CET 2016", acquisitionInfo.getSensingStop().toString());
+            assertEquals(NodeType.UNDEFINED, acquisitionInfo.getNodeType());
+
+            // @todo 1 tb/tb
+            // acquisitionInfo.getBoundingGeometry();
+            // @todo 1 tb/tb
+            // acquisitionInfo.getTimeAxes();
         } finally {
             reader.close();
         }

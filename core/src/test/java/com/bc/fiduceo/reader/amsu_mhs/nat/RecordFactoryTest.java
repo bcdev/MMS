@@ -7,7 +7,8 @@ import org.junit.Test;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class RecordFactoryTest {
 
@@ -34,9 +35,9 @@ public class RecordFactoryTest {
 
     @Test
     public void createRecord() {
-        GENERIC_RECORD_HEADER headerMPHR = new GENERIC_RECORD_HEADER(RECORD_CLASS.MPHR, INSTRUMENT_GROUP.MHS, 42);
-        GENERIC_RECORD_HEADER headerMDR = new GENERIC_RECORD_HEADER(RECORD_CLASS.MDR, INSTRUMENT_GROUP.MHS, 42);
-        GENERIC_RECORD_HEADER headerRecord = new GENERIC_RECORD_HEADER(RECORD_CLASS.RESERVED, INSTRUMENT_GROUP.MHS, 42);
+        GENERIC_RECORD_HEADER headerMPHR = new GENERIC_RECORD_HEADER(RECORD_CLASS.MPHR, INSTRUMENT_GROUP.MHS, (byte) 3, (byte) 6, 42);
+        GENERIC_RECORD_HEADER headerMDR = new GENERIC_RECORD_HEADER(RECORD_CLASS.MDR, INSTRUMENT_GROUP.MHS, (byte) 4, (byte) 7, 42);
+        GENERIC_RECORD_HEADER headerRecord = new GENERIC_RECORD_HEADER(RECORD_CLASS.RESERVED, INSTRUMENT_GROUP.MHS, (byte) 5, (byte) 8, 42);
         byte[] payload = new byte[22];
 
         Record recordMPHR = RecordFactory.createRecord(headerMPHR, payload);

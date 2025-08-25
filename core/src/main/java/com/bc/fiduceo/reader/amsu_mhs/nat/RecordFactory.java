@@ -1,11 +1,14 @@
 package com.bc.fiduceo.reader.amsu_mhs.nat;
 
+import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.ASMUSA_MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+
+import static com.bc.fiduceo.reader.amsu_mhs.nat.INSTRUMENT_GROUP.AMSUA;
 
 public class RecordFactory {
 
@@ -15,6 +18,7 @@ public class RecordFactory {
         int index = 0;
 
         while (index < allBytes.length) {
+            // @todo 2 tb/* introduce named constant? 2025-08-22
             byte[] headerBytes = new byte[20];
             System.arraycopy(allBytes, index, headerBytes, 0, 20);
 
@@ -42,9 +46,17 @@ public class RecordFactory {
             case MPHR:
                 return new MPHR(header, payload);
             case MDR:
-                return new MDR(header, payload);
+                return createMDR(header, payload);
             default:
                 return new Record(header, payload);
         }
+    }
+
+    private static MDR createMDR(GENERIC_RECORD_HEADER header, byte[] payload) {
+        if (header.getInstrumentGroup() == AMSUA) {
+            return new ASMUSA_MDR(header, payload);
+        }
+
+        return new MDR(header, payload);
     }
 }

@@ -9,11 +9,13 @@ public class GENERIC_RECORD_HEADER_Test {
 
     @Test
     public void testParse() {
-        final byte[] data = {1, 9, 0, 0, 0, 0, 0, 100};
+        final byte[] data = {1, 9, 12, 13, 0, 0, 0, 100};
         final GENERIC_RECORD_HEADER genericHeader = GENERIC_RECORD_HEADER.parse(data);
 
         assertNotNull(genericHeader);
         assertEquals(RECORD_CLASS.MPHR, genericHeader.getRecordClass());
+        assertEquals((byte) 12, genericHeader.getRecordSubClass());
+        assertEquals((byte) 13, genericHeader.getRecordSubClassVersion());
         assertEquals(INSTRUMENT_GROUP.MHS, genericHeader.getInstrumentGroup());
         assertEquals(100, genericHeader.getRecordSize());
     }
