@@ -7,7 +7,7 @@ import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.Reader;
 import com.bc.fiduceo.reader.amsu_mhs.nat.GENERIC_RECORD_HEADER;
-import com.bc.fiduceo.reader.amsu_mhs.nat.RECORD_CLASS;
+import com.bc.fiduceo.reader.amsu_mhs.nat.MdrUtilities;
 import com.bc.fiduceo.reader.amsu_mhs.nat.Record;
 import com.bc.fiduceo.reader.amsu_mhs.nat.RecordFactory;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
@@ -57,24 +57,30 @@ public class AMSUA_L1B_Reader implements Reader {
         final MPHR recordMPHR = (MPHR) records.get(0);
         setSensingDates(acquisitionInfo, recordMPHR);
 
-        for (Record record : records) {
-            GENERIC_RECORD_HEADER header = record.getHeader();
-            RECORD_CLASS recordClass = header.getRecordClass();
+        final List<MDR> recordsMDR = MdrUtilities.getMdrList(records);
+        final GENERIC_RECORD_HEADER header = recordsMDR.get(0).getHeader();
+        ensureMdrVersionSupported(header);
 
-            if (recordClass == RECORD_CLASS.MDR) {
-                byte recordSubClass = header.getRecordSubClass();
-                byte recordSubClassVersion = header.getRecordSubClassVersion();
-                if (recordSubClass != 2 || recordSubClassVersion != 3) {
-                    throw new IllegalStateException("Unsupported MDR version: " + recordSubClass + " v " + recordSubClassVersion);
-                }
+        int numScanLines = recordsMDR.size();
 
-                MDR recordMDR = (MDR) record;
-                int[] lons = recordMDR.parseVariable("longitude");
-                int[] lats = recordMDR.parseVariable("latitude");
-            }
+        // detect data type and allocate array
+        for (Record record : recordsMDR) {
+            // calculate byte offset and size in payload
+            // read subsection from payload
+            // interprete and convert data to native type
+            // copy to appropriate array location
         }
 
         return acquisitionInfo;
+    }
+
+    // @todo 2 tb/tb add tests 2025-08-26
+    static void ensureMdrVersionSupported(GENERIC_RECORD_HEADER header) {
+        byte recordSubClass = header.getRecordSubClass();
+        byte recordSubClassVersion = header.getRecordSubClassVersion();
+        if (recordSubClass != 2 || recordSubClassVersion != 3) {
+            throw new IllegalStateException("Unsupported MDR version: " + recordSubClass + " v " + recordSubClassVersion);
+        }
     }
 
     private static void setSensingDates(AcquisitionInfo acquisitionInfo, MPHR recordMPHR) throws IOException {

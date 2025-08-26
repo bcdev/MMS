@@ -7,6 +7,7 @@ import com.bc.fiduceo.geometry.*;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.*;
 import com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants;
+import com.bc.fiduceo.reader.amsu_mhs.nat.MdrUtilities;
 import com.bc.fiduceo.reader.amsu_mhs.nat.Record;
 import com.bc.fiduceo.reader.amsu_mhs.nat.RecordFactory;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
@@ -59,10 +60,7 @@ public class MHS_L1B_Reader implements Reader {
         List<Record> records = RecordFactory.parseRecordsForIngestion(bytes);
 
         MPHR recordMPHR = (MPHR) records.get(0);
-        List<MDR> recordsMDR = records.subList(1, records.size())
-                .stream()
-                .map(r -> (MDR) r)
-                .collect(Collectors.toList());
+        List<MDR> recordsMDR = MdrUtilities.getMdrList(records);
 
         Date sensingStart = recordMPHR.getDate("SENSING_START");
         Date sensingEnd = recordMPHR.getDate("SENSING_END");
@@ -79,6 +77,8 @@ public class MHS_L1B_Reader implements Reader {
 
         return acquisitionInfo;
     }
+
+
 
     @Override
     public String getRegEx() {
