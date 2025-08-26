@@ -6,10 +6,7 @@ import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.Reader;
-import com.bc.fiduceo.reader.amsu_mhs.nat.GENERIC_RECORD_HEADER;
-import com.bc.fiduceo.reader.amsu_mhs.nat.MdrUtilities;
-import com.bc.fiduceo.reader.amsu_mhs.nat.Record;
-import com.bc.fiduceo.reader.amsu_mhs.nat.RecordFactory;
+import com.bc.fiduceo.reader.amsu_mhs.nat.*;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
 import com.bc.fiduceo.reader.time.TimeLocator;
@@ -28,8 +25,15 @@ import static com.bc.fiduceo.core.NodeType.UNDEFINED;
 
 public class AMSUA_L1B_Reader implements Reader {
 
+    public static final String RESOURCE_KEY = "AMSUA_L1B";
+
     private FileInputStream fileInputStream;
     private byte[] rawDataBuffer;
+    private final VariableRegistry registry;
+
+    public AMSUA_L1B_Reader() {
+        this.registry = VariableRegistry.load(RESOURCE_KEY);
+    }
 
     @Override
     public void open(File file) throws IOException {

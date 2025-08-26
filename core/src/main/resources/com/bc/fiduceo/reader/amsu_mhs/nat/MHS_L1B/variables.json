@@ -1,0 +1,18 @@
+{
+  "variables": [
+    {
+      "name": "latitude",
+      "data_type": "integer4",
+      "offset": 3318,
+      "stride": 2,
+      "scale_factor": 10000
+    },
+    {
+      "name": "longitude",
+      "data_type": "integer4",
+      "offset": 3322,
+      "stride": 2,
+      "scale_factor": 10000
+    }
+  ]
+}

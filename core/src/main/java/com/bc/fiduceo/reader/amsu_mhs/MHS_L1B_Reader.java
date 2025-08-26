@@ -6,10 +6,7 @@ import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.*;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.*;
-import com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants;
-import com.bc.fiduceo.reader.amsu_mhs.nat.MdrUtilities;
-import com.bc.fiduceo.reader.amsu_mhs.nat.Record;
-import com.bc.fiduceo.reader.amsu_mhs.nat.RecordFactory;
+import com.bc.fiduceo.reader.amsu_mhs.nat.*;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
 import com.bc.fiduceo.reader.time.TimeLocator;
@@ -29,14 +26,18 @@ import java.util.List;
 
 public class MHS_L1B_Reader implements Reader {
 
+    public static final String RESOURCE_KEY = "MHS_L1B";
     private static final int NUM_SPLITS = 2;
+
     private FileInputStream fileInputStream;
     private byte[] rawDataBuffer;
+    private final VariableRegistry registry;
 
     private final GeometryFactory geometryFactory;
 
     MHS_L1B_Reader(ReaderContext readerContext) {
         this.geometryFactory = readerContext.getGeometryFactory();
+        this.registry = VariableRegistry.load(RESOURCE_KEY);
     }
 
     @Override
