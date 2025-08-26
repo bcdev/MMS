@@ -384,6 +384,50 @@ public class IngestionToolIntegrationTest {
     }
 
     @Test
+    public void testIngest_MHS_L1B_MC() throws SQLException, ParseException {
+        final String[] args = new String[]{"-c", configDir.getAbsolutePath(), "-s", "mhs-mc", "-start", "2025-232", "-end", "2025-232", "-v", "v10"};
+
+        IngestionToolMain.main(args);
+        final List<SatelliteObservation> satelliteObservations = storage.get();
+        assertEquals(1, satelliteObservations.size());
+
+        final SatelliteObservation observation = getSatelliteObservation("MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat", satelliteObservations);
+        TestUtil.assertCorrectUTCDate(2025, 8, 20, 6, 3, 50, 0, observation.getStartTime());
+        TestUtil.assertCorrectUTCDate(2025, 8, 20, 7, 45, 50, 0, observation.getStopTime());
+        assertEquals("mhs-mc", observation.getSensor().getName());
+
+        final String expectedPath = TestUtil.assembleFileSystemPath(new String[]{"mhs-mc", "v10", "2025", "08", "20", "MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat"}, false);
+        assertEquals(expectedPath, observation.getDataFilePath().toString());
+
+        assertEquals(NodeType.UNDEFINED, observation.getNodeType());
+        assertEquals("v10", observation.getVersion());
+
+        final Geometry geoBounds = observation.getGeoBounds();
+        assertTrue(geoBounds instanceof MultiPolygon);
+        final MultiPolygon multiPolygon = (MultiPolygon) geoBounds;
+        final List<Polygon> polygons = multiPolygon.getPolygons();
+        assertEquals(2, polygons.size());
+
+        Geometry expected = geometryFactory.parse(TestData.MHS_MC_GEOMETRIES[0]);
+        assertSameGeometry(expected, polygons.get(0));
+
+        expected = geometryFactory.parse(TestData.MHS_MC_GEOMETRIES[1]);
+        assertSameGeometry(expected, polygons.get(1));
+
+        final TimeAxis[] timeAxes = observation.getTimeAxes();
+        assertEquals(2, timeAxes.length);
+        TestUtil.assertCorrectUTCDate(2025, 8, 20, 6, 3, 50, 0, timeAxes[0].getStartTime());
+        TestUtil.assertCorrectUTCDate(2025, 8, 20, 6, 54, 50, 0, timeAxes[0].getEndTime());
+        expected = geometryFactory.parse(TestData.MHS_MC_AXIS_GEOMETRIES[0]);
+        assertSameGeometry(expected, timeAxes[0].getGeometry());
+
+        TestUtil.assertCorrectUTCDate(2025, 8, 20, 6, 54, 50, 0, timeAxes[1].getStartTime());
+        TestUtil.assertCorrectUTCDate(2025, 8, 20, 7, 45, 50, 0, timeAxes[1].getEndTime());
+        expected = geometryFactory.parse(TestData.MHS_MC_AXIS_GEOMETRIES[1]);
+        assertSameGeometry(expected, timeAxes[1].getGeometry());
+    }
+
+    @Test
     public void testIngest_HIRS_TIROSN() throws SQLException, ParseException {
         final String[] args = new String[]{"-c", configDir.getAbsolutePath(), "-s", "hirs-tn", "-start", "1979-286", "-end", "1979-288", "-v", "1.0"};
 

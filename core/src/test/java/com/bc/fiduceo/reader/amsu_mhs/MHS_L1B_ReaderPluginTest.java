@@ -9,18 +9,18 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-public class AMSUB_MHS_L1B_ReaderPluginTest {
+public class MHS_L1B_ReaderPluginTest {
 
-    private AMSUB_MHS_L1B_ReaderPlugin plugin;
+    private MHS_L1B_ReaderPlugin plugin;
 
     @Before
     public void setUp() throws Exception {
-        plugin = new AMSUB_MHS_L1B_ReaderPlugin();
+        plugin = new MHS_L1B_ReaderPlugin();
     }
 
     @Test
     public void testGetSupportedSensorKeys() {
-        final String[] expected = {"mhs-ma", "mhs-mb", "mhs-mc", "mhs-n18"};
+        final String[] expected = {"mhs-ma", "mhs-mb", "mhs-mc"};
 
         final String[] sensorKeys = plugin.getSupportedSensorKeys();
         assertArrayEquals(expected, sensorKeys);
@@ -35,6 +35,6 @@ public class AMSUB_MHS_L1B_ReaderPluginTest {
     public void testCreateReader() {
         final Reader reader = plugin.createReader(new ReaderContext());
         assertNotNull(reader);
-        assertTrue(reader instanceof AMSUB_MHS_L1B_Reader);
+        assertTrue(reader instanceof MHS_L1B_Reader);
     }
 }

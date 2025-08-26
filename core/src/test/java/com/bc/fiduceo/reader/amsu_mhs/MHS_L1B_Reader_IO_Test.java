@@ -21,15 +21,15 @@ import java.util.TimeZone;
 import static org.junit.Assert.*;
 
 @RunWith(IOTestRunner.class)
-public class AMSUB_MHS_L1B_Reader_IO_Test {
+public class MHS_L1B_Reader_IO_Test {
 
-    private AMSUB_MHS_L1B_Reader reader;
+    private MHS_L1B_Reader reader;
 
     @Before
     public void setUp() {
         final ReaderContext readerContext = new ReaderContext();
         readerContext.setGeometryFactory(new GeometryFactory(GeometryFactory.Type.S2));
-        this.reader = new AMSUB_MHS_L1B_Reader(readerContext);
+        this.reader = new MHS_L1B_Reader(readerContext);
     }
 
     @Test

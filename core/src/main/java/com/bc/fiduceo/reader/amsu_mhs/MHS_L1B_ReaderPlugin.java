@@ -5,13 +5,13 @@ import com.bc.fiduceo.reader.Reader;
 import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.ReaderPlugin;
 
-public class AMSUB_MHS_L1B_ReaderPlugin implements ReaderPlugin {
+public class MHS_L1B_ReaderPlugin implements ReaderPlugin {
 
-    private static final String[] SENSOR_KEYS = {"mhs-ma", "mhs-mb", "mhs-mc", "mhs-n18"};
+    private static final String[] SENSOR_KEYS = {"mhs-ma", "mhs-mb", "mhs-mc"};
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
-        return new AMSUB_MHS_L1B_Reader(readerContext);
+        return new MHS_L1B_Reader(readerContext);
     }
 
     @Override

@@ -27,14 +27,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AMSUB_MHS_L1B_Reader implements Reader {
+public class MHS_L1B_Reader implements Reader {
 
     private static final int NUM_SPLITS = 2;
     private FileInputStream fileInputStream;
 
     private final GeometryFactory geometryFactory;
 
-    AMSUB_MHS_L1B_Reader(ReaderContext readerContext) {
+    MHS_L1B_Reader(ReaderContext readerContext) {
         this.geometryFactory = readerContext.getGeometryFactory();
     }
 
@@ -82,7 +82,7 @@ public class AMSUB_MHS_L1B_Reader implements Reader {
 
     @Override
     public String getRegEx() {
-        throw new RuntimeException("not implemented");
+        return "MHSx_[A-Z0-9x]{3}_1B_M0[123]_[0-9]{14}Z_[0-9]{14}Z_[A-Z0-9x]{1}_[A-Z0-9x]{1}_[0-9]{14}Z\\.nat";
     }
 
     @Override

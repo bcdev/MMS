@@ -9,6 +9,10 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 
@@ -16,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 public class AMSUA_L1B_Reader_IO_Test {
 
     @Test
-    public void testReadAcquisitionInfo_MetopA() throws IOException {
+    public void testReadAcquisitionInfo_MetopA() throws IOException, ParseException {
         final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
 
         final AMSUA_L1B_Reader reader = new AMSUA_L1B_Reader();
@@ -24,8 +28,13 @@ public class AMSUA_L1B_Reader_IO_Test {
             reader.open(file);
 
             final AcquisitionInfo acquisitionInfo = reader.read();
-            assertEquals("Sat Jan 02 00:49:24 CET 2016", acquisitionInfo.getSensingStart().toString());
-            assertEquals("Sat Jan 02 02:31:24 CET 2016", acquisitionInfo.getSensingStop().toString());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssX");
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+            Date expectedStart = sdf.parse("20160101234924Z");
+            Date expectedStop  = sdf.parse("20160102013124Z");
+
+            assertEquals(expectedStart, acquisitionInfo.getSensingStart());
+            assertEquals(expectedStop, acquisitionInfo.getSensingStop());
             assertEquals(NodeType.UNDEFINED, acquisitionInfo.getNodeType());
 
             // @todo 1 tb/tb
