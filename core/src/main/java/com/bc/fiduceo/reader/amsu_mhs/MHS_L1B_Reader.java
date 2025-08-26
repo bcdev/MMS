@@ -26,12 +26,12 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MHS_L1B_Reader implements Reader {
 
     private static final int NUM_SPLITS = 2;
     private FileInputStream fileInputStream;
+    private byte[] rawDataBuffer;
 
     private final GeometryFactory geometryFactory;
 
@@ -42,6 +42,7 @@ public class MHS_L1B_Reader implements Reader {
     @Override
     public void open(File file) throws IOException {
         fileInputStream = new FileInputStream(file);
+        rawDataBuffer =  null;
     }
 
     @Override
@@ -50,24 +51,21 @@ public class MHS_L1B_Reader implements Reader {
             fileInputStream.close();
             fileInputStream = null;
         }
+        rawDataBuffer = null;
     }
 
     @Override
     public AcquisitionInfo read() throws IOException {
-        byte[] bytes = fileInputStream.readAllBytes();
         final AcquisitionInfo acquisitionInfo = new AcquisitionInfo();
+        acquisitionInfo.setNodeType(NodeType.UNDEFINED);
 
-        List<Record> records = RecordFactory.parseRecordsForIngestion(bytes);
+        rawDataBuffer = fileInputStream.readAllBytes();
+        List<Record> records = RecordFactory.parseRecords(rawDataBuffer);
 
         MPHR recordMPHR = (MPHR) records.get(0);
+        setSensingDates(acquisitionInfo, recordMPHR);
+
         List<MDR> recordsMDR = MdrUtilities.getMdrList(records);
-
-        Date sensingStart = recordMPHR.getDate("SENSING_START");
-        Date sensingEnd = recordMPHR.getDate("SENSING_END");
-
-        acquisitionInfo.setSensingStart(sensingStart);
-        acquisitionInfo.setSensingStop(sensingEnd);
-        acquisitionInfo.setNodeType(NodeType.UNDEFINED);
 
         List<Array> coordinates = extractCoordinates(recordsMDR);
         final Geometries geometries = extractGeometries(coordinates.get(0), coordinates.get(1));
@@ -78,7 +76,12 @@ public class MHS_L1B_Reader implements Reader {
         return acquisitionInfo;
     }
 
-
+    private static void setSensingDates(AcquisitionInfo acquisitionInfo, MPHR recordMPHR) throws IOException {
+        final Date sensingStart = recordMPHR.getDate("SENSING_START");
+        acquisitionInfo.setSensingStart(sensingStart);
+        final Date sensingEnd = recordMPHR.getDate("SENSING_END");
+        acquisitionInfo.setSensingStop(sensingEnd);
+    }
 
     @Override
     public String getRegEx() {

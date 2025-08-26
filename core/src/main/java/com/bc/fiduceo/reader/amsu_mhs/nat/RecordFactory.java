@@ -1,34 +1,24 @@
 package com.bc.fiduceo.reader.amsu_mhs.nat;
 
-import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.ASMUSA_MDR;
-import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
-import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
+import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.*;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import static com.bc.fiduceo.reader.amsu_mhs.nat.INSTRUMENT_GROUP.AMSUA;
 
 public class RecordFactory {
 
-    public static List<Record> parseRecordsForIngestion(byte[] allBytes) {
+    public static List<Record> parseRecords(byte[] allBytes) {
         List<Record> records = new ArrayList<>();
-        EnumSet<RECORD_CLASS> recordClassesNeededForIngestion = EnumSet.of(RECORD_CLASS.MPHR, RECORD_CLASS.MDR);
         int index = 0;
 
         while (index < allBytes.length) {
-            // @todo 2 tb/* introduce named constant? 2025-08-22
-            byte[] headerBytes = new byte[20];
-            System.arraycopy(allBytes, index, headerBytes, 0, 20);
+            byte[] headerBytes = new byte[EPS_Constants.GENERIC_RECORD_HEADER_SIZE];
+            System.arraycopy(allBytes, index, headerBytes, 0, EPS_Constants.GENERIC_RECORD_HEADER_SIZE);
 
             GENERIC_RECORD_HEADER header = GENERIC_RECORD_HEADER.parse(headerBytes);
             int recordSize = header.getRecordSize();
-            if (!recordClassesNeededForIngestion.contains(header.getRecordClass())) {
-                index += recordSize;
-                continue;
-            }
-
             byte[] payload = new byte[recordSize];
             System.arraycopy(allBytes, index, payload, 0, recordSize);
 
@@ -45,6 +35,18 @@ public class RecordFactory {
         switch (header.getRecordClass()) {
             case MPHR:
                 return new MPHR(header, payload);
+            case SPHR:
+                return new SPHR(header, payload);
+            case IPR:
+                return new IPR(header, payload);
+            case GEADR:
+                return new GEADR(header, payload);
+            case GIADR:
+                return new GIADR(header, payload);
+            case VEADR:
+                return new VEADR(header, payload);
+            case VIADR:
+                return new VIADR(header, payload);
             case MDR:
                 return createMDR(header, payload);
             default:

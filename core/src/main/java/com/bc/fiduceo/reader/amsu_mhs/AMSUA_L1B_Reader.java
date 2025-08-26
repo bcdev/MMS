@@ -52,7 +52,7 @@ public class AMSUA_L1B_Reader implements Reader {
         acquisitionInfo.setNodeType(UNDEFINED);
 
         rawDataBuffer = fileInputStream.readAllBytes();
-        final List<Record> records = RecordFactory.parseRecordsForIngestion(rawDataBuffer);
+        final List<Record> records = RecordFactory.parseRecords(rawDataBuffer);
 
         final MPHR recordMPHR = (MPHR) records.get(0);
         setSensingDates(acquisitionInfo, recordMPHR);
