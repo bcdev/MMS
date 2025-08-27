@@ -4,7 +4,7 @@ public class VariableDefinition {
 
     private String name;
     private String data_type;
-    private DATA_TYPE dataType;
+    private int productDataType;
     private int offset;
     private int stride;
     private int scale_factor;
@@ -17,12 +17,12 @@ public class VariableDefinition {
         this.name = name;
     }
 
-    public DATA_TYPE getData_type() {
-        return dataType;
+    public int getData_type() {
+        return productDataType;
     }
 
     public void setData_type(String data_type) {
-        this.dataType = DATA_TYPE.fromString(data_type);
+        this.productDataType = EpsReaderUtils.mapToProductData(data_type);
         this.data_type = data_type;
     }
 

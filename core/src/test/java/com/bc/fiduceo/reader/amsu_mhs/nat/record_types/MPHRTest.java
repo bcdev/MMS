@@ -1,5 +1,6 @@
 package com.bc.fiduceo.reader.amsu_mhs.nat.record_types;
 
+import com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -67,9 +68,8 @@ public class MPHRTest {
     public void testGetProductName() {
         final byte[] payLoad = new byte[3307];
         final String productName = "PRODUCT_NAME                  = The_thing_how_we_call_it_version7";
-        // @todo 2 tb/tb speaking constants! 2025-08-25
         byte[] productNameBytes = productName.getBytes();
-        System.arraycopy(productNameBytes, 0, payLoad, 20, productNameBytes.length);
+        System.arraycopy(productNameBytes, 0, payLoad, EPS_Constants.GENERIC_RECORD_HEADER_SIZE, productNameBytes.length);
         final MPHR mphr = new MPHR(null, payLoad);
 
         assertEquals("The_thing_how_we_call_it_version7", mphr.getProductName());

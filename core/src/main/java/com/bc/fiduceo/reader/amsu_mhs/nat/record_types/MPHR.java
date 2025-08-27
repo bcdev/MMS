@@ -38,18 +38,6 @@ public class MPHR extends Record {
         }
 
         return parseDate(attributeValue);
-        // @todo 3 tb/* make this a lazy process, i.e. put fields already decoded into a HashMap and use this as cache 2025-08-25
-        /*String content = new String(getPayload(), StandardCharsets.US_ASCII);
-        String[] lines = content.split("\n");
-
-        for (String line : lines) {
-            String[] parts = line.split("=");
-            if (parts.length == 2 && parts[0].trim().equals(key)) {
-                String value = parts[1].trim();
-                return parseDate(value, key);
-            }
-        }
-        throw new IOException(key + " not found in MPHR payload");*/
     }
 
 
