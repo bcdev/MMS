@@ -7,11 +7,9 @@ import com.bc.fiduceo.geometry.*;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.*;
 import com.bc.fiduceo.reader.amsu_mhs.nat.*;
-import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Variable;
@@ -19,8 +17,6 @@ import ucar.nc2.Variable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,30 +25,30 @@ public class MHS_L1B_Reader implements Reader {
     public static final String RESOURCE_KEY = "MHS_L1B";
     private static final int NUM_SPLITS = 2;
 
-    private FileInputStream fileInputStream;
-    private byte[] rawDataBuffer;
-    private final VariableRegistry registry;
-
     private final GeometryFactory geometryFactory;
+    private VariableRegistry registry;
+    private EpsVariableCache cache;
 
     MHS_L1B_Reader(ReaderContext readerContext) {
         this.geometryFactory = readerContext.getGeometryFactory();
-        this.registry = VariableRegistry.load(RESOURCE_KEY);
     }
 
     @Override
     public void open(File file) throws IOException {
-        fileInputStream = new FileInputStream(file);
-        rawDataBuffer =  null;
+        final byte[] rawDataBuffer;
+        try (FileInputStream fis = new FileInputStream(file)) {
+            rawDataBuffer = fis.readAllBytes();
+        }
+        registry = VariableRegistry.load(RESOURCE_KEY);
+        cache = new EpsVariableCache(rawDataBuffer, registry, EPS_Constants.MHS_FOV_COUNT);
     }
 
     @Override
     public void close() throws IOException {
-        if (fileInputStream != null) {
-            fileInputStream.close();
-            fileInputStream = null;
+        if (cache != null) {
+            cache.clear();
+            cache = null;
         }
-        rawDataBuffer = null;
     }
 
     @Override
@@ -60,17 +56,15 @@ public class MHS_L1B_Reader implements Reader {
         final AcquisitionInfo acquisitionInfo = new AcquisitionInfo();
         acquisitionInfo.setNodeType(NodeType.UNDEFINED);
 
-        rawDataBuffer = fileInputStream.readAllBytes();
-        List<Record> records = RecordFactory.parseRecords(rawDataBuffer);
-
-        MPHR recordMPHR = (MPHR) records.get(0);
+        MPHR recordMPHR = cache.getMPHR();
         setSensingDates(acquisitionInfo, recordMPHR);
 
-        List<MDR> recordsMDR = MdrUtilities.getMdrList(records);
+        Array lon = cache.getRaw("longitude");
+        Array lat = cache.getRaw("latitude");
+        double scaleFactor_lon = registry.getVariableDef("longitude").getScale_factor();
+        double scaleFactor_lat = registry.getVariableDef("latitude").getScale_factor();
 
-        List<Array> coordinates = extractCoordinates(recordsMDR);
-        final Geometries geometries = extractGeometries(coordinates.get(0), coordinates.get(1));
-
+        final Geometries geometries = extractGeometries(EpsReaderUtils.scale(lon, scaleFactor_lon), EpsReaderUtils.scale(lat, scaleFactor_lat));
         acquisitionInfo.setBoundingGeometry(geometries.getBoundingGeometry());
         ReaderUtils.setTimeAxes(acquisitionInfo, geometries.getTimeAxesGeometry(), geometryFactory);
 
@@ -111,12 +105,19 @@ public class MHS_L1B_Reader implements Reader {
 
     @Override
     public Array readRaw(int centerX, int centerY, Interval interval, String variableName) throws IOException, InvalidRangeException {
-        throw new RuntimeException("not implemented");
+        // todo 28-08-2025 BL: evaluate functionality and test edge cases
+        Array array = cache.getRaw(variableName);
+        // todo 28-08-2025 BL: figure out what the fill values are
+        Number fillValue = Double.NaN;
+        return RawDataReader.read(centerX, centerY, interval, fillValue, array, new Dimension("size", EPS_Constants.MHS_FOV_COUNT, 0));
     }
 
     @Override
     public Array readScaled(int centerX, int centerY, Interval interval, String variableName) throws IOException, InvalidRangeException {
-        throw new RuntimeException("not implemented");
+        // todo 28-08-2025 BL: evaluate functionality and test edge cases
+        Array array = readRaw(centerX, centerY, interval, variableName);
+        double scaleFactor = registry.getVariableDef(variableName).getScale_factor();
+        return EpsReaderUtils.scale(array, scaleFactor);
     }
 
     @Override
@@ -170,32 +171,5 @@ public class MHS_L1B_Reader implements Reader {
         geometries.setTimeAxesGeometry(timeAxisGeometry);
 
         return geometries;
-    }
-
-    private List<Array> extractCoordinates(List<MDR> recordsMDR) {
-        List<Array> coordinates = new ArrayList<>();
-
-        int numScanLines = recordsMDR.size();
-
-        Array longitudes = new ArrayDouble.D2(numScanLines, EPS_Constants.MHS_FOV_COUNT);
-        Array latitudes = new ArrayDouble.D2(numScanLines, EPS_Constants.MHS_FOV_COUNT);
-
-        for (int ii = 0; ii < numScanLines; ii++) {
-            MDR mdr = recordsMDR.get(ii);
-            byte[] locationBytes = new byte[EPS_Constants.MHS_EARTH_LOCATIONS_TOTAL_BYTE_SIZE];
-            System.arraycopy(mdr.getPayload(), EPS_Constants.MHS_L1B_EARTH_LOCATIONS_OFFSET, locationBytes, 0, EPS_Constants.MHS_EARTH_LOCATIONS_TOTAL_BYTE_SIZE);
-            final ByteBuffer byteBuffer = ByteBuffer.wrap(locationBytes);
-
-            for (int jj = 0; jj < EPS_Constants.MHS_FOV_COUNT; jj++) {
-                int lat = byteBuffer.getInt();
-                int lon = byteBuffer.getInt();
-                latitudes.setDouble((ii * EPS_Constants.MHS_FOV_COUNT) + jj, (double) lat / EPS_Constants.MHS_EARTH_LOCATIONS_SCALE_FACTOR);
-                longitudes.setDouble((ii * EPS_Constants.MHS_FOV_COUNT) + jj, (double) lon / EPS_Constants.MHS_EARTH_LOCATIONS_SCALE_FACTOR);
-            }
-        }
-
-        coordinates.add(longitudes);
-        coordinates.add(latitudes);
-        return coordinates;
     }
 }

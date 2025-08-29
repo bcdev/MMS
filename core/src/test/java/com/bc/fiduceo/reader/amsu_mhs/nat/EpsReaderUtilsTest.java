@@ -2,6 +2,7 @@ package com.bc.fiduceo.reader.amsu_mhs.nat;
 
 import org.esa.snap.core.datamodel.ProductData;
 import org.junit.Test;
+import ucar.ma2.*;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -101,5 +102,120 @@ public class EpsReaderUtilsTest {
         } catch (IllegalArgumentException expected) {
             assertEquals("Unknown data type: invalid", expected.getMessage());
         }
+    }
+
+    @Test
+    public void test_scale_appliesFactor() {
+        int[] values = {10, -20, 30};
+        Array input = Array.factory(DataType.INT, new int[]{values.length}, values);
+        double scaleFactor = 0.1;
+
+        Array result = EpsReaderUtils.scale(input, scaleFactor);
+
+        assertEquals(1.0, result.getDouble(0), 1e-6);
+        assertEquals(-2.0, result.getDouble(1), 1e-6);
+        assertEquals(3.0, result.getDouble(2), 1e-6);
+    }
+
+    @Test
+    public void test_scale_factorIsOne_returnsSameArray() {
+        int[] values = {5, 10, 15};
+        Array input = Array.factory(DataType.INT, new int[]{values.length}, values);
+        double scaleFactor = 1.0;
+
+        Array result = EpsReaderUtils.scale(input, scaleFactor);
+
+        assertSame(input, result);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    @Test
+    public void testInitializeArray_int8() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(ProductData.TYPE_INT8, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayByte.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testInitializeArray_uint8() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(ProductData.TYPE_UINT8, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayByte.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testInitializeArray_int16() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(ProductData.TYPE_INT16, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayShort.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testInitializeArray_uint16() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(ProductData.TYPE_UINT16, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayShort.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testInitializeArray_int32() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(ProductData.TYPE_INT32, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayInt.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testInitializeArray_uint32() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(ProductData.TYPE_UINT32, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayInt.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testInitializeArray_int64() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(ProductData.TYPE_INT64, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayLong.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testInitializeArray_uint64() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(ProductData.TYPE_UINT64, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayLong.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testInitializeArray_default() {
+        int numScanLines = 4;
+        int numFOVs = 20;
+        Array array = EpsReaderUtils.initializeArray(9999, numScanLines, numFOVs);
+        assertTrue(array instanceof ArrayDouble.D2);
+        assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
     }
 }

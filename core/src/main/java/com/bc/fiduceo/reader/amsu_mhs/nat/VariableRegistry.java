@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
+import java.util.Map;
 
 public class VariableRegistry {
 
-    private List<VariableDefinition> variables;
+    private Map<String, VariableDefinition> variables;
 
     public static VariableRegistry load(String resourceKey) {
         ObjectMapper mapper = new ObjectMapper();
@@ -23,11 +23,19 @@ public class VariableRegistry {
         }
     }
 
-    public List<VariableDefinition> getVariables() {
+    public Map<String, VariableDefinition> getVariables() {
         return variables;
     }
 
-    public void setVariables(List<VariableDefinition> variables) {
+    public void setVariables(Map<String, VariableDefinition> variables) {
         this.variables = variables;
+    }
+
+    public VariableDefinition getVariableDef(String variableName) {
+        VariableDefinition def = variables.get(variableName);
+        if (def == null) {
+            throw new IllegalArgumentException("Variable not defined: " + variableName);
+        }
+        return def;
     }
 }

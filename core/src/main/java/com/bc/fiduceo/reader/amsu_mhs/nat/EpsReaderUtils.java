@@ -1,6 +1,8 @@
 package com.bc.fiduceo.reader.amsu_mhs.nat;
 
+import com.bc.fiduceo.reader.ReaderUtils;
 import org.esa.snap.core.datamodel.ProductData;
+import ucar.ma2.*;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
@@ -89,5 +91,47 @@ public class EpsReaderUtils {
             default:
                 throw new IllegalArgumentException("Unknown data type: " + value);
         }
+    }
+
+    public static Array scale(Array array, double scaleFactor) {
+        if (ReaderUtils.mustScale(scaleFactor, 0.0)) {
+            final MAMath.ScaleOffset scaleOffset = new MAMath.ScaleOffset(scaleFactor, 0.0);
+            return MAMath.convert2Unpacked(array, scaleOffset);
+        }
+        return array;
+    }
+
+    public static Array initializeArray(int dataType, int numScanLines, int numFOVs) {
+        Array array;
+
+        switch (dataType) {
+            case ProductData.TYPE_INT8:
+                array = new ArrayByte.D2(numScanLines, numFOVs, false);
+                break;
+            case ProductData.TYPE_UINT8:
+                array = new ArrayByte.D2(numScanLines, numFOVs, true);
+                break;
+            case ProductData.TYPE_INT16:
+                array = new ArrayShort.D2(numScanLines, numFOVs, false);
+                break;
+            case ProductData.TYPE_UINT16:
+                array = new ArrayShort.D2(numScanLines, numFOVs, true);
+                break;
+            case ProductData.TYPE_INT32:
+                array = new ArrayInt.D2(numScanLines, numFOVs, false);
+                break;
+            case ProductData.TYPE_UINT32:
+                array = new ArrayInt.D2(numScanLines, numFOVs, true);
+                break;
+            case ProductData.TYPE_INT64:
+                array = new ArrayLong.D2(numScanLines, numFOVs, false);
+                break;
+            case ProductData.TYPE_UINT64:
+                array = new ArrayLong.D2(numScanLines, numFOVs, true);
+                break;
+            default:
+                array = new ArrayDouble.D2(numScanLines, numFOVs);
+        }
+        return array;
     }
 }

@@ -5,7 +5,7 @@ import com.bc.fiduceo.reader.amsu_mhs.MHS_L1B_Reader;
 import org.esa.snap.core.datamodel.ProductData;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -20,8 +20,8 @@ public class VariableRegistryTest {
         assertNotNull(mhsRegistry);
         assertNotNull(amsuaRegistry);
 
-        List<VariableDefinition> mhsVars = mhsRegistry.getVariables();
-        List<VariableDefinition> amsuaVars = amsuaRegistry.getVariables();
+        Map<String, VariableDefinition> mhsVars = mhsRegistry.getVariables();
+        Map<String, VariableDefinition> amsuaVars = amsuaRegistry.getVariables();
 
         assertFalse(mhsVars.isEmpty());
         assertFalse(amsuaVars.isEmpty());
@@ -43,25 +43,23 @@ public class VariableRegistryTest {
 
         assertNotNull(mhsRegistry);
 
-        List<VariableDefinition> mhsVars = mhsRegistry.getVariables();
+        Map<String, VariableDefinition> mhsVars = mhsRegistry.getVariables();
 
         assertEquals(2, mhsVars.size());
 
-        VariableDefinition mhsVar1 = mhsVars.get(0);
+        VariableDefinition mhsVar1 = mhsVars.get("latitude");
 
-        assertEquals("latitude", mhsVar1.getName());
         assertEquals(ProductData.TYPE_INT32, mhsVar1.getData_type());
         assertEquals(3318, mhsVar1.getOffset());
         assertEquals(2, mhsVar1.getStride());
-        assertEquals(10000, mhsVar1.getScale_factor());
+        assertEquals(.0001, mhsVar1.getScale_factor(), 1e-10);
 
-        VariableDefinition mhsVar2 = mhsVars.get(1);
+        VariableDefinition mhsVar2 = mhsVars.get("longitude");
 
-        assertEquals("longitude", mhsVar2.getName());
         assertEquals(ProductData.TYPE_INT32, mhsVar2.getData_type());
         assertEquals(3322, mhsVar2.getOffset());
         assertEquals(2, mhsVar2.getStride());
-        assertEquals(10000, mhsVar2.getScale_factor());
+        assertEquals(.0001, mhsVar2.getScale_factor(), 1e-10);
     }
 
     @Test
@@ -70,24 +68,46 @@ public class VariableRegistryTest {
 
         assertNotNull(amsuaRegistry);
 
-        List<VariableDefinition> amsuaVars = amsuaRegistry.getVariables();
+        Map<String, VariableDefinition> amsuaVars = amsuaRegistry.getVariables();
 
         assertEquals(2, amsuaVars.size());
 
-        VariableDefinition amsuaVar1 = amsuaVars.get(0);
+        VariableDefinition amsuaVar1 = amsuaVars.get("latitude");
 
-        assertEquals("latitude", amsuaVar1.getName());
         assertEquals(ProductData.TYPE_INT32, amsuaVar1.getData_type());
         assertEquals(2082, amsuaVar1.getOffset());
         assertEquals(2, amsuaVar1.getStride());
-        assertEquals(10000, amsuaVar1.getScale_factor());
+        assertEquals(.0001, amsuaVar1.getScale_factor(), 1e-10);
 
-        VariableDefinition amsuaVar2 = amsuaVars.get(1);
+        VariableDefinition amsuaVar2 = amsuaVars.get("longitude");
 
-        assertEquals("longitude", amsuaVar2.getName());
         assertEquals(ProductData.TYPE_INT32, amsuaVar2.getData_type());
         assertEquals(2086, amsuaVar2.getOffset());
         assertEquals(2, amsuaVar2.getStride());
-        assertEquals(10000, amsuaVar2.getScale_factor());
+        assertEquals(.0001, amsuaVar2.getScale_factor(), 1e-10);
+    }
+
+    @Test
+    public void test_getVariableDef_success() {
+        VariableRegistry mhsRegistry = VariableRegistry.load(MHS_L1B_Reader.RESOURCE_KEY);
+        assertNotNull(mhsRegistry);
+
+        VariableDefinition lon = mhsRegistry.getVariableDef("longitude");
+        assertNotNull(lon);
+        assertEquals(3322, lon.getOffset());
+    }
+
+    @Test
+    public void test_getVariableDef_error() {
+        VariableRegistry mhsRegistry = VariableRegistry.load(MHS_L1B_Reader.RESOURCE_KEY);
+        assertNotNull(mhsRegistry);
+
+        try {
+            VariableDefinition lon = mhsRegistry.getVariableDef("not_existing_variable");
+            fail("Expected exception");
+        } catch (IllegalArgumentException expected) {
+            assertEquals("Variable not defined: not_existing_variable", expected.getMessage());
+        }
+
     }
 }
