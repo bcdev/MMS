@@ -76,7 +76,7 @@ public class AMSUA_L1B_Reader extends Abstract_L1B_NatReader {
 
     @Override
     public String getRegEx() {
-        throw new RuntimeException("not implemented");
+        return "AMSA_[A-Z0-9x]{3}_1B_M0[123]_[0-9]{14}Z_[0-9]{14}Z_[A-Z0-9x]{1}_[A-Z0-9x]{1}_[0-9]{14}Z\\.nat";
     }
 
     @Override
@@ -117,6 +117,15 @@ public class AMSUA_L1B_Reader extends Abstract_L1B_NatReader {
     @Override
     public List<Variable> getVariables() throws InvalidRangeException, IOException {
         throw new RuntimeException("not implemented");
+        // + SCENE_RADIANCE_01 -> SCENE_RADIANCE_15 , scale_factor 10^7, integer4
+        // ANGULAR_RELATION, solar_zenith_angle, satellite_zenith_angle, solar_azimuth_angle, satellite_azimuth_angle
+        //    scale_factor 10^2, units degree, integer2
+        // + EARTH_LOCATION, latitude, longitude, scale_factor 10^4, units degree, integer4
+        // SURFACE_PROPERTIES surface_property, property(0 = water, 1 = mixed/coast, 2 = land), integer2
+        // TERRAIN_ELEVATION terrain_elevation, units m, integer2
+        //
+        // to be discussed:
+        // REFLECTOR_A11_POSITION, REFLECTOR_A12_POSITION, REFLECTOR_A2_POSITION
     }
 
     @Override
@@ -126,13 +135,11 @@ public class AMSUA_L1B_Reader extends Abstract_L1B_NatReader {
 
     @Override
     public String getLongitudeVariableName() {
-        throw new RuntimeException("not implemented");
+        return "longitude";
     }
 
     @Override
     public String getLatitudeVariableName() {
-        throw new RuntimeException("not implemented");
+        return "latitude";
     }
-
-
 }

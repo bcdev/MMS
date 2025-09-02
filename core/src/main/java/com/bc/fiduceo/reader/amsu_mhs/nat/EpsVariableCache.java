@@ -65,7 +65,7 @@ public class EpsVariableCache {
         int numScanLines = mdrs.size();
         int stride = varDef.getStride();
         int offset = varDef.getOffset();
-        int dataType = varDef.getData_type();
+        int dataType = varDef.getProductData_type();
         int size = ProductData.getElemSize(dataType);
 
         array = EpsReaderUtils.initializeArray(dataType, numScanLines, numFOVs);
@@ -86,7 +86,7 @@ public class EpsVariableCache {
 
     private double readValue(byte[] payload, int offset, VariableDefinition def) {
         ByteBuffer buffer = ByteBuffer.wrap(payload).order(ByteOrder.BIG_ENDIAN);
-        int type = def.getData_type();
+        int type = def.getProductData_type();
 
         switch (type) {
             case ProductData.TYPE_INT8:

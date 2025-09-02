@@ -71,6 +71,24 @@ public class EpsVariableCache_IO_Test {
     }
 
     @Test
+    public void test_getSceneRadiance_02() {
+        Array radiance = cache.getRaw("SCENE_RADIANCE_02");
+
+        assertNotNull(radiance);
+        assertEquals(2, radiance.getRank());
+
+        final int height = radiance.getShape()[0];
+        final int width = radiance.getShape()[1];
+        assertEquals(cache.getMdrs().size(), height);
+        assertEquals(EPS_Constants.AMSUA_FOV_COUNT, width);
+
+        // @todo 2 tb/tb check which data type is it originally
+        assertEquals(21796, radiance.getInt(1));
+        assertEquals(22334, radiance.getInt(11));
+        assertEquals(22465, radiance.getInt(21));
+    }
+
+    @Test
     public void test_getScaled_latitude() {
         Array latitude = cache.getScaled("latitude");
 

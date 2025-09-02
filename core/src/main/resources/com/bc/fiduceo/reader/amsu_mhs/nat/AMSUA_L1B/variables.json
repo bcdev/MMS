@@ -1,16 +1,53 @@
 {
   "variables": {
+    "SCENE_RADIANCE_*": {
+      "data_type": "integer4",
+      "offset": 22,
+      "stride": 15,
+      "scale_factor": 0.0000001,
+      "units" : "mW/m2/sr/cm-1"
+    },
+    "solar_zenith_angle": {
+      "data_type": "integer2",
+      "offset": 1842,
+      "stride": 4,
+      "scale_factor": 0.01,
+      "units" : "degree"
+    },
+    "satellite_zenith_angle": {
+      "data_type": "integer2",
+      "offset": 1844,
+      "stride": 4,
+      "scale_factor": 0.01,
+      "units" : "degree"
+    },
+    "solar_azimuth_angle": {
+      "data_type": "integer2",
+      "offset": 1846,
+      "stride": 4,
+      "scale_factor": 0.01,
+      "units" : "degree"
+    },
+    "satellite_azimuth_angle": {
+      "data_type": "integer2",
+      "offset": 1848,
+      "stride": 4,
+      "scale_factor": 0.01,
+      "units" : "degree"
+    },
     "latitude": {
       "data_type": "integer4",
       "offset": 2082,
       "stride": 2,
-      "scale_factor": 0.0001
+      "scale_factor": 0.0001,
+      "units" : "degree"
     },
     "longitude": {
       "data_type": "integer4",
       "offset": 2086,
       "stride": 2,
-      "scale_factor": 0.0001
+      "scale_factor": 0.0001,
+      "units" : "degree"
     }
   }
 }
