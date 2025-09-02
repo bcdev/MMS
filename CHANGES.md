@@ -1,9 +1,9 @@
 ### Updates from version 1.5.8 to 1.6.0
 * Migrated to SNAP 11, several refactorings and library updates
 * The VariableCache now uses an LRU cache with a listener to automatically free the oldest cached, no longer
-  needed variables and file handles when the maximum cache size is reached.* fix wrong corner point order of 
-  era5 interpolation in SatelliteFields
-* Instead, the four era5 interpolation vertices are read directly from the variable
+  needed variables and file handles when the maximum cache size is reached.
+* fix wrong corner point order of era5 interpolation in SatelliteFields.  
+  Instead, the four era5 interpolation vertices are read directly from the variable
 * Remove reading of subset from entire era5 variable array and remove to read the entire era5 variable in VariableCache
 * Remove creation of rectangles for InterpolationContext and remove field era5Region in InterpolationContext
 * era5 post processing .. can now also handle satellite longitude data which not fits the range [-180 to 180].

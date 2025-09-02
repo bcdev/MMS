@@ -15,40 +15,27 @@ import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Variable;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
-public class MHS_L1B_Reader implements Reader {
+public class MHS_L1B_Reader extends Abstract_L1B_NatReader {
 
     public static final String RESOURCE_KEY = "MHS_L1B";
     private static final int NUM_SPLITS = 2;
 
-    private final GeometryFactory geometryFactory;
-    private VariableRegistry registry;
-    private EpsVariableCache cache;
-
     MHS_L1B_Reader(ReaderContext readerContext) {
-        this.geometryFactory = readerContext.getGeometryFactory();
+        super(readerContext);
     }
 
     @Override
     public void open(File file) throws IOException {
-        final byte[] rawDataBuffer;
-        try (FileInputStream fis = new FileInputStream(file)) {
-            rawDataBuffer = fis.readAllBytes();
-        }
-        registry = VariableRegistry.load(RESOURCE_KEY);
-        cache = new EpsVariableCache(rawDataBuffer, registry, EPS_Constants.MHS_FOV_COUNT);
+        initializeRegistry(RESOURCE_KEY);
+        readDataToCache(file, EPS_Constants.MHS_FOV_COUNT);
     }
 
     @Override
     public void close() throws IOException {
-        if (cache != null) {
-            cache.clear();
-            cache = null;
-        }
+        super.close();
     }
 
     @Override
@@ -59,23 +46,14 @@ public class MHS_L1B_Reader implements Reader {
         MPHR recordMPHR = cache.getMPHR();
         setSensingDates(acquisitionInfo, recordMPHR);
 
-        Array lon = cache.getRaw("longitude");
-        Array lat = cache.getRaw("latitude");
-        double scaleFactor_lon = registry.getVariableDef("longitude").getScale_factor();
-        double scaleFactor_lat = registry.getVariableDef("latitude").getScale_factor();
+        final Array lon = cache.getScaled("longitude");
+        final Array lat = cache.getScaled("latitude");
 
-        final Geometries geometries = extractGeometries(EpsReaderUtils.scale(lon, scaleFactor_lon), EpsReaderUtils.scale(lat, scaleFactor_lat));
+        final Geometries geometries = extractGeometries(lon, lat, NUM_SPLITS, new Interval(10, 20));
         acquisitionInfo.setBoundingGeometry(geometries.getBoundingGeometry());
         ReaderUtils.setTimeAxes(acquisitionInfo, geometries.getTimeAxesGeometry(), geometryFactory);
 
         return acquisitionInfo;
-    }
-
-    private static void setSensingDates(AcquisitionInfo acquisitionInfo, MPHR recordMPHR) throws IOException {
-        final Date sensingStart = recordMPHR.getDate("SENSING_START");
-        acquisitionInfo.setSensingStart(sensingStart);
-        final Date sensingEnd = recordMPHR.getDate("SENSING_END");
-        acquisitionInfo.setSensingStop(sensingEnd);
     }
 
     @Override
@@ -143,33 +121,5 @@ public class MHS_L1B_Reader implements Reader {
     @Override
     public String getLatitudeVariableName() {
         throw new RuntimeException("not implemented");
-    }
-
-
-    private BoundingPolygonCreator getBoundingPolygonCreator() {
-        return new BoundingPolygonCreator(new Interval(10, 20), geometryFactory);
-    }
-
-    private Geometries extractGeometries(Array longitudes, Array latitudes) throws IOException {
-        final Geometries geometries = new Geometries();
-        final BoundingPolygonCreator boundingPolygonCreator = getBoundingPolygonCreator();
-
-        Geometry boundingGeometry = boundingPolygonCreator.createBoundingGeometryClockwise(longitudes, latitudes);
-        Geometry timeAxisGeometry;
-
-        if (!boundingGeometry.isValid()) {
-            boundingGeometry = boundingPolygonCreator.createBoundingGeometrySplitted(longitudes, latitudes, NUM_SPLITS, true);
-            if (!boundingGeometry.isValid()) {
-                throw new RuntimeException("Invalid bounding geometry detected");
-            }
-            timeAxisGeometry = boundingPolygonCreator.createTimeAxisGeometrySplitted(longitudes, latitudes, NUM_SPLITS);
-        } else {
-            timeAxisGeometry = boundingPolygonCreator.createTimeAxisGeometry(longitudes, latitudes);
-        }
-
-        geometries.setBoundingGeometry(boundingGeometry);
-        geometries.setTimeAxesGeometry(timeAxisGeometry);
-
-        return geometries;
     }
 }

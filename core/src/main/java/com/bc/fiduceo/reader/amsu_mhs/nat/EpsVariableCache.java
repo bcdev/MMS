@@ -1,5 +1,6 @@
 package com.bc.fiduceo.reader.amsu_mhs.nat;
 
+import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
 import org.esa.snap.core.datamodel.ProductData;
@@ -42,30 +43,44 @@ public class EpsVariableCache {
         Array array = rawDataCache.get(variableName);
 
         if (array == null) {
-            VariableDefinition varDef = registry.getVariableDef(variableName);
-            List<MDR> mdrs = getMdrs();
-            int numScanLines = mdrs.size();
-            int stride = varDef.getStride();
-            int offset = varDef.getOffset();
-            int dataType = varDef.getData_type();
-            int size = ProductData.getElemSize(dataType);
-
-            array = EpsReaderUtils.initializeArray(dataType, numScanLines, numFOVs);
-
-            for (int yy = 0; yy < numScanLines; yy++) {
-                MDR mdr = mdrs.get(yy);
-                byte[] payload = mdr.getPayload();
-
-                for (int xx = 0; xx < numFOVs; xx++) {
-                    int valueSpecificOffset = offset + xx * stride * size;
-                    double value = readValue(payload, valueSpecificOffset, varDef);
-
-                    array.setDouble(array.getIndex().set(yy, xx), value);
-                }
-            }
+            array = decodeRawDataArray(variableName);
             rawDataCache.put(variableName, array);
         }
 
+        return array;
+    }
+
+    public Array getScaled(String variableName) {
+        final Array rawArray = getRaw(variableName);
+
+        final VariableDefinition varDef = registry.getVariableDef(variableName);
+        double scaleFactor = varDef.getScale_factor();
+        return EpsReaderUtils.scale(rawArray, scaleFactor);
+    }
+
+    private Array decodeRawDataArray(String variableName) {
+        Array array;
+        VariableDefinition varDef = registry.getVariableDef(variableName);
+        List<MDR> mdrs = getMdrs();
+        int numScanLines = mdrs.size();
+        int stride = varDef.getStride();
+        int offset = varDef.getOffset();
+        int dataType = varDef.getData_type();
+        int size = ProductData.getElemSize(dataType);
+
+        array = EpsReaderUtils.initializeArray(dataType, numScanLines, numFOVs);
+
+        for (int yy = 0; yy < numScanLines; yy++) {
+            MDR mdr = mdrs.get(yy);
+            byte[] payload = mdr.getPayload();
+
+            for (int xx = 0; xx < numFOVs; xx++) {
+                int valueSpecificOffset = offset + xx * stride * size;
+                double value = readValue(payload, valueSpecificOffset, varDef);
+
+                array.setDouble(array.getIndex().set(yy, xx), value);
+            }
+        }
         return array;
     }
 

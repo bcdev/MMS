@@ -3,7 +3,9 @@ package com.bc.fiduceo.reader.amsu_mhs;
 import com.bc.fiduceo.IOTestRunner;
 import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.NodeType;
+import com.bc.fiduceo.geometry.*;
 import com.bc.fiduceo.reader.AcquisitionInfo;
+import com.bc.fiduceo.reader.ReaderContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -12,9 +14,12 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
+import static com.bc.fiduceo.geometry.GeometryFactory.Type.S2;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(IOTestRunner.class)
 public class AMSUA_L1B_Reader_IO_Test {
@@ -23,24 +28,61 @@ public class AMSUA_L1B_Reader_IO_Test {
     public void testReadAcquisitionInfo_MetopA() throws IOException, ParseException {
         final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
 
-        final AMSUA_L1B_Reader reader = new AMSUA_L1B_Reader();
+        final ReaderContext readerContext = new ReaderContext();
+        readerContext.setGeometryFactory(new GeometryFactory(S2));
+        final AMSUA_L1B_Reader reader = new AMSUA_L1B_Reader(readerContext);
         try {
             reader.open(file);
 
             final AcquisitionInfo acquisitionInfo = reader.read();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssX");
+
+            final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssX");
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-            Date expectedStart = sdf.parse("20160101234924Z");
-            Date expectedStop  = sdf.parse("20160102013124Z");
+            final Date expectedStart = sdf.parse("20160101234924Z");
+            final Date expectedStop  = sdf.parse("20160102013124Z");
 
             assertEquals(expectedStart, acquisitionInfo.getSensingStart());
             assertEquals(expectedStop, acquisitionInfo.getSensingStop());
             assertEquals(NodeType.UNDEFINED, acquisitionInfo.getNodeType());
 
-            // @todo 1 tb/tb
-            // acquisitionInfo.getBoundingGeometry();
-            // @todo 1 tb/tb
-            // acquisitionInfo.getTimeAxes();
+            final Geometry boundingGeometry = acquisitionInfo.getBoundingGeometry();
+            assertTrue(boundingGeometry instanceof MultiPolygon);
+            final MultiPolygon multiPolygon = (MultiPolygon) boundingGeometry;
+            final List<Polygon> polygons = multiPolygon.getPolygons();
+            assertEquals(2, polygons.size());
+
+            final Point[] coordinates0 = polygons.get(0).getCoordinates();
+            assertEquals(51, coordinates0.length);
+            assertEquals(-168.0057, coordinates0[0].getLon(), 1e-8);
+            assertEquals(65.5792, coordinates0[0].getLat(), 1e-8);
+            assertEquals(169.72060000000005, coordinates0[48].getLon(), 1e-8);
+            assertEquals(50.1226, coordinates0[48].getLat(), 1e-8);
+
+            Point[] coordinates1 = polygons.get(1).getCoordinates();
+            assertEquals(51, coordinates1.length);
+            assertEquals(-51.4854, coordinates1[0].getLon(), 1e-8);
+            assertEquals(-73.0652, coordinates1[0].getLat(), 1e-8);
+            assertEquals(-52.7916, coordinates1[48].getLon(), 1e-8);
+            assertEquals(-54.673, coordinates1[48].getLat(), 1e-8);
+
+            final TimeAxis[] timeAxes = acquisitionInfo.getTimeAxes();
+            assertEquals(2, timeAxes.length);
+            TimeAxis timeAxis = timeAxes[0];
+            Point[] coordinates = timeAxis.getGeometry().getCoordinates();
+            assertEquals(21, coordinates.length);
+            assertEquals(161.1958, coordinates[1].getLon(), 1e-8);
+            assertEquals(62.6422, coordinates[1].getLat(), 1e-8);
+
+            timeAxis = timeAxes[1];
+            coordinates = timeAxis.getGeometry().getCoordinates();
+            assertEquals(21, coordinates.length);
+            assertEquals(-31.1957, coordinates[1].getLon(), 1e-8);
+            assertEquals(-61.7517, coordinates[1].getLat(), 1e-8);
+
+            Date time = timeAxes[0].getTime(coordinates0[0]);
+            TestUtil.assertCorrectUTCDate(2016, 1, 1, 23, 49, 24, 0, time);
+            time = timeAxes[1].getTime(coordinates1[1]);
+            TestUtil.assertCorrectUTCDate(2016, 1, 2, 0, 40, 24, 0, time);
         } finally {
             reader.close();
         }

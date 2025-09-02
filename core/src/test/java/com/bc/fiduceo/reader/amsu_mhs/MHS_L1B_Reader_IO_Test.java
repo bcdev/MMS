@@ -46,7 +46,6 @@ public class MHS_L1B_Reader_IO_Test {
             final Date expectedStop = sdf.parse("20250820074550Z");
 
             final Geometry boundingGeometry = acquisitionInfo.getBoundingGeometry();
-            final TimeAxis[] timeAxes = acquisitionInfo.getTimeAxes();
 
             assertEquals(expectedStart, acquisitionInfo.getSensingStart());
             assertEquals(expectedStop, acquisitionInfo.getSensingStop());
@@ -71,6 +70,20 @@ public class MHS_L1B_Reader_IO_Test {
             assertEquals(-145.0478, coordinates1[48].getLon(), 1e-8);
             assertEquals(-61.4848, coordinates1[0].getLat(), 1e-8);
             assertEquals(61.40250000000001, coordinates1[48].getLat(), 1e-8);
+
+            final TimeAxis[] timeAxes = acquisitionInfo.getTimeAxes();
+            assertEquals(2, timeAxes.length);
+            TimeAxis timeAxis = timeAxes[0];
+            Point[] coordinates = timeAxis.getGeometry().getCoordinates();
+            assertEquals(59, coordinates.length);
+            assertEquals(65.3291, coordinates[1].getLon(), 1e-8);
+            assertEquals(57.4655, coordinates[1].getLat(), 1e-8);
+
+            timeAxis = timeAxes[1];
+            coordinates = timeAxis.getGeometry().getCoordinates();
+            assertEquals(59, coordinates.length);
+            assertEquals(-127.6211, coordinates[1].getLon(), 1e-8);
+            assertEquals(-56.5496, coordinates[1].getLat(), 1e-8);
 
             assertEquals(2, timeAxes.length);
             Date time = timeAxes[0].getTime(coordinates0[0]);

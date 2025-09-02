@@ -5,8 +5,12 @@ import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
-import com.bc.fiduceo.reader.Reader;
-import com.bc.fiduceo.reader.amsu_mhs.nat.*;
+import com.bc.fiduceo.reader.Geometries;
+import com.bc.fiduceo.reader.ReaderContext;
+import com.bc.fiduceo.reader.ReaderUtils;
+import com.bc.fiduceo.reader.amsu_mhs.nat.Abstract_L1B_NatReader;
+import com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants;
+import com.bc.fiduceo.reader.amsu_mhs.nat.GENERIC_RECORD_HEADER;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
 import com.bc.fiduceo.reader.time.TimeLocator;
@@ -16,38 +20,32 @@ import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Variable;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import static com.bc.fiduceo.core.NodeType.UNDEFINED;
 
-public class AMSUA_L1B_Reader implements Reader {
+public class AMSUA_L1B_Reader extends Abstract_L1B_NatReader {
 
     public static final String RESOURCE_KEY = "AMSUA_L1B";
+    private static final int NUM_SPLITS = 2;
 
-    private FileInputStream fileInputStream;
-    private byte[] rawDataBuffer;
-    private final VariableRegistry registry;
-
-    public AMSUA_L1B_Reader() {
-        this.registry = VariableRegistry.load(RESOURCE_KEY);
+    AMSUA_L1B_Reader(ReaderContext readerContext) {
+        super(readerContext);
     }
 
     @Override
     public void open(File file) throws IOException {
-        fileInputStream = new FileInputStream(file);
-        rawDataBuffer = null;
+        initializeRegistry(RESOURCE_KEY);
+        readDataToCache(file, EPS_Constants.AMSUA_FOV_COUNT);
+
+        final List<MDR> mdrs = cache.getMdrs();
+        ensureMdrVersionSupported(mdrs.get(0).getHeader());
     }
 
     @Override
     public void close() throws IOException {
-        if (fileInputStream != null) {
-            fileInputStream.close();
-            fileInputStream = null;
-        }
-        rawDataBuffer = null;
+        super.close();
     }
 
     @Override
@@ -55,43 +53,25 @@ public class AMSUA_L1B_Reader implements Reader {
         final AcquisitionInfo acquisitionInfo = new AcquisitionInfo();
         acquisitionInfo.setNodeType(UNDEFINED);
 
-        rawDataBuffer = fileInputStream.readAllBytes();
-        final List<Record> records = RecordFactory.parseRecords(rawDataBuffer);
-
-        final MPHR recordMPHR = (MPHR) records.get(0);
+        final MPHR recordMPHR = cache.getMPHR();
         setSensingDates(acquisitionInfo, recordMPHR);
 
-        final List<MDR> recordsMDR = MdrUtilities.getMdrList(records);
-        final GENERIC_RECORD_HEADER header = recordsMDR.get(0).getHeader();
-        ensureMdrVersionSupported(header);
+        final Array lon = cache.getScaled("longitude");
+        final Array lat = cache.getScaled("latitude");
 
-        int numScanLines = recordsMDR.size();
-
-        // detect data type and allocate array
-        for (Record record : recordsMDR) {
-            // calculate byte offset and size in payload
-            // read subsection from payload
-            // interprete and convert data to native type
-            // copy to appropriate array location
-        }
+        final Geometries geometries = extractGeometries(lon, lat, NUM_SPLITS, new Interval(6, 20));
+        acquisitionInfo.setBoundingGeometry(geometries.getBoundingGeometry());
+        ReaderUtils.setTimeAxes(acquisitionInfo, geometries.getTimeAxesGeometry(), geometryFactory);
 
         return acquisitionInfo;
     }
 
-    // @todo 2 tb/tb add tests 2025-08-26
     static void ensureMdrVersionSupported(GENERIC_RECORD_HEADER header) {
         byte recordSubClass = header.getRecordSubClass();
         byte recordSubClassVersion = header.getRecordSubClassVersion();
         if (recordSubClass != 2 || recordSubClassVersion != 3) {
             throw new IllegalStateException("Unsupported MDR version: " + recordSubClass + " v " + recordSubClassVersion);
         }
-    }
-
-    private static void setSensingDates(AcquisitionInfo acquisitionInfo, MPHR recordMPHR) throws IOException {
-        final Date sensingStart = recordMPHR.getDate("SENSING_START");
-        acquisitionInfo.setSensingStart(sensingStart);
-        final Date sensingEnd = recordMPHR.getDate("SENSING_END");
-        acquisitionInfo.setSensingStop(sensingEnd);
     }
 
     @Override
@@ -153,4 +133,6 @@ public class AMSUA_L1B_Reader implements Reader {
     public String getLatitudeVariableName() {
         throw new RuntimeException("not implemented");
     }
+
+
 }
