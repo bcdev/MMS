@@ -70,7 +70,7 @@ public class VariableRegistryTest {
 
         Map<String, VariableDefinition> amsuaVars = amsuaRegistry.getVariables();
 
-        assertEquals(21, amsuaVars.size());
+        assertEquals(23, amsuaVars.size());
 
         final VariableDefinition sceneRadiance01 = amsuaVars.get("SCENE_RADIANCE_01");
         assertEquals("integer4", sceneRadiance01.getData_type());
@@ -127,6 +127,22 @@ public class VariableRegistryTest {
         assertEquals(2, longitude.getStride());
         assertEquals(.0001, longitude.getScale_factor(), 1e-10);
         assertEquals("degree", longitude.getUnits());
+
+        final VariableDefinition surfaceProperties = amsuaVars.get("SURFACE_PROPERTIES");
+        assertEquals("integer2", surfaceProperties.getData_type());
+        assertEquals(2322, surfaceProperties.getOffset());
+        assertEquals(1, surfaceProperties.getStride());
+        assertEquals(1.0, surfaceProperties.getScale_factor(), 1e-10);
+        assertEquals("", surfaceProperties.getUnits());
+        assertEquals("0, 1, 2", surfaceProperties.getFlag_values());
+        assertEquals("water mixed_coast land", surfaceProperties.getFlag_meanings());
+
+        final VariableDefinition terrainElevation = amsuaVars.get("TERRAIN_ELEVATION");
+        assertEquals("integer2", terrainElevation.getData_type());
+        assertEquals(2382, terrainElevation.getOffset());
+        assertEquals(1, terrainElevation.getStride());
+        assertEquals(1.0, terrainElevation.getScale_factor(), 1e-10);
+        assertEquals("m", terrainElevation.getUnits());
     }
 
     @Test

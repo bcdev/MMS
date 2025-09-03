@@ -7,6 +7,13 @@ public class VariableDefinition {
     private int stride;
     private double scale_factor;
     private String units;
+    private String flag_values;
+    private String flag_meanings;
+
+    public VariableDefinition() {
+        scale_factor = 1.0;
+        units = "";
+    }
 
     public int getProductData_type() {
         return EpsReaderUtils.mapToProductData(data_type);
@@ -50,5 +57,21 @@ public class VariableDefinition {
 
     public void setUnits(String units) {
         this.units = units;
+    }
+
+    public String getFlag_values() {
+        return flag_values;
+    }
+
+    public void setFlag_values(String flag_values) {
+        this.flag_values = flag_values;
+    }
+
+    public String getFlag_meanings() {
+        return flag_meanings;
+    }
+
+    public void setFlag_meanings(String flag_meanings) {
+        this.flag_meanings = flag_meanings;
     }
 }

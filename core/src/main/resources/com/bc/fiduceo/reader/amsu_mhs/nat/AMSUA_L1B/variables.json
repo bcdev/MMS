@@ -48,6 +48,19 @@
       "stride": 2,
       "scale_factor": 0.0001,
       "units" : "degree"
+    },
+    "SURFACE_PROPERTIES": {
+      "data_type": "integer2",
+      "offset": 2322,
+      "stride": 1,
+      "flag_values": "0, 1, 2",
+      "flag_meanings": "water mixed_coast land"
+    },
+    "TERRAIN_ELEVATION": {
+      "data_type": "integer2",
+      "offset": 2382,
+      "stride": 1,
+      "units" : "m"
     }
   }
 }
