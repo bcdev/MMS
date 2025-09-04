@@ -45,21 +45,49 @@ public class VariableRegistryTest {
 
         Map<String, VariableDefinition> mhsVars = mhsRegistry.getVariables();
 
-        assertEquals(2, mhsVars.size());
+        assertEquals(9, mhsVars.size());
 
-        VariableDefinition mhsVar1 = mhsVars.get("latitude");
+        final VariableDefinition sceneRadiance01 = mhsVars.get("SCENE_RADIANCES_01");
+        assertEquals("integer4", sceneRadiance01.getData_type());
+        assertEquals(83, sceneRadiance01.getOffset());
+        assertEquals(5, sceneRadiance01.getStride());
+        assertEquals(.0000001, sceneRadiance01.getScale_factor(), 1e-10);
+        assertEquals("mW/m2/sr/cm-1", sceneRadiance01.getUnits());
 
-        assertEquals("integer4", mhsVar1.getData_type());
-        assertEquals(3318, mhsVar1.getOffset());
-        assertEquals(2, mhsVar1.getStride());
-        assertEquals(.0001, mhsVar1.getScale_factor(), 1e-10);
+        final VariableDefinition sceneRadiance05 = mhsVars.get("SCENE_RADIANCES_05");
+        assertEquals("integer4", sceneRadiance05.getData_type());
+        assertEquals(99, sceneRadiance05.getOffset());
+        assertEquals(5, sceneRadiance05.getStride());
+        assertEquals(.0000001, sceneRadiance05.getScale_factor(), 1e-10);
+        assertEquals("mW/m2/sr/cm-1", sceneRadiance05.getUnits());
 
-        VariableDefinition mhsVar2 = mhsVars.get("longitude");
+        final VariableDefinition dataQuality = mhsVars.get("FOV_DATA QUALITY");
+        assertEquals("integer4", dataQuality.getData_type());
+        assertEquals(1883, dataQuality.getOffset());
+        assertEquals(1, dataQuality.getStride());
+        assertEquals(1, dataQuality.getScale_factor(), 1e-10);
+        assertEquals("", dataQuality.getUnits());
 
-        assertEquals("integer4", mhsVar2.getData_type());
-        assertEquals(3322, mhsVar2.getOffset());
-        assertEquals(2, mhsVar2.getStride());
-        assertEquals(.0001, mhsVar2.getScale_factor(), 1e-10);
+        final VariableDefinition timeAttitude = mhsVars.get("TIME_ATTITUDE");
+        assertEquals("u-integer4", timeAttitude.getData_type());
+        assertEquals(2580, timeAttitude.getOffset());
+        assertEquals(1, timeAttitude.getStride());
+        assertEquals("s", timeAttitude.getUnits());
+        assertEquals("VECTOR", timeAttitude.getData_layout());
+
+        final VariableDefinition latitude = mhsVars.get("latitude");
+        assertEquals("integer4", latitude.getData_type());
+        assertEquals(3318, latitude.getOffset());
+        assertEquals(2, latitude.getStride());
+        assertEquals(.0001, latitude.getScale_factor(), 1e-10);
+        assertEquals("deg", latitude.getUnits());
+
+        final VariableDefinition longitude = mhsVars.get("longitude");
+        assertEquals("integer4", longitude.getData_type());
+        assertEquals(3322, longitude.getOffset());
+        assertEquals(2, longitude.getStride());
+        assertEquals(.0001, longitude.getScale_factor(), 1e-10);
+        assertEquals("deg", longitude.getUnits());
     }
 
     @Test
@@ -70,7 +98,7 @@ public class VariableRegistryTest {
 
         Map<String, VariableDefinition> amsuaVars = amsuaRegistry.getVariables();
 
-        assertEquals(23, amsuaVars.size());
+        assertEquals(24, amsuaVars.size());
 
         final VariableDefinition sceneRadiance01 = amsuaVars.get("SCENE_RADIANCE_01");
         assertEquals("integer4", sceneRadiance01.getData_type());
@@ -143,6 +171,13 @@ public class VariableRegistryTest {
         assertEquals(1, terrainElevation.getStride());
         assertEquals(1.0, terrainElevation.getScale_factor(), 1e-10);
         assertEquals("m", terrainElevation.getUnits());
+
+        final VariableDefinition timeAttitude = amsuaVars.get("TIME_ATTITUDE");
+        assertEquals("u-integer4", timeAttitude.getData_type());
+        assertEquals(1824, timeAttitude.getOffset());
+        assertEquals(1, timeAttitude.getStride());
+        assertEquals("s", timeAttitude.getUnits());
+        assertEquals("VECTOR", timeAttitude.getData_layout());
     }
 
     @Test

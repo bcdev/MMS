@@ -3,6 +3,7 @@ package com.bc.fiduceo.reader.amsu_mhs.nat;
 public class VariableDefinition {
 
     private String data_type;
+    private String data_layout;
     private int offset;
     private int stride;
     private double scale_factor;
@@ -13,6 +14,9 @@ public class VariableDefinition {
     public VariableDefinition() {
         scale_factor = 1.0;
         units = "";
+        data_layout =  "ARRAY";
+        offset = 0;
+        stride = 0;
     }
 
     public int getProductData_type() {
@@ -73,5 +77,13 @@ public class VariableDefinition {
 
     public void setFlag_meanings(String flag_meanings) {
         this.flag_meanings = flag_meanings;
+    }
+
+    public String getData_layout() {
+        return data_layout;
+    }
+
+    public void setData_layout(String data_layout) {
+        this.data_layout = data_layout;
     }
 }

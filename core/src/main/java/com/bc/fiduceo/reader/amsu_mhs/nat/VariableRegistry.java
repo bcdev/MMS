@@ -31,6 +31,7 @@ public class VariableRegistry {
         final ArrayList<String> toBeDeleted = new ArrayList<>();
         final HashMap<String, VariableDefinition> toBeAdded = new HashMap<>();
 
+        // @todo 2 tb/tb refactor and add testing 2025-09-03
         for (final String key: variables.keySet()) {
             if (key.contains("*")) {
                 // expand to bands wise reading variable

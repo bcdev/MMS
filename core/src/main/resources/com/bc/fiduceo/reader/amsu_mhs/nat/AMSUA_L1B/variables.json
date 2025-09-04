@@ -61,6 +61,13 @@
       "offset": 2382,
       "stride": 1,
       "units" : "m"
+    },
+    "TIME_ATTITUDE": {
+      "data_type": "u-integer4",
+      "data_layout": "VECTOR",
+      "offset": 1824,
+      "stride": 1,
+      "units" : "s"
     }
   }
 }

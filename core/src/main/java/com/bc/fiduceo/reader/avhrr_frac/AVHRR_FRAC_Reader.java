@@ -7,6 +7,7 @@ import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.reader.snap.SNAP_Reader;
+import com.bc.fiduceo.reader.time.TimeLocator_StartStopDate;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import com.bc.fiduceo.util.NetCDFUtils;
 import eu.esa.opt.dataio.avhrr.AvhrrConstants;
@@ -75,7 +76,7 @@ public class AVHRR_FRAC_Reader extends SNAP_Reader {
     public TimeLocator getTimeLocator() {
         final ProductData.UTC startTime = product.getStartTime();
         final ProductData.UTC endTime = product.getEndTime();
-        return new AVHRR_FRAC_TimeLocator(startTime.getAsDate(), endTime.getAsDate(), product.getSceneRasterHeight());
+        return new TimeLocator_StartStopDate(startTime.getAsDate(), endTime.getAsDate(), product.getSceneRasterHeight());
     }
 
     @Override

@@ -6,6 +6,8 @@ import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.*;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.ReaderContext;
+import com.bc.fiduceo.reader.time.TimeLocator;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -24,13 +26,19 @@ import static org.junit.Assert.assertTrue;
 @RunWith(IOTestRunner.class)
 public class AMSUA_L1B_Reader_IO_Test {
 
+    private AMSUA_L1B_Reader reader;
+
+    @Before
+    public void setUp() {
+        final ReaderContext readerContext = new ReaderContext();
+        readerContext.setGeometryFactory(new GeometryFactory(S2));
+        reader = new AMSUA_L1B_Reader(readerContext);
+    }
+
     @Test
     public void testReadAcquisitionInfo_MetopA() throws IOException, ParseException {
         final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
 
-        final ReaderContext readerContext = new ReaderContext();
-        readerContext.setGeometryFactory(new GeometryFactory(S2));
-        final AMSUA_L1B_Reader reader = new AMSUA_L1B_Reader(readerContext);
         try {
             reader.open(file);
 
@@ -83,6 +91,27 @@ public class AMSUA_L1B_Reader_IO_Test {
             TestUtil.assertCorrectUTCDate(2016, 1, 1, 23, 49, 24, 0, time);
             time = timeAxes[1].getTime(coordinates1[1]);
             TestUtil.assertCorrectUTCDate(2016, 1, 2, 0, 40, 24, 0, time);
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testGetTimeLocator() throws IOException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+
+        try {
+            reader.open(file);
+
+            final TimeLocator timeLocator = reader.getTimeLocator();
+            long time = timeLocator.getTimeFor(3, 0);
+            TestUtil.assertCorrectUTCDate(2016, 1, 1, 23, 49, 24, 0, new Date(time));
+
+            time = timeLocator.getTimeFor(4, 250);
+            TestUtil.assertCorrectUTCDate(2016, 1, 2, 0, 22, 46, 618, new Date(time));
+
+            time = timeLocator.getTimeFor(5, 764);
+            TestUtil.assertCorrectUTCDate(2016, 1, 2, 1, 31, 24, 0, new Date(time));
         } finally {
             reader.close();
         }

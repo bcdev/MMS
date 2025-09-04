@@ -1,15 +1,13 @@
-package com.bc.fiduceo.reader.avhrr_frac;
-
-import com.bc.fiduceo.reader.time.TimeLocator;
+package com.bc.fiduceo.reader.time;
 
 import java.util.Date;
 
-class AVHRR_FRAC_TimeLocator implements TimeLocator {
+public class TimeLocator_StartStopDate implements TimeLocator {
 
     private final long startTime;
     private final double increment;
 
-    AVHRR_FRAC_TimeLocator(Date startTime, Date stopTime, int numLines) {
+    public TimeLocator_StartStopDate(Date startTime, Date stopTime, int numLines) {
         this.startTime = startTime.getTime();
         double timeDelta = (stopTime.getTime() - this.startTime);
         increment = timeDelta / (numLines - 1);

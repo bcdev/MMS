@@ -36,6 +36,7 @@ public class EpsVariableCache {
     }
 
     public List<MDR> getMdrs() {
+        // @todo 2 tb this should be a lazy-loaded instance
         return MdrUtilities.getMdrList(records);
     }
 
@@ -68,20 +69,35 @@ public class EpsVariableCache {
         int dataType = varDef.getProductData_type();
         int size = ProductData.getElemSize(dataType);
 
-        array = EpsReaderUtils.initializeArray(dataType, numScanLines, numFOVs);
+        DATA_LAYOUT dataLayout = DATA_LAYOUT.fromString(varDef.getData_layout());
+        if (dataLayout == DATA_LAYOUT.ARRAY) {
+            array = EpsReaderUtils.initializeArray(dataType, numScanLines, numFOVs);
 
-        for (int yy = 0; yy < numScanLines; yy++) {
-            MDR mdr = mdrs.get(yy);
-            byte[] payload = mdr.getPayload();
+            for (int yy = 0; yy < numScanLines; yy++) {
+                MDR mdr = mdrs.get(yy);
+                byte[] payload = mdr.getPayload();
 
-            for (int xx = 0; xx < numFOVs; xx++) {
-                int valueSpecificOffset = offset + xx * stride * size;
-                double value = readValue(payload, valueSpecificOffset, varDef);
+                for (int xx = 0; xx < numFOVs; xx++) {
+                    int valueSpecificOffset = offset + xx * stride * size;
+                    // @todo 1 tb/tb why as double???
+                    double value = readValue(payload, valueSpecificOffset, varDef);
 
-                array.setDouble(array.getIndex().set(yy, xx), value);
+                    array.setDouble(array.getIndex().set(yy, xx), value);
+                }
             }
+            return array;
+        } else if (dataLayout == DATA_LAYOUT.VECTOR) {
+            array = EpsReaderUtils.initializeArray(dataType, numScanLines, 1);
+            for (int y = 0; y < numScanLines; y++) {
+                MDR mdr = mdrs.get(y);
+                byte[] payload = mdr.getPayload();
+                double value = readValue(payload, offset, varDef);
+                array.setDouble(array.getIndex().set(y), value);
+            }
+            return array;
+        } else  {
+            throw new IllegalStateException("Unsupported data layout: " + dataLayout);
         }
-        return array;
     }
 
     private double readValue(byte[] payload, int offset, VariableDefinition def) {

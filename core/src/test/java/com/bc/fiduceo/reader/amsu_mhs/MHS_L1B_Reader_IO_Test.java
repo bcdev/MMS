@@ -6,6 +6,7 @@ import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.*;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.ReaderContext;
+import com.bc.fiduceo.reader.time.TimeLocator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -93,6 +94,27 @@ public class MHS_L1B_Reader_IO_Test {
 
         } finally {
             this.reader.close();
+        }
+    }
+
+    @Test
+    public void testGetTimeLocator() throws IOException {
+        final File file = createMhsMetopCPath("MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat");
+
+        try {
+            reader.open(file);
+
+            final TimeLocator timeLocator = reader.getTimeLocator();
+            long time = timeLocator.getTimeFor(12, 0);
+            TestUtil.assertCorrectUTCDate(2025, 8, 20, 6, 3, 50, 0, new Date(time));
+
+            time = timeLocator.getTimeFor(12, 250);
+            TestUtil.assertCorrectUTCDate(2025, 8, 20, 6, 14, 56, 957, new Date(time));
+
+            time = timeLocator.getTimeFor(12, 2294);
+            TestUtil.assertCorrectUTCDate(2025, 8, 20, 7, 45, 50, 0, new Date(time));
+        } finally {
+            reader.close();
         }
     }
 

@@ -11,5 +11,6 @@ public class VariableDefinitionTest {
         final VariableDefinition definition = new VariableDefinition();
         assertEquals(1.0, definition.getScale_factor(), 1e-8);
         assertEquals("", definition.getUnits());
+        assertEquals("ARRAY", definition.getData_layout());
     }
 }

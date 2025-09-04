@@ -8,6 +8,7 @@ import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.*;
 import com.bc.fiduceo.reader.amsu_mhs.nat.*;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
+import com.bc.fiduceo.reader.time.TimeLocator_StartStopDate;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayInt;
@@ -16,6 +17,7 @@ import ucar.nc2.Variable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public class MHS_L1B_Reader extends Abstract_L1B_NatReader {
@@ -73,7 +75,19 @@ public class MHS_L1B_Reader extends Abstract_L1B_NatReader {
 
     @Override
     public TimeLocator getTimeLocator() throws IOException {
-        throw new RuntimeException("not implemented");
+        // for the test file, the array returned contains only zeros - same as for AMSUA
+        // According to the sparse documentation, I would expect this to contain seconds since epoch
+        // tb 2025-09-04
+        // Array timeAttitude = cache.getRaw("TIME_ATTITUDE");
+
+        // Instead, we interpolate between header start and stop times tb 2025-09-04
+        final MPHR mphr = cache.getMPHR();
+        // @todo 2 tb this is not good, because I need to know the name, better offer explicit getters for sensing start and stop
+        final Date sensingStart = mphr.getDate("SENSING_START");
+        final Date sensingStop = mphr.getDate("SENSING_END");
+
+        final int numScanLines = cache.getMdrs().size();
+        return new TimeLocator_StartStopDate(sensingStart, sensingStop, numScanLines);
     }
 
     @Override

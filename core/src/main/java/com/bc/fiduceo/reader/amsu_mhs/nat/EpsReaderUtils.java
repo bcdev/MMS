@@ -68,6 +68,7 @@ public class EpsReaderUtils {
         return new BigInteger(1, bytes); // unsigned interpretation
     }
 
+    // @todo 3 tb discuss naming uf unsigned types 2025-09-03
     public static int mapToProductData(String value) {
         switch (value.toLowerCase()) {
             case "byte":
@@ -131,6 +132,10 @@ public class EpsReaderUtils {
                 break;
             default:
                 array = new ArrayDouble.D2(numScanLines, numFOVs);
+        }
+
+        if (numFOVs == 1) {
+            array = array.reduce();
         }
         return array;
     }

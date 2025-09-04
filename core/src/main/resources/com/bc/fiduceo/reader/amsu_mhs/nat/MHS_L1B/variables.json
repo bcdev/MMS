@@ -1,16 +1,37 @@
 {
   "variables": {
+    "SCENE_RADIANCES_*": {
+      "data_type": "integer4",
+      "offset": 83,
+      "stride": 5,
+      "scale_factor": 0.0000001,
+      "units": "mW/m2/sr/cm-1"
+    },
+    "FOV_DATA QUALITY": {
+      "data_type": "integer4",
+      "offset": 1883,
+      "stride": 1
+    },
+    "TIME_ATTITUDE": {
+      "data_type": "u-integer4",
+      "data_layout": "VECTOR",
+      "offset": 2580,
+      "stride": 1,
+      "units" : "s"
+    },
     "latitude": {
       "data_type": "integer4",
       "offset": 3318,
       "stride": 2,
-      "scale_factor": 0.0001
+      "scale_factor": 0.0001,
+      "units": "deg"
     },
     "longitude": {
       "data_type": "integer4",
       "offset": 3322,
       "stride": 2,
-      "scale_factor": 0.0001
+      "scale_factor": 0.0001,
+      "units": "deg"
     }
   }
 }
