@@ -10,4 +10,10 @@ public class EPS_Constants {
     public static final int MHS_EARTH_LOCATIONS_SCALE_FACTOR = 10000;
 
     public static final int AMSUA_FOV_COUNT = 30;
+
+    public static String SENSING_START_KEY = "SENSING_START";
+    public static String SENSING_STOP_KEY = "SENSING_END";
+
+    public static String LON_VAR_NAME = "longitude";
+    public static String LAT_VAR_NAME = "latitude";
 }

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import static com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants.SENSING_START_KEY;
+import static com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants.SENSING_STOP_KEY;
 import static org.junit.Assert.*;
 
 public class MPHRTest {
@@ -21,8 +23,8 @@ public class MPHRTest {
         System.arraycopy(sensingEnd.getBytes(), 0, payLoad, 748, sensingStart.getBytes().length);
         MPHR mphr = new MPHR(null, payLoad);
 
-        Date sensingStartDate = mphr.getDate("SENSING_START");
-        Date sensingEndDate = mphr.getDate("SENSING_END");
+        Date sensingStartDate = mphr.getDate(SENSING_START_KEY);
+        Date sensingEndDate = mphr.getDate(SENSING_STOP_KEY);
 
         assertEquals(1755669830000L, sensingStartDate.getTime());
         assertEquals(1755675950000L, sensingEndDate.getTime());
@@ -39,7 +41,7 @@ public class MPHRTest {
         System.arraycopy(sensingEnd.getBytes(), 0, payLoad, 748, sensingStart.getBytes().length);
         MPHR mphr = new MPHR(null, payLoad);
 
-        Exception ex = assertThrows(IOException.class, () -> mphr.getDate("SENSING_START"));
+        Exception ex = assertThrows(IOException.class, () -> mphr.getDate(SENSING_START_KEY));
         assertEquals("Could not parse time: 20250820060350X", ex.getMessage());
     }
 
@@ -60,7 +62,7 @@ public class MPHRTest {
         final byte[] payLoad = new byte[3307];
         MPHR mphr = new MPHR(null, payLoad);
 
-        Exception ex = assertThrows(IllegalStateException.class, () -> mphr.getDate("SENSING_START"));
+        Exception ex = assertThrows(IllegalStateException.class, () -> mphr.getDate(SENSING_START_KEY));
         assertEquals("Invalid attribute formatting: ", ex.getMessage());
     }
 

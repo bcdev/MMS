@@ -11,6 +11,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import static com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants.SENSING_START_KEY;
+import static com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants.SENSING_STOP_KEY;
+
 public class MPHR extends Record {
 
     public static final int PRODUCT_NAME_OFFSET = 20;
@@ -26,9 +29,9 @@ public class MPHR extends Record {
         String attributeValue = attributesMap.get(key);
         if (attributeValue == null) {
             int offset;
-            if (key.equals("SENSING_START")) {
+            if (key.equals(SENSING_START_KEY)) {
                 offset = 700;
-            } else if (key.equals("SENSING_END")) {
+            } else if (key.equals(SENSING_STOP_KEY)) {
                 offset = 748;
             } else  {
                 throw new IllegalStateException("Unknown attribute key: " + key);

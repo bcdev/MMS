@@ -4,6 +4,7 @@ import com.bc.fiduceo.IOTestRunner;
 import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.*;
+import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.time.TimeLocator;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -113,6 +115,50 @@ public class MHS_L1B_Reader_IO_Test {
 
             time = timeLocator.getTimeFor(12, 2294);
             TestUtil.assertCorrectUTCDate(2025, 8, 20, 7, 45, 50, 0, new Date(time));
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testGetPixelLocator() throws IOException {
+        final File file = createMhsMetopCPath("MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat");
+
+        try {
+            reader.open(file);
+
+            final PixelLocator pixelLocator = reader.getPixelLocator();
+            Point2D geoLocation = pixelLocator.getGeoLocation(0, 0, null);
+            assertEquals(84.0214, geoLocation.getX(), 1e-8);
+            assertEquals(56.0866, geoLocation.getY(), 1e-8);
+
+            geoLocation = pixelLocator.getGeoLocation(6, 109, null);
+            assertEquals(68.5426, geoLocation.getX(), 1e-8);
+            assertEquals(41.5551, geoLocation.getY(), 1e-8);
+
+            Point2D[] pixelLocations = pixelLocator.getPixelLocation(84.0214, 56.0866);
+            assertEquals(1, pixelLocations.length);
+            assertEquals(0, pixelLocations[0].getX(), 1e-8);
+            assertEquals(0, pixelLocations[0].getY(), 1e-8);
+
+            pixelLocations = pixelLocator.getPixelLocation(68.5426, 41.5551);
+            assertEquals(1, pixelLocations.length);
+            assertEquals(6, pixelLocations[0].getX(), 1e-8);
+            assertEquals(109, pixelLocations[0].getY(), 1e-8);
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testGetSubScenePixelLocator() throws IOException {
+        final File file = createMhsMetopCPath("MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat");
+        try {
+            reader.open(file);
+
+            final PixelLocator pixelLocator = reader.getPixelLocator();
+            final PixelLocator subScenePixelLocator = reader.getSubScenePixelLocator(null);
+            assertSame(pixelLocator, subScenePixelLocator);
         } finally {
             reader.close();
         }

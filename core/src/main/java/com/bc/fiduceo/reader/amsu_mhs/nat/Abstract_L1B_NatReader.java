@@ -3,8 +3,12 @@ package com.bc.fiduceo.reader.amsu_mhs.nat;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.geometry.Geometry;
 import com.bc.fiduceo.geometry.GeometryFactory;
+import com.bc.fiduceo.geometry.Polygon;
+import com.bc.fiduceo.location.PixelGeoCodingPixelLocator;
+import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.*;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
+import org.esa.snap.core.dataio.geocoding.GeoChecks;
 import ucar.ma2.Array;
 
 import java.io.File;
@@ -12,20 +16,43 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import static com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants.*;
+import static com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants.LAT_VAR_NAME;
+import static com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants.LON_VAR_NAME;
+
 abstract public class Abstract_L1B_NatReader implements Reader {
 
     protected VariableRegistry registry;
     protected EpsVariableCache cache;
     protected final GeometryFactory geometryFactory;
 
+    private PixelLocator pixelLocator;
+
     public Abstract_L1B_NatReader(ReaderContext readerContext) {
         this.geometryFactory = readerContext.getGeometryFactory();
+        pixelLocator = null;
+    }
+
+    @Override
+    public PixelLocator getPixelLocator() throws IOException {
+        if (pixelLocator == null) {
+            final Array lon = cache.getScaled(LON_VAR_NAME);
+            final Array lat = cache.getScaled(LAT_VAR_NAME);
+
+            pixelLocator = new PixelGeoCodingPixelLocator(lon, lat, LON_VAR_NAME, LAT_VAR_NAME, 48.0, GeoChecks.POLES);
+        }
+        return pixelLocator;
+    }
+
+    @Override
+    public PixelLocator getSubScenePixelLocator(Polygon sceneGeometry) throws IOException {
+        return getPixelLocator();
     }
 
     protected static void setSensingDates(AcquisitionInfo acquisitionInfo, MPHR recordMPHR) throws IOException {
-        final Date sensingStart = recordMPHR.getDate("SENSING_START");
+        final Date sensingStart = recordMPHR.getDate(SENSING_START_KEY);
         acquisitionInfo.setSensingStart(sensingStart);
-        final Date sensingEnd = recordMPHR.getDate("SENSING_END");
+        final Date sensingEnd = recordMPHR.getDate(SENSING_STOP_KEY);
         acquisitionInfo.setSensingStop(sensingEnd);
     }
 
@@ -49,6 +76,7 @@ abstract public class Abstract_L1B_NatReader implements Reader {
         }
         // @todo 2 tb/tb implement clear() method for registry
         registry = null;
+        pixelLocator = null;
     }
 
     protected Geometries extractGeometries(Array longitudes, Array latitudes, int numSplits, Interval interval) throws IOException {
