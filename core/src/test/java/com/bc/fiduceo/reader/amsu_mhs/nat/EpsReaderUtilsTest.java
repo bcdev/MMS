@@ -1,5 +1,6 @@
 package com.bc.fiduceo.reader.amsu_mhs.nat;
 
+import com.sun.jna.platform.win32.WinDef;
 import org.esa.snap.core.datamodel.ProductData;
 import org.junit.Test;
 import ucar.ma2.*;
@@ -128,16 +129,6 @@ public class EpsReaderUtilsTest {
         assertSame(input, result);
     }
 
-
-
-
-
-
-
-
-
-
-
     @Test
     public void testInitializeArray_int8() {
         int numScanLines = 4;
@@ -217,5 +208,17 @@ public class EpsReaderUtilsTest {
         Array array = EpsReaderUtils.initializeArray(9999, numScanLines, numFOVs);
         assertTrue(array instanceof ArrayDouble.D2);
         assertArrayEquals(new int[]{numScanLines, numFOVs}, array.getShape());
+    }
+
+    @Test
+    public void testGetFillValue() {
+        assertEquals(Byte.MIN_VALUE, EpsReaderUtils.getFillValue("byte"));
+        assertEquals(255, EpsReaderUtils.getFillValue("u-byte"));
+        assertEquals(Short.MIN_VALUE, EpsReaderUtils.getFillValue("integer2"));
+        assertEquals(65535, EpsReaderUtils.getFillValue("u-integer2"));
+        assertEquals(Integer.MIN_VALUE, EpsReaderUtils.getFillValue("integer4"));
+        assertEquals(4294967295L, EpsReaderUtils.getFillValue("u-integer4"));
+        assertEquals(Long.MIN_VALUE, EpsReaderUtils.getFillValue("integer8"));
+        assertEquals(Long.MAX_VALUE, EpsReaderUtils.getFillValue("u-integer8"));
     }
 }

@@ -10,56 +10,56 @@ import java.nio.ByteBuffer;
 public class EpsReaderUtils {
 
     /**
-        reads eps data types "byte", "boolean", "enumerated" from buffer
+     * reads eps data types "byte", "boolean", "enumerated" from buffer
      */
     public static byte readInt8(ByteBuffer buffer, int offset) {
         return buffer.get(offset);
     }
 
     /**
-        reads eps data types "u-byte" from buffer
+     * reads eps data types "u-byte" from buffer
      */
     public static short readUInt8(ByteBuffer buffer, int offset) {
         return (short) Byte.toUnsignedInt(buffer.get(offset));
     }
 
     /**
-     reads eps data types "integer2" from buffer
+     * reads eps data types "integer2" from buffer
      */
     public static short readInt16(ByteBuffer buffer, int offset) {
         return buffer.getShort(offset);
     }
 
     /**
-     reads eps data types "u-integer2" from buffer
+     * reads eps data types "u-integer2" from buffer
      */
     public static int readUInt16(ByteBuffer buffer, int offset) {
         return Short.toUnsignedInt(buffer.getShort(offset));
     }
 
     /**
-     reads eps data types "integer-4" from buffer
+     * reads eps data types "integer-4" from buffer
      */
     public static int readInt32(ByteBuffer buffer, int offset) {
         return buffer.getInt(offset);
     }
 
     /**
-     reads eps data types "u-integer4" from buffer
+     * reads eps data types "u-integer4" from buffer
      */
     public static long readUInt32(ByteBuffer buffer, int offset) {
         return Integer.toUnsignedLong(buffer.getInt(offset));
     }
 
     /**
-        reads eps data types "integer8" from buffer
+     * reads eps data types "integer8" from buffer
      */
     public static long readInt64(ByteBuffer buffer, int offset) {
         return buffer.getLong(offset);
     }
 
     /**
-        reads eps data types "u-integer8" from buffer
+     * reads eps data types "u-integer8" from buffer
      */
     public static BigInteger readUInt64(ByteBuffer buffer, int offset) {
         byte[] bytes = new byte[8];
@@ -138,5 +138,28 @@ public class EpsReaderUtils {
             array = array.reduce();
         }
         return array;
+    }
+
+    public static Number getFillValue(String dataType) {
+        switch (dataType) {
+            case "byte":
+                return Byte.MIN_VALUE;
+            case "u-byte":
+                return 255;
+            case "integer2":
+                return Short.MIN_VALUE;
+            case "u-integer2":
+                return 65535;
+            case "integer4":
+                return Integer.MIN_VALUE;
+            case "u-integer4":
+                return 4294967295L;
+            case "integer8":
+                return Long.MIN_VALUE;
+            case "u-integer8":
+                return Long.MAX_VALUE;  // @todo 2 tb/* check how we can handle uint64 in Java anyways 2025-09-16
+            default:
+                throw new IllegalArgumentException("Unsupported data type: " + dataType);
+        }
     }
 }

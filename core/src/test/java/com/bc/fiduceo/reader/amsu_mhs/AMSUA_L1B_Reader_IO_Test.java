@@ -2,6 +2,7 @@ package com.bc.fiduceo.reader.amsu_mhs;
 
 import com.bc.fiduceo.IOTestRunner;
 import com.bc.fiduceo.TestUtil;
+import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.*;
 import com.bc.fiduceo.location.PixelLocator;
@@ -11,6 +12,9 @@ import com.bc.fiduceo.reader.time.TimeLocator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import ucar.ma2.Array;
+import ucar.ma2.Index;
+import ucar.ma2.InvalidRangeException;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -157,6 +161,34 @@ public class AMSUA_L1B_Reader_IO_Test {
             final PixelLocator pixelLocator = reader.getPixelLocator();
             final PixelLocator subScenePixelLocator = reader.getSubScenePixelLocator(null);
             assertSame(pixelLocator, subScenePixelLocator);
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testReadRaw() throws IOException, InvalidRangeException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            Array rawData = reader.readRaw(1, 1, new Interval(3, 3), "SCENE_RADIANCE_01");
+            Index idx = rawData.getIndex();
+            idx.set(0, 0);
+            assertEquals(11880, rawData.getInt(idx));
+            idx.set(0, 1);
+            assertEquals(12634, rawData.getInt(idx));
+            idx.set(0, 2);
+            assertEquals(12883, rawData.getInt(idx));
+
+            rawData = reader.readRaw(2, 2, new Interval(3, 3), "solar_zenith_angle");
+            idx = rawData.getIndex();
+            idx.set(1, 0);
+            assertEquals(8883, rawData.getInt(idx));
+            idx.set(1, 1);
+            assertEquals(8947, rawData.getInt(idx));
+            idx.set(1, 2);
+            assertEquals(9002, rawData.getInt(idx));
         } finally {
             reader.close();
         }

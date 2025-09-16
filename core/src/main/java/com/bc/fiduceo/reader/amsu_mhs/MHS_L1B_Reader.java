@@ -84,11 +84,6 @@ public class MHS_L1B_Reader extends Abstract_L1B_NatReader {
     }
 
     @Override
-    public int[] extractYearMonthDayFromFilename(String fileName) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
     public Array readRaw(int centerX, int centerY, Interval interval, String variableName) throws IOException, InvalidRangeException {
         // todo 28-08-2025 BL: evaluate functionality and test edge cases
         Array array = cache.getRaw(variableName);

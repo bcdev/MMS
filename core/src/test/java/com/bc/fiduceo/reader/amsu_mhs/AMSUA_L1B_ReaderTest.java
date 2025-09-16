@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 
+@SuppressWarnings("resource")
 public class AMSUA_L1B_ReaderTest {
 
     @Test
@@ -83,5 +84,12 @@ public class AMSUA_L1B_ReaderTest {
         final AMSUA_L1B_Reader reader = new AMSUA_L1B_Reader(new ReaderContext());
 
         assertEquals("latitude", reader.getLatitudeVariableName());
+    }
+
+    @Test
+    public void testExtractYearMonthDayFromFilename()  {
+        final AMSUA_L1B_Reader reader = new AMSUA_L1B_Reader(new ReaderContext());
+
+        assertArrayEquals(new int[]{2016, 1, 1}, reader.extractYearMonthDayFromFilename("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat"));
     }
 }

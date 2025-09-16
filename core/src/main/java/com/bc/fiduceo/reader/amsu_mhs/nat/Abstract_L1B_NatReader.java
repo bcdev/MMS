@@ -49,6 +49,18 @@ abstract public class Abstract_L1B_NatReader implements Reader {
         return getPixelLocator();
     }
 
+    @Override
+    public int[] extractYearMonthDayFromFilename(String fileName) {
+        final String[] strings = fileName.split("_");
+        final String dateTimePart = strings[4];
+
+        final int[] ymd = new int[3];
+        ymd[0] = Integer.parseInt(dateTimePart.substring(0, 4));
+        ymd[1] = Integer.parseInt(dateTimePart.substring(4, 6));
+        ymd[2] = Integer.parseInt(dateTimePart.substring(6, 8));
+        return ymd;
+    }
+
     protected static void setSensingDates(AcquisitionInfo acquisitionInfo, MPHR recordMPHR) throws IOException {
         final Date sensingStart = recordMPHR.getDate(SENSING_START_KEY);
         acquisitionInfo.setSensingStart(sensingStart);

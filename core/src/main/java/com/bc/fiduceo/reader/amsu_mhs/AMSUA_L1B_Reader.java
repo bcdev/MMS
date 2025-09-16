@@ -5,13 +5,9 @@ import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelGeoCodingPixelLocator;
 import com.bc.fiduceo.location.PixelLocator;
-import com.bc.fiduceo.reader.AcquisitionInfo;
-import com.bc.fiduceo.reader.Geometries;
-import com.bc.fiduceo.reader.ReaderContext;
-import com.bc.fiduceo.reader.ReaderUtils;
-import com.bc.fiduceo.reader.amsu_mhs.nat.Abstract_L1B_NatReader;
-import com.bc.fiduceo.reader.amsu_mhs.nat.EPS_Constants;
-import com.bc.fiduceo.reader.amsu_mhs.nat.GENERIC_RECORD_HEADER;
+import com.bc.fiduceo.reader.*;
+import com.bc.fiduceo.reader.amsr.AmsrUtils;
+import com.bc.fiduceo.reader.amsu_mhs.nat.*;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MDR;
 import com.bc.fiduceo.reader.amsu_mhs.nat.record_types.MPHR;
 import com.bc.fiduceo.reader.time.TimeLocator;
@@ -102,13 +98,12 @@ public class AMSUA_L1B_Reader extends Abstract_L1B_NatReader {
     }
 
     @Override
-    public int[] extractYearMonthDayFromFilename(String fileName) {
-        throw new RuntimeException("not implemented");
-    }
-
-    @Override
     public Array readRaw(int centerX, int centerY, Interval interval, String variableName) throws IOException, InvalidRangeException {
-        throw new RuntimeException("not implemented");
+        final Array rawData = cache.getRaw(variableName);
+        final VariableDefinition variableDef = registry.getVariableDef(variableName);
+        final Number fillValue = EpsReaderUtils.getFillValue(variableDef.getData_type());
+        final int numScanLines = cache.getMdrs().size();
+        return RawDataReader.read(centerX, centerY, interval, fillValue, rawData, new Dimension("size", AMSUA_FOV_COUNT, numScanLines));
     }
 
     @Override

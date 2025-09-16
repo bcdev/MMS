@@ -36,4 +36,9 @@ public class MHS_L1B_ReaderTest {
         matcher = pattern.matcher("MHSx_xxx_1B_M04_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat");
         assertFalse(matcher.matches());
     }
+
+    @Test
+    public void testExtractYearMonthDayFromFilename()  {
+        assertArrayEquals(new int[]{2025, 8, 20}, reader.extractYearMonthDayFromFilename("MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat"));
+    }
 }
