@@ -10,6 +10,7 @@ public class VariableDefinition {
     private String units;
     private String flag_values;
     private String flag_meanings;
+    private String standard_name;
 
     public VariableDefinition() {
         scale_factor = 1.0;
@@ -85,5 +86,13 @@ public class VariableDefinition {
 
     public void setData_layout(String data_layout) {
         this.data_layout = data_layout;
+    }
+
+    public String getStandard_name() {
+        return standard_name;
+    }
+
+    public void setStandard_name(String standard_name) {
+        this.standard_name = standard_name;
     }
 }

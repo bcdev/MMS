@@ -2,6 +2,7 @@ package com.bc.fiduceo.reader.amsu_mhs;
 
 import com.bc.fiduceo.IOTestRunner;
 import com.bc.fiduceo.TestUtil;
+import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.*;
@@ -9,12 +10,13 @@ import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.time.TimeLocator;
+import com.bc.fiduceo.util.VariableProxy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import ucar.ma2.Array;
-import ucar.ma2.Index;
-import ucar.ma2.InvalidRangeException;
+import ucar.ma2.*;
+import ucar.nc2.Attribute;
+import ucar.nc2.Variable;
 
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -52,7 +54,7 @@ public class AMSUA_L1B_Reader_IO_Test {
             final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssX");
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
             final Date expectedStart = sdf.parse("20160101234924Z");
-            final Date expectedStop  = sdf.parse("20160102013124Z");
+            final Date expectedStop = sdf.parse("20160102013124Z");
 
             assertEquals(expectedStart, acquisitionInfo.getSensingStart());
             assertEquals(expectedStop, acquisitionInfo.getSensingStop());
@@ -167,6 +169,20 @@ public class AMSUA_L1B_Reader_IO_Test {
     }
 
     @Test
+    public void testGetProductSize() throws IOException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            final Dimension productSize = reader.getProductSize();
+            assertEquals(30, productSize.getNx(), 1e-8);
+            assertEquals(765, productSize.getNy(), 1e-8);
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
     public void testReadRaw() throws IOException, InvalidRangeException {
         final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
         try {
@@ -194,6 +210,267 @@ public class AMSUA_L1B_Reader_IO_Test {
         }
     }
 
+    @Test
+    public void testReadRaw_topBorder() throws IOException, InvalidRangeException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            Array rawData = reader.readRaw(1, 0, new Interval(3, 3), "SCENE_RADIANCE_02");
+            Index idx = rawData.getIndex();
+            idx.set(0, 0);
+            assertEquals(-2147483648, rawData.getInt(idx));
+            idx.set(1, 1);
+            assertEquals(21796, rawData.getInt(idx));
+            idx.set(2, 2);
+            assertEquals(21208, rawData.getInt(idx));
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testReadRaw_upperRightEdge() throws IOException, InvalidRangeException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            Array rawData = reader.readRaw(29, 0, new Interval(3, 3), "SURFACE_PROPERTIES");
+            Index idx = rawData.getIndex();
+            idx.set(0, 2);
+            assertEquals(-32768, rawData.getInt(idx));
+            idx.set(1, 2);
+            assertEquals(-32768, rawData.getInt(idx));
+            idx.set(0, 1);
+            assertEquals(-32768, rawData.getInt(idx));
+            idx.set(1, 1);
+            assertEquals(1, rawData.getInt(idx));
+            idx.set(2, 1);
+            assertEquals(1, rawData.getInt(idx));
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testReadScaled() throws IOException, InvalidRangeException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            Array scaledData = reader.readScaled(3, 3, new Interval(3, 3), "SCENE_RADIANCE_03");
+            Index idx = scaledData.getIndex();
+            idx.set(0, 0);
+            assertEquals(0.005504000000655651, scaledData.getFloat(idx), 1e-8);
+            idx.set(0, 1);
+            assertEquals(0.005510400049388409, scaledData.getFloat(idx), 1e-8);
+            idx.set(0, 2);
+            assertEquals(0.005386400036513805, scaledData.getFloat(idx), 1e-8);
+
+            scaledData = reader.readScaled(4, 4, new Interval(3, 3), "satellite_azimuth_angle");
+            idx = scaledData.getIndex();
+            idx.set(1, 0);
+            assertEquals(-50.310001373291016, scaledData.getFloat(idx), 1e-8);
+            idx.set(1, 1);
+            assertEquals(-51.689998626708984, scaledData.getFloat(idx), 1e-8);
+            idx.set(1, 2);
+            assertEquals(-52.97999954223633, scaledData.getFloat(idx), 1e-8);
+
+            // and check for a variable without scale factor tb 2025-09-17
+            scaledData = reader.readScaled(4, 4, new Interval(3, 3), "TERRAIN_ELEVATION");
+            idx = scaledData.getIndex();
+            idx.set(1, 0);
+            assertEquals(244, scaledData.getFloat(idx), 1e-8);
+            idx.set(1, 1);
+            assertEquals(305, scaledData.getFloat(idx), 1e-8);
+            idx.set(1, 2);
+            assertEquals(457, scaledData.getFloat(idx), 1e-8);
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testReadScaled_rightBorder() throws IOException, InvalidRangeException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            Array scaledData = reader.readScaled(29, 5, new Interval(3, 3), "SCENE_RADIANCE_04");
+            Index idx = scaledData.getIndex();
+            idx.set(0, 0);
+            assertEquals(0.006011600140482187, scaledData.getFloat(idx), 1e-8);
+            idx.set(1, 1);
+            assertEquals(0.005992699880152941, scaledData.getFloat(idx), 1e-8);
+            idx.set(2, 2);
+            assertEquals(-214.7483673095703, scaledData.getFloat(idx), 1e-8);
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testReadScaled_lowerRightEdge() throws IOException, InvalidRangeException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            Array scaledData = reader.readScaled(29, 764, new Interval(3, 3), "satellite_zenith_angle");
+            Index idx = scaledData.getIndex();
+            idx.set(0, 0);
+            assertEquals(53.040000915527344, scaledData.getFloat(idx), 1e-8);
+            idx.set(1, 1);
+            assertEquals(57.59000015258789, scaledData.getFloat(idx), 1e-8);
+            idx.set(2, 2);
+            assertEquals(-327.67999267578125, scaledData.getFloat(idx), 1e-8);
+        } finally {
+            reader.close();
+        }
+    }
+
+
+    @Test
+    public void testGetVariables() throws InvalidRangeException, IOException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            final List<Variable> variables = reader.getVariables();
+            assertEquals(24, variables.size());
+
+            VariableProxy variable = (VariableProxy) variables.get(0);
+            assertEquals("solar_zenith_angle", variable.getFullName());
+            assertEquals(DataType.SHORT, variable.getDataType());
+            List<Attribute> attributes = variable.getAttributes();
+            Attribute attribute = attributes.get(0);
+            assertEquals("units", attribute.getShortName());
+            assertEquals("degree", attribute.getStringValue());
+            attribute = attributes.get(1);
+            assertEquals("scale_factor", attribute.getShortName());
+            assertEquals(0.01, attribute.getNumericValue());
+            attribute = attributes.get(2);
+            assertEquals("add_offset", attribute.getShortName());
+            assertEquals(0.0, attribute.getNumericValue());
+            attribute = attributes.get(3);
+            assertEquals("_FillValue", attribute.getShortName());
+            assertEquals(-32768, attribute.getNumericValue().intValue());
+            attribute = attributes.get(4);
+            assertEquals("standard_name", attribute.getShortName());
+            assertEquals("solar_zenith_angle", attribute.getStringValue());
+
+            variable = (VariableProxy) variables.get(5);
+            assertEquals("longitude", variable.getFullName());
+            assertEquals(DataType.INT, variable.getDataType());
+            attributes = variable.getAttributes();
+            attribute = attributes.get(0);
+            assertEquals("units", attribute.getShortName());
+            assertEquals("degree", attribute.getStringValue());
+            attribute = attributes.get(1);
+            assertEquals("scale_factor", attribute.getShortName());
+            assertEquals(1.0E-4, attribute.getNumericValue());
+            attribute = attributes.get(3);
+            assertEquals("_FillValue", attribute.getShortName());
+            assertEquals(-2147483648, attribute.getNumericValue());
+
+            variable = (VariableProxy) variables.get(6);
+            assertEquals("SURFACE_PROPERTIES", variable.getFullName());
+            assertEquals(DataType.SHORT, variable.getDataType());
+            attributes = variable.getAttributes();
+            attribute = attributes.get(1);
+            assertEquals("flag_meanings", attribute.getShortName());
+            assertEquals("water mixed_coast land", attribute.getStringValue());
+            attribute = attributes.get(2);
+            assertEquals("flag_values", attribute.getShortName());
+            assertEquals(0, attribute.getValues().getShort(0));
+            assertEquals(1, attribute.getValues().getShort(1));
+            assertEquals(2, attribute.getValues().getShort(2));
+
+            variable = (VariableProxy) variables.get(10);
+            assertEquals("SCENE_RADIANCE_07", variable.getFullName());
+            assertEquals(DataType.INT, variable.getDataType());
+            attributes = variable.getAttributes();
+            attribute = attributes.get(0);
+            assertEquals("units", attribute.getShortName());
+            assertEquals("mW/m2/sr/cm-1", attribute.getStringValue());
+            attribute = attributes.get(1);
+            assertEquals("scale_factor", attribute.getShortName());
+            assertEquals(1.0E-7, attribute.getNumericValue());
+            attribute = attributes.get(3);
+            assertEquals("_FillValue", attribute.getShortName());
+            assertEquals(-2147483648, attribute.getNumericValue());
+            attribute = attributes.get(4);
+            assertEquals("standard_name", attribute.getShortName());
+            assertEquals("toa_radiance", attribute.getStringValue());
+
+            variable = (VariableProxy) variables.get(15);
+            assertEquals("SCENE_RADIANCE_14", variable.getFullName());
+            assertEquals(DataType.INT, variable.getDataType());
+            attributes = variable.getAttributes();
+            attribute = attributes.get(0);
+            assertEquals("units", attribute.getShortName());
+            assertEquals("mW/m2/sr/cm-1", attribute.getStringValue());
+            attribute = attributes.get(1);
+            assertEquals("scale_factor", attribute.getShortName());
+            assertEquals(1.0E-7, attribute.getNumericValue());
+            attribute = attributes.get(3);
+            assertEquals("_FillValue", attribute.getShortName());
+            assertEquals(-2147483648, attribute.getNumericValue());
+
+            variable = (VariableProxy) variables.get(20);
+            assertEquals("SCENE_RADIANCE_02", variable.getFullName());
+            assertEquals(DataType.INT, variable.getDataType());
+            attributes = variable.getAttributes();
+            attribute = attributes.get(0);
+            assertEquals("units", attribute.getShortName());
+            assertEquals("mW/m2/sr/cm-1", attribute.getStringValue());
+            attribute = attributes.get(1);
+            assertEquals("scale_factor", attribute.getShortName());
+            assertEquals(1.0E-7, attribute.getNumericValue());
+            attribute = attributes.get(2);
+            assertEquals("add_offset", attribute.getShortName());
+            assertEquals(0.0, attribute.getNumericValue());
+            attribute = attributes.get(3);
+            assertEquals("_FillValue", attribute.getShortName());
+            assertEquals(-2147483648, attribute.getNumericValue());
+
+            variable = (VariableProxy) variables.get(23);
+            assertEquals("SCENE_RADIANCE_11", variable.getFullName());
+            assertEquals(DataType.INT, variable.getDataType());
+            attributes = variable.getAttributes();
+            attribute = attributes.get(0);
+            assertEquals("units", attribute.getShortName());
+            assertEquals("mW/m2/sr/cm-1", attribute.getStringValue());
+            attribute = attributes.get(1);
+            assertEquals("scale_factor", attribute.getShortName());
+            assertEquals(1.0E-7, attribute.getNumericValue());
+            attribute = attributes.get(3);
+            assertEquals("_FillValue", attribute.getShortName());
+            assertEquals(-2147483648, attribute.getNumericValue());
+            attribute = attributes.get(4);
+            assertEquals("standard_name", attribute.getShortName());
+            assertEquals("toa_radiance", attribute.getStringValue());
+        } finally {
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testReadAcquisitionTime() throws InvalidRangeException, IOException {
+        final File file = createAmsuaMetopAPath("AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat");
+        try {
+            reader.open(file);
+
+            ArrayInt.D2 timeArray = reader.readAcquisitionTime(14, 189, new Interval(3, 5));
+                assertEquals(1451693662, timeArray.getInt(0));
+                assertEquals(1451693662, timeArray.getInt(1));
+
+                assertEquals(1451693670, timeArray.getInt(3));
+                assertEquals(1451693670, timeArray.getInt(4));
+
+        } finally {
+            reader.close();
+        }
+    }
     private File createAmsuaMetopAPath(String fileName) throws IOException {
         final String testFilePath = TestUtil.assembleFileSystemPath(new String[]{"amsua-ma", "v8A", "2016", "01", "01", fileName}, false);
         return TestUtil.getTestDataFileAsserted(testFilePath);

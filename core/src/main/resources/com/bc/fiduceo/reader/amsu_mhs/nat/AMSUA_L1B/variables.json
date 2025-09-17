@@ -5,49 +5,56 @@
       "offset": 22,
       "stride": 15,
       "scale_factor": 0.0000001,
-      "units" : "mW/m2/sr/cm-1"
+      "units" : "mW/m2/sr/cm-1",
+      "standard_name": "toa_radiance"
     },
     "solar_zenith_angle": {
       "data_type": "integer2",
       "offset": 1842,
       "stride": 4,
       "scale_factor": 0.01,
-      "units" : "degree"
+      "units" : "degree",
+      "standard_name": "solar_zenith_angle"
     },
     "satellite_zenith_angle": {
       "data_type": "integer2",
       "offset": 1844,
       "stride": 4,
       "scale_factor": 0.01,
-      "units" : "degree"
+      "units" : "degree",
+      "standard_name": "platform_zenith_angle"
     },
     "solar_azimuth_angle": {
       "data_type": "integer2",
       "offset": 1846,
       "stride": 4,
       "scale_factor": 0.01,
-      "units" : "degree"
+      "units" : "degree",
+      "standard_name": "solar_azimuth_angle"
     },
     "satellite_azimuth_angle": {
       "data_type": "integer2",
       "offset": 1848,
       "stride": 4,
       "scale_factor": 0.01,
-      "units" : "degree"
+      "units" : "degree",
+      "standard_name": "platform_azimuth_angle"
     },
     "latitude": {
       "data_type": "integer4",
       "offset": 2082,
       "stride": 2,
       "scale_factor": 0.0001,
-      "units" : "degree"
+      "units" : "degree",
+      "standard_name": "latitude"
     },
     "longitude": {
       "data_type": "integer4",
       "offset": 2086,
       "stride": 2,
       "scale_factor": 0.0001,
-      "units" : "degree"
+      "units" : "degree",
+      "standard_name": "longitude"
     },
     "SURFACE_PROPERTIES": {
       "data_type": "integer2",
@@ -60,14 +67,16 @@
       "data_type": "integer2",
       "offset": 2382,
       "stride": 1,
-      "units" : "m"
+      "units" : "m",
+      "standard_name": "height_above_mean_sea_level"
     },
     "TIME_ATTITUDE": {
       "data_type": "u-integer4",
       "data_layout": "VECTOR",
       "offset": 1824,
       "stride": 1,
-      "units" : "s"
+      "units" : "s",
+      "standard_name": "time"
     }
   }
 }

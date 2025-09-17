@@ -68,7 +68,6 @@ public class EpsReaderUtils {
         return new BigInteger(1, bytes); // unsigned interpretation
     }
 
-    // @todo 3 tb discuss naming uf unsigned types 2025-09-03
     public static int mapToProductData(String value) {
         switch (value.toLowerCase()) {
             case "byte":

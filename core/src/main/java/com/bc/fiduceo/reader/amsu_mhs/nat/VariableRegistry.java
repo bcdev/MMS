@@ -47,6 +47,7 @@ public class VariableRegistry {
                     layerVariableDefinition.setScale_factor(variableDefinition.getScale_factor());
                     layerVariableDefinition.setData_type(variableDefinition.getData_type());
                     layerVariableDefinition.setUnits(variableDefinition.getUnits());
+                    layerVariableDefinition.setStandard_name(variableDefinition.getStandard_name());
                     final String layerKey = key.replace("*", String.format("%02d", offset + 1));
                     toBeAdded.put(layerKey, layerVariableDefinition);
                 }
