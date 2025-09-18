@@ -37,59 +37,6 @@ public class AMSUA_L1B_Reader extends Abstract_L1B_NatReader {
         productSize = null;
     }
 
-    // package access for testing only tb 2025-09-17
-    static List<Attribute> extractCFAttributes(VariableDefinition variableDefinition) {
-        final ArrayList<Attribute> attributes = new ArrayList<>();
-
-        final String units = variableDefinition.getUnits();
-        if (StringUtils.isNotNullAndNotEmpty(units)) {
-            attributes.add(new Attribute("units", units));
-        }
-
-        final double scaleFactor = variableDefinition.getScale_factor();
-        if (scaleFactor != 1.0) {
-            attributes.add(new Attribute("scale_factor", scaleFactor));
-            attributes.add(new Attribute("add_offset", 0.0));
-        }
-
-        final String dataType = variableDefinition.getData_type();
-        if (StringUtils.isNotNullAndNotEmpty(dataType)) {
-            final Number fillValue = EpsReaderUtils.getFillValue(dataType);
-            if (fillValue != null) {
-                attributes.add(new Attribute("_FillValue", fillValue));
-            }
-        }
-
-        final String flagMeanings = variableDefinition.getFlag_meanings();
-        final String flagValues = variableDefinition.getFlag_values();
-        if (StringUtils.isNotNullAndNotEmpty(flagMeanings) && StringUtils.isNotNullAndNotEmpty(flagValues)) {
-            attributes.add(new Attribute("flag_meanings", flagMeanings));
-
-            final Array valuesArray = toValuesArray(flagValues, variableDefinition.getData_type());
-            attributes.add(new Attribute("flag_values", valuesArray));
-        }
-
-        final String standardName = variableDefinition.getStandard_name();
-        if (StringUtils.isNotNullAndNotEmpty(standardName)) {
-            attributes.add(new Attribute("standard_name", standardName));
-        }
-
-        return attributes;
-    }
-
-    // package access for testing only tb 2025-09-17
-    public static Array toValuesArray(String valuesString, String dataType) {
-        final String[] valueStrings = StringUtils.split(valuesString, new char[]{','}, true);
-        final int snapDataType = EpsReaderUtils.mapToProductData(dataType);
-
-        Array dataVector = Array.factory(NetCDFUtils.getNetcdfDataType(snapDataType), new int[]{valueStrings.length});
-
-        for (int i = 0; i < valueStrings.length; i++) {
-            dataVector.setDouble(i, Double.parseDouble(valueStrings[i]));
-        }
-        return dataVector;
-    }
-
     @Override
     public void open(File file) throws IOException {
         initializeRegistry(RESOURCE_KEY);
@@ -121,14 +68,6 @@ public class AMSUA_L1B_Reader extends Abstract_L1B_NatReader {
         ReaderUtils.setTimeAxes(acquisitionInfo, geometries.getTimeAxesGeometry(), geometryFactory);
 
         return acquisitionInfo;
-    }
-
-    static void ensureMdrVersionSupported(GENERIC_RECORD_HEADER header) {
-        final byte recordSubClass = header.getRecordSubClass();
-        final byte recordSubClassVersion = header.getRecordSubClassVersion();
-        if (recordSubClass != 2 || recordSubClassVersion != 3) {
-            throw new IllegalStateException("Unsupported MDR version: " + recordSubClass + " v " + recordSubClassVersion);
-        }
     }
 
     @Override
@@ -250,5 +189,66 @@ public class AMSUA_L1B_Reader extends Abstract_L1B_NatReader {
     @Override
     public String getLatitudeVariableName() {
         return "latitude";
+    }
+
+    // package access for testing only tb 2025-09-17
+    static List<Attribute> extractCFAttributes(VariableDefinition variableDefinition) {
+        final ArrayList<Attribute> attributes = new ArrayList<>();
+
+        final String units = variableDefinition.getUnits();
+        if (StringUtils.isNotNullAndNotEmpty(units)) {
+            attributes.add(new Attribute("units", units));
+        }
+
+        final double scaleFactor = variableDefinition.getScale_factor();
+        if (scaleFactor != 1.0) {
+            attributes.add(new Attribute("scale_factor", scaleFactor));
+            attributes.add(new Attribute("add_offset", 0.0));
+        }
+
+        final String dataType = variableDefinition.getData_type();
+        if (StringUtils.isNotNullAndNotEmpty(dataType)) {
+            final Number fillValue = EpsReaderUtils.getFillValue(dataType);
+            if (fillValue != null) {
+                attributes.add(new Attribute("_FillValue", fillValue));
+            }
+        }
+
+        final String flagMeanings = variableDefinition.getFlag_meanings();
+        final String flagValues = variableDefinition.getFlag_values();
+        if (StringUtils.isNotNullAndNotEmpty(flagMeanings) && StringUtils.isNotNullAndNotEmpty(flagValues)) {
+            attributes.add(new Attribute("flag_meanings", flagMeanings));
+
+            final Array valuesArray = toValuesArray(flagValues, variableDefinition.getData_type());
+            attributes.add(new Attribute("flag_values", valuesArray));
+        }
+
+        final String standardName = variableDefinition.getStandard_name();
+        if (StringUtils.isNotNullAndNotEmpty(standardName)) {
+            attributes.add(new Attribute("standard_name", standardName));
+        }
+
+        return attributes;
+    }
+
+    // package access for testing only tb 2025-09-17
+    static Array toValuesArray(String valuesString, String dataType) {
+        final String[] valueStrings = StringUtils.split(valuesString, new char[]{','}, true);
+        final int snapDataType = EpsReaderUtils.mapToProductData(dataType);
+
+        Array dataVector = Array.factory(NetCDFUtils.getNetcdfDataType(snapDataType), new int[]{valueStrings.length});
+
+        for (int i = 0; i < valueStrings.length; i++) {
+            dataVector.setDouble(i, Double.parseDouble(valueStrings[i]));
+        }
+        return dataVector;
+    }
+
+    static void ensureMdrVersionSupported(GENERIC_RECORD_HEADER header) {
+        final byte recordSubClass = header.getRecordSubClass();
+        final byte recordSubClassVersion = header.getRecordSubClassVersion();
+        if (recordSubClass != 2 || recordSubClassVersion != 3) {
+            throw new IllegalStateException("Unsupported MDR version: " + recordSubClass + " v " + recordSubClassVersion);
+        }
     }
 }

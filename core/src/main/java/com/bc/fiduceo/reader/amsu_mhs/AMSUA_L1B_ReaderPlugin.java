@@ -11,7 +11,7 @@ public class AMSUA_L1B_ReaderPlugin implements ReaderPlugin {
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
-        return new AMSUA_L1B_Reader(new ReaderContext());
+        return new AMSUA_L1B_Reader(readerContext);
     }
 
     @Override
