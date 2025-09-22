@@ -38,6 +38,16 @@ public class MHS_L1B_ReaderTest {
     }
 
     @Test
+    public void testGetLongitudeVariableName() {
+        assertEquals("longitude", reader.getLongitudeVariableName());
+    }
+
+    @Test
+    public void testGetLatitudeVariableName() {
+        assertEquals("latitude", reader.getLatitudeVariableName());
+    }
+
+    @Test
     public void testExtractYearMonthDayFromFilename()  {
         assertArrayEquals(new int[]{2025, 8, 20}, reader.extractYearMonthDayFromFilename("MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat"));
     }

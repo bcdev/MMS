@@ -5,33 +5,82 @@
       "offset": 83,
       "stride": 5,
       "scale_factor": 0.0000001,
-      "units": "mW/m2/sr/cm-1"
+      "units": "mW/m2/sr/cm-1",
+      "standard_name": "toa_radiance"
     },
     "FOV_DATA QUALITY": {
       "data_type": "integer4",
       "offset": 1883,
-      "stride": 1
-    },
-    "TIME_ATTITUDE": {
-      "data_type": "u-integer4",
-      "data_layout": "VECTOR",
-      "offset": 2580,
       "stride": 1,
-      "units" : "s"
+      "standard_name": "quality_flag"
+    },
+    "solar_zenith_angle": {
+      "data_type": "integer2",
+      "offset": 2598,
+      "stride": 4,
+      "scale_factor": 0.01,
+      "units" : "degree",
+      "standard_name": "solar_zenith_angle"
+    },
+    "satellite_zenith_angle": {
+      "data_type": "integer2",
+      "offset": 2600,
+      "stride": 4,
+      "scale_factor": 0.01,
+      "units" : "degree",
+      "standard_name": "platform_zenith_angle"
+    },
+    "solar_azimuth_angle": {
+      "data_type": "integer2",
+      "offset": 2602,
+      "stride": 4,
+      "scale_factor": 0.01,
+      "units" : "degree",
+      "standard_name": "solar_azimuth_angle"
+    },
+    "satellite_azimuth_angle": {
+      "data_type": "integer2",
+      "offset": 2604,
+      "stride": 4,
+      "scale_factor": 0.01,
+      "units" : "degree",
+      "standard_name": "platform_azimuth_angle"
     },
     "latitude": {
       "data_type": "integer4",
       "offset": 3318,
       "stride": 2,
       "scale_factor": 0.0001,
-      "units": "deg"
+      "units": "degree"
     },
     "longitude": {
       "data_type": "integer4",
       "offset": 3322,
       "stride": 2,
       "scale_factor": 0.0001,
-      "units": "deg"
+      "units": "degree"
+    },
+    "SURFACE_PROPERTIES": {
+      "data_type": "byte",
+      "offset": 4038,
+      "stride": 1,
+      "flag_values": "0, 1, 2",
+      "flag_meanings": "water mixed_coast land"
+    },
+    "TERRAIN_ELEVATION": {
+      "data_type": "integer2",
+      "offset": 4128,
+      "stride": 1,
+      "units" : "m",
+      "standard_name": "height_above_mean_sea_level"
+    },
+    "TIME_ATTITUDE": {
+      "data_type": "u-integer4",
+      "data_layout": "VECTOR",
+      "offset": 2580,
+      "stride": 1,
+      "units" : "s",
+      "standard_name": "time"
     }
   }
 }

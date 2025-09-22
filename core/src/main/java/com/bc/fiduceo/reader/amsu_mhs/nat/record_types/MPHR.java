@@ -43,6 +43,14 @@ public class MPHR extends Record {
         return parseDate(attributeValue);
     }
 
+    public Date getSensingStart() throws IOException {
+        return getDate(SENSING_START_KEY);
+    }
+
+    public Date getSensingStop() throws IOException {
+        return getDate(SENSING_STOP_KEY);
+    }
+
 
     private Date parseDate(String date) throws IOException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssX");

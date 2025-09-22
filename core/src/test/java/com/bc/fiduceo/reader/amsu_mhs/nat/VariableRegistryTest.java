@@ -2,7 +2,6 @@ package com.bc.fiduceo.reader.amsu_mhs.nat;
 
 import com.bc.fiduceo.reader.amsu_mhs.AMSUA_L1B_Reader;
 import com.bc.fiduceo.reader.amsu_mhs.MHS_L1B_Reader;
-import org.esa.snap.core.datamodel.ProductData;
 import org.junit.Test;
 
 import java.util.Map;
@@ -45,7 +44,7 @@ public class VariableRegistryTest {
 
         Map<String, VariableDefinition> mhsVars = mhsRegistry.getVariables();
 
-        assertEquals(9, mhsVars.size());
+        assertEquals(15, mhsVars.size());
 
         final VariableDefinition sceneRadiance01 = mhsVars.get("SCENE_RADIANCES_01");
         assertEquals("integer4", sceneRadiance01.getData_type());
@@ -80,14 +79,14 @@ public class VariableRegistryTest {
         assertEquals(3318, latitude.getOffset());
         assertEquals(2, latitude.getStride());
         assertEquals(.0001, latitude.getScale_factor(), 1e-10);
-        assertEquals("deg", latitude.getUnits());
+        assertEquals("degree", latitude.getUnits());
 
         final VariableDefinition longitude = mhsVars.get("longitude");
         assertEquals("integer4", longitude.getData_type());
         assertEquals(3322, longitude.getOffset());
         assertEquals(2, longitude.getStride());
         assertEquals(.0001, longitude.getScale_factor(), 1e-10);
-        assertEquals("deg", longitude.getUnits());
+        assertEquals("degree", longitude.getUnits());
     }
 
     @Test
