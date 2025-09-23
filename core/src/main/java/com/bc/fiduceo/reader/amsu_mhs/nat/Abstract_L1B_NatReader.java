@@ -158,8 +158,10 @@ abstract public class Abstract_L1B_NatReader implements Reader {
             cache.clear();
             cache = null;
         }
-        registry.clear();
-        registry = null;
+        if (registry != null) {
+            registry.clear();
+            registry = null;
+        }
         pixelLocator = null;
         productSize = null;
     }

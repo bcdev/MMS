@@ -367,7 +367,7 @@ public class MHS_L1B_Reader_IO_Test {
             assertEquals(15, variables.size());
 
             VariableProxy variable = (VariableProxy) variables.get(0);
-            assertEquals("FOV_DATA QUALITY", variable.getFullName());
+            assertEquals("FOV_DATA_QUALITY", variable.getFullName());
             assertEquals(DataType.INT, variable.getDataType());
             List<Attribute> attributes = variable.getAttributes();
             Attribute attribute = attributes.get(0);

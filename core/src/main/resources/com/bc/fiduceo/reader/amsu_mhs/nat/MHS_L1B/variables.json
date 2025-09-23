@@ -8,7 +8,7 @@
       "units": "mW/m2/sr/cm-1",
       "standard_name": "toa_radiance"
     },
-    "FOV_DATA QUALITY": {
+    "FOV_DATA_QUALITY": {
       "data_type": "integer4",
       "offset": 1883,
       "stride": 1,

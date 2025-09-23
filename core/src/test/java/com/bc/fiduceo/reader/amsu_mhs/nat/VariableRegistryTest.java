@@ -60,7 +60,7 @@ public class VariableRegistryTest {
         assertEquals(.0000001, sceneRadiance05.getScale_factor(), 1e-10);
         assertEquals("mW/m2/sr/cm-1", sceneRadiance05.getUnits());
 
-        final VariableDefinition dataQuality = mhsVars.get("FOV_DATA QUALITY");
+        final VariableDefinition dataQuality = mhsVars.get("FOV_DATA_QUALITY");
         assertEquals("integer4", dataQuality.getData_type());
         assertEquals(1883, dataQuality.getOffset());
         assertEquals(1, dataQuality.getStride());
