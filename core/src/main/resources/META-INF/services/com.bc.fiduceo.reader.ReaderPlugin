@@ -47,3 +47,5 @@ com.bc.fiduceo.reader.insitu.ndbc.NdbcCWReaderPlugin
 com.bc.fiduceo.reader.insitu.ndbc.NdbcSMReaderPlugin
 com.bc.fiduceo.reader.insitu.tao.TaoReaderPlugin
 com.bc.fiduceo.reader.amsu_mhs.AMSUA_L1B_ReaderPlugin
+com.bc.fiduceo.reader.insitu.scope.ScopeReaderPlugin
+com.bc.fiduceo.reader.scope_sat.ScopeSatReaderPlugin
