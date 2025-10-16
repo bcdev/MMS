@@ -60,6 +60,7 @@ class ScopeSatMonthlyReader extends NetCDFReader {
 
     private final ReaderContext readerContext;
     private PixelLocator pixelLocator;
+    private TimeLocator timeLocator;
 
     ScopeSatMonthlyReader(ReaderContext readerContext) {
         this.readerContext = readerContext;
@@ -73,6 +74,7 @@ class ScopeSatMonthlyReader extends NetCDFReader {
     @Override
     public void close() throws IOException {
         pixelLocator = null;
+        timeLocator = null;
         super.close();
     }
 
@@ -125,7 +127,30 @@ class ScopeSatMonthlyReader extends NetCDFReader {
 
     @Override
     public TimeLocator getTimeLocator() throws IOException {
-        throw new RuntimeException("TimeLocator not implemented for 2D gridded monthly data");
+        if (timeLocator == null) {
+            // For monthly composites, create a constant time locator
+            // that returns the middle of the month for all pixels
+            final int[] ymd = extractYearMonthDayFromFilename(netcdfFile.getLocation());
+            final Calendar calendar = TimeUtils.getUTCCalendar();
+            calendar.set(Calendar.YEAR, ymd[0]);
+            calendar.set(Calendar.MONTH, ymd[1] - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 15);  // middle of month
+            calendar.set(Calendar.HOUR_OF_DAY, 12);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+
+            final long constantTime = calendar.getTimeInMillis();
+
+            // Create a simple TimeLocator that always returns the same time
+            timeLocator = new TimeLocator() {
+                @Override
+                public long getTimeFor(int x, int y) {
+                    return constantTime;
+                }
+            };
+        }
+        return timeLocator;
     }
 
     @Override
@@ -254,21 +279,23 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         final Calendar utcCalendar = TimeUtils.getUTCCalendar();
         utcCalendar.set(Calendar.YEAR, ymd[0]);
         utcCalendar.set(Calendar.MONTH, ymd[1] - 1);  // month is zero-based
+
+        // For monthly composites, set sensing start to beginning of month
         utcCalendar.set(Calendar.DAY_OF_MONTH, 1);
         utcCalendar.set(Calendar.HOUR_OF_DAY, 0);
         utcCalendar.set(Calendar.MINUTE, 0);
         utcCalendar.set(Calendar.SECOND, 0);
         utcCalendar.set(Calendar.MILLISECOND, 0);
-
         acquisitionInfo.setSensingStart(utcCalendar.getTime());
 
-        // Set to last day of month
-        utcCalendar.set(Calendar.DAY_OF_MONTH, utcCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        // Set sensing stop to end of month
+        // Get the last day of the month
+        final int lastDay = utcCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        utcCalendar.set(Calendar.DAY_OF_MONTH, lastDay);
         utcCalendar.set(Calendar.HOUR_OF_DAY, 23);
         utcCalendar.set(Calendar.MINUTE, 59);
         utcCalendar.set(Calendar.SECOND, 59);
         utcCalendar.set(Calendar.MILLISECOND, 999);
-
         acquisitionInfo.setSensingStop(utcCalendar.getTime());
     }
 }

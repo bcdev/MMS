@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
  * - Primary: scope-pp (in-situ point measurements)
  * - Secondary: scope-sat-pp (satellite monthly composites)
  *
- * Uses May 2004 data for testing.
+ * Uses May 2016 data for testing.
  */
 @RunWith(DbAndIOTestRunner.class)
 public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrationTest {
@@ -40,7 +40,7 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
     public void testMatchup_scope_pp() throws IOException, SQLException, ParseException, InvalidRangeException {
         // Create use case configuration
         final UseCaseConfig useCaseConfig = createUseCaseConfigBuilder("scope-pp")
-                .withTimeDeltaSeconds(1296000, null)  // ±15 days (half month)
+                .withTimeDeltaSeconds(0, null)  // No time delta - match by month only
                 .withMaxPixelDistanceKm(15, null)     // ~1.5 pixels (9km resolution)
                 .createConfig();
         final File useCaseConfigFile = storeUseCaseConfig(useCaseConfig, "usecase-scope-pp.xml");
@@ -50,8 +50,11 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
         insert_scope_sat_pp_2016();
 
         // Run matchup tool
-        // Note: The in-situ PP file spans 1958-2021, so we use a wide date range
-        // to allow the matchup algorithm to find any overlaps
+        // Note: Match by month only (timeDelta=0). Satellite files report full month range,
+        // so any in-situ point from the same month will match.
+        System.out.println("=== RUNNING MATCHUP TOOL ===");
+        System.out.println("Config dir: " + configDir.getAbsolutePath());
+        System.out.println("Use case file: " + useCaseConfigFile.getName());
         final String[] args = new String[]{
                 "-c", configDir.getAbsolutePath(),
                 "-u", useCaseConfigFile.getName(),
@@ -61,9 +64,8 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
         MatchupToolMain.main(args);
 
         // Verify MMD file creation
-        // Note: Due to the long time span of the in-situ file (1958-2021),
-        // matchups may or may not be found depending on spatial/temporal overlap.
-        // This test primarily verifies that the readers work correctly.
+        // Note: Matchups should be found for any in-situ points from 2016
+        // that have spatial overlap with satellite coverage.
         final File mmdFile = getMmdFilePath(useCaseConfig, "2016-001", "2016-366");
 
         if (mmdFile.isFile()) {

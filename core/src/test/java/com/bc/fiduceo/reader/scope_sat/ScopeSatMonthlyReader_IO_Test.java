@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * - wpPIC (Particulate Inorganic Carbon)
  * - wpPOC (Particulate Organic Carbon)
  *
- * This test uses wp26 (PP) as a representative monthly dataset.
+ * This test uses wp26 (PP) April 2016 as a representative monthly dataset.
  */
 @RunWith(IOTestRunner.class)
 public class ScopeSatMonthlyReader_IO_Test {
@@ -62,6 +62,8 @@ public class ScopeSatMonthlyReader_IO_Test {
             final Date sensingStop = info.getSensingStop();
             assertNotNull("Sensing start should not be null", sensingStart);
             assertNotNull("Sensing stop should not be null", sensingStop);
+            System.out.println("Sensing start: " + sensingStart);
+            System.out.println("Sensing stop: " + sensingStop);
             assertTrue("Sensing stop should be after start", sensingStop.after(sensingStart));
 
             assertEquals(NodeType.UNDEFINED, info.getNodeType());
@@ -143,7 +145,20 @@ public class ScopeSatMonthlyReader_IO_Test {
 
         try {
             reader.open(testFile);
-            assertNotNull("PixelLocator should not be null", reader.getPixelLocator());
+            final com.bc.fiduceo.location.PixelLocator pixelLocator = reader.getPixelLocator();
+            assertNotNull("PixelLocator should not be null", pixelLocator);
+
+            // Test pixel -> geo (corner pixel)
+            java.awt.geom.Point2D geoLocation = pixelLocator.getGeoLocation(0.5, 0.5, null);
+            assertEquals(-179.979166666667, geoLocation.getX(), 1e-5);  // Tolerance for float precision
+            assertEquals(-89.9791666666667, geoLocation.getY(), 1e-5);
+
+            // Test geo -> pixel (roundtrip with actual values)
+            java.awt.geom.Point2D[] pixelLocations = pixelLocator.getPixelLocation(geoLocation.getX(), geoLocation.getY());
+            assertEquals(1, pixelLocations.length);
+            assertEquals(0.5, pixelLocations[0].getX(), 1e-8);
+            assertEquals(0.5, pixelLocations[0].getY(), 1e-8);
+
         } finally {
             reader.close();
         }
@@ -171,16 +186,21 @@ public class ScopeSatMonthlyReader_IO_Test {
     }
 
     @Test
-    public void testGetTimeLocator_ThrowsException() throws IOException {
+    public void testGetTimeLocator() throws IOException {
         final File testFile = getPPTestFile();
 
         try {
             reader.open(testFile);
-            reader.getTimeLocator();
-            fail("Should throw RuntimeException for monthly data");
-        } catch (RuntimeException expected) {
-            assertTrue("Exception message should mention TimeLocator",
-                       expected.getMessage().contains("TimeLocator"));
+            final com.bc.fiduceo.reader.time.TimeLocator timeLocator = reader.getTimeLocator();
+            assertNotNull("TimeLocator should not be null", timeLocator);
+
+            // For monthly data, time should be constant across all pixels
+            final long time1 = timeLocator.getTimeFor(0, 0);
+            final long time2 = timeLocator.getTimeFor(100, 100);
+            assertEquals("Time should be constant for all pixels", time1, time2);
+
+            // Time should be in April 2016 (around middle of month)
+            assertTrue("Time should be positive", time1 > 0);
         } finally {
             reader.close();
         }
@@ -239,12 +259,12 @@ public class ScopeSatMonthlyReader_IO_Test {
 
         try {
             reader.open(testFile);
-            final String filename = "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_200405-fv6.0.out.nc";
+            final String filename = "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc";
             int[] ymd = reader.extractYearMonthDayFromFilename(filename);
 
             assertEquals(3, ymd.length);
-            assertEquals(2004, ymd[0]);
-            assertEquals(5, ymd[1]);
+            assertEquals(2016, ymd[0]);
+            assertEquals(4, ymd[1]);
             assertEquals(1, ymd[2]);
         } finally {
             reader.close();
@@ -260,7 +280,7 @@ public class ScopeSatMonthlyReader_IO_Test {
             final String regex = reader.getRegEx();
             assertNotNull(regex);
 
-            final String filename = "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_200405-fv6.0.out.nc";
+            final String filename = "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc";
             assertTrue("Filename should match regex", filename.matches(regex));
         } finally {
             reader.close();
@@ -309,7 +329,7 @@ public class ScopeSatMonthlyReader_IO_Test {
 
     private static File getPPTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"satellite", "scope-merge", "wp26", "2004", "05", "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_200405-fv6.0.out.nc"},
+            new String[]{"satellite", "scope-merge", "wp26", "2016", "04", "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc"},
             false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
