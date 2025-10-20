@@ -13,7 +13,7 @@ public class ScopeReaderPlugin implements ReaderPlugin {
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
-        return new ScopeGenericReader();
+        return new ScopeGenericReader(readerContext);
     }
 
     @Override

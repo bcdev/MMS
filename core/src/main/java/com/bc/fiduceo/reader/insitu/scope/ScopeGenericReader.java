@@ -2,10 +2,12 @@ package com.bc.fiduceo.reader.insitu.scope;
 
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.Reader;
+import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayInt;
@@ -19,10 +21,17 @@ import java.util.List;
 class ScopeGenericReader implements Reader {
 
     private Reader actualReader;
+    protected GeometryFactory geometryFactory;
+
+    public ScopeGenericReader(ReaderContext readerContext) {
+
+    geometryFactory = readerContext.getGeometryFactory();
+    }
+
 
     @Override
     public void open(File file) throws IOException {
-        actualReader = detectAndCreateReaderFromFilename(file.getName());
+        actualReader = detectAndCreateReaderFromFilename(file.getName(), geometryFactory);
         actualReader.open(file);
     }
 
@@ -99,7 +108,7 @@ class ScopeGenericReader implements Reader {
         return actualReader.getLatitudeVariableName();
     }
 
-    static Reader detectAndCreateReaderFromFilename(String fileName) throws IOException {
+    static Reader detectAndCreateReaderFromFilename(String fileName, GeometryFactory geometryFactory) throws IOException {
         // Normalize to uppercase for case-insensitive matching
         String upperFileName = fileName.toUpperCase();
 
@@ -116,7 +125,7 @@ class ScopeGenericReader implements Reader {
         } else if (upperFileName.contains("_POC_")) {
             return new ScopePOCReader();
         } else if (upperFileName.contains("_PP_")) {
-            return new ScopePPReader();
+            return new ScopePPReader(geometryFactory);
         } else {
             throw new IOException("Unknown SCOPE file format. Cannot detect type from filename: " + fileName);
         }

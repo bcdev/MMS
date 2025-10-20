@@ -164,6 +164,12 @@ public class TestUtil {
                 "        <rule sensors=\"tao-sss, pirata-sss\">\n" +
                 "            insitu/SENSOR/VERSION/YEAR/MONTH\n" +
                 "        </rule>" +
+                "        <rule sensors=\"scope-pp, scope-doc, scope-cdoc, scope-poc, scope-pic, scope-phyto\">\n" +
+                "            insitu/wp26\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-pp\">\n" +
+                "            satellite/scope-merge/wp26/YEAR/MONTH\n" +
+                "        </rule>" +
                 "    </archive>" +
                 "    <temp-directory>" +
                 "            " + TestUtil.getTestDir().getAbsolutePath() +

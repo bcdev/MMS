@@ -29,7 +29,7 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
     @Test
     public void testMatchup_scope_pp() throws IOException, SQLException, ParseException, InvalidRangeException {
         final UseCaseConfig useCaseConfig = createUseCaseConfigBuilder("scope-pp")
-                .withTimeDeltaSeconds(0, null)  // No time delta - match by month only
+                .withTimeDeltaSeconds(0, null)  // 0 seconds - match by month only via reader sensing times
                 .withMaxPixelDistanceKm(15, null)
                 .createConfig();
         final File useCaseConfigFile = storeUseCaseConfig(useCaseConfig, "usecase-scope-pp.xml");

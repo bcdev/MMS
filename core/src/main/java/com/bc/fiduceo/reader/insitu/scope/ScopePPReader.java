@@ -3,6 +3,7 @@ package com.bc.fiduceo.reader.insitu.scope;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
@@ -25,6 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +42,12 @@ class ScopePPReader extends ScopeReader {
 
     private ArrayList<PpRecord> records;
     private TimeLocator timeLocator;
+    private GeometryFactory geometryFactory;
+
+    public ScopePPReader(GeometryFactory geometryFactory) {
+        super();
+        this.geometryFactory = geometryFactory;
+    }
 
     @Override
     public void open(File file) throws IOException {
@@ -61,6 +69,11 @@ class ScopePPReader extends ScopeReader {
 
         int minTime = Integer.MAX_VALUE;
         int maxTime = Integer.MIN_VALUE;
+        double minLat = Double.MAX_VALUE;
+        double maxLat = -Double.MAX_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double maxLon = -Double.MAX_VALUE;
+
         for (final PpRecord record : records) {
             if (record.utc < minTime) {
                 minTime = record.utc;
@@ -68,11 +81,33 @@ class ScopePPReader extends ScopeReader {
             if (record.utc > maxTime) {
                 maxTime = record.utc;
             }
+            if (record.latitude < minLat) {
+                minLat = record.latitude;
+            }
+            if (record.latitude > maxLat) {
+                maxLat = record.latitude;
+            }
+            if (record.longitude < minLon) {
+                minLon = record.longitude;
+            }
+            if (record.longitude > maxLon) {
+                maxLon = record.longitude;
+            }
         }
 
         acquisitionInfo.setSensingStart(new Date(minTime * 1000L));
         acquisitionInfo.setSensingStop(new Date(maxTime * 1000L));
         acquisitionInfo.setNodeType(NodeType.UNDEFINED);
+
+        // Set bounding geometry for the in-situ measurements
+        final com.bc.fiduceo.geometry.Polygon polygon = geometryFactory.createPolygon(Arrays.asList(
+                geometryFactory.createPoint(minLon, minLat),
+                geometryFactory.createPoint(minLon, maxLat),
+                geometryFactory.createPoint(maxLon, maxLat),
+                geometryFactory.createPoint(maxLon, minLat),
+                geometryFactory.createPoint(minLon, minLat)
+        ));
+        acquisitionInfo.setBoundingGeometry(polygon);
 
         return acquisitionInfo;
     }
