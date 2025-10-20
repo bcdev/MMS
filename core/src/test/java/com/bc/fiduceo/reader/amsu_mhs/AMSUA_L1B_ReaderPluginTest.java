@@ -20,7 +20,7 @@ public class AMSUA_L1B_ReaderPluginTest {
 
     @Test
     public void testGetSupportedSensorKeys() {
-        final String[] expected = {"amsua-ma", "amsua-mb", "amsua-mc"};
+        final String[] expected = {"amsua-ma-l1b", "amsua-mb-l1b", "amsua-mc-l1b"};
 
         final String[] sensorKeys = plugin.getSupportedSensorKeys();
         assertArrayEquals(expected, sensorKeys);
