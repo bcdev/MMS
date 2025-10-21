@@ -7,7 +7,7 @@ import com.bc.fiduceo.reader.ReaderPlugin;
 
 public class AMSUA_L1B_ReaderPlugin implements ReaderPlugin {
 
-    private static final String[] SENSOR_KEYS = {"amsua-ma", "amsua-mb", "amsua-mc"};
+    private static final String[] SENSOR_KEYS = {"amsua-ma-l1b", "amsua-mb-l1b", "amsua-mc-l1b"};
 
     @Override
     public Reader createReader(ReaderContext readerContext) {

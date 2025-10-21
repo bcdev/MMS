@@ -472,7 +472,7 @@ public class AMSUA_L1B_Reader_IO_Test {
         }
     }
     private File createAmsuaMetopAPath(String fileName) throws IOException {
-        final String testFilePath = TestUtil.assembleFileSystemPath(new String[]{"amsua-ma", "v8A", "2016", "01", "01", fileName}, false);
+        final String testFilePath = TestUtil.assembleFileSystemPath(new String[]{"amsua-ma-l1b", "v8A", "2016", "01", "01", fileName}, false);
         return TestUtil.getTestDataFileAsserted(testFilePath);
     }
 }

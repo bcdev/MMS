@@ -7,7 +7,7 @@ import com.bc.fiduceo.reader.ReaderPlugin;
 
 public class MHS_L1B_ReaderPlugin implements ReaderPlugin {
 
-    private static final String[] SENSOR_KEYS = {"mhs-ma", "mhs-mb", "mhs-mc"};
+    private static final String[] SENSOR_KEYS = {"mhs-ma-l1b", "mhs-mb-l1b", "mhs-mc-l1b"};
 
     @Override
     public Reader createReader(ReaderContext readerContext) {

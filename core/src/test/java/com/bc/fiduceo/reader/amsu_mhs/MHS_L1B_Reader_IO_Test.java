@@ -512,7 +512,7 @@ public class MHS_L1B_Reader_IO_Test {
     }
 
     private File createMhsMetopCPath(String fileName) throws IOException {
-        final String testFilePath = TestUtil.assembleFileSystemPath(new String[]{"mhs-mc", "v10", "2025", "08", "20", fileName}, false);
+        final String testFilePath = TestUtil.assembleFileSystemPath(new String[]{"mhs-mc-l1b", "v10", "2025", "08", "20", fileName}, false);
         return TestUtil.getTestDataFileAsserted(testFilePath);
     }
 }

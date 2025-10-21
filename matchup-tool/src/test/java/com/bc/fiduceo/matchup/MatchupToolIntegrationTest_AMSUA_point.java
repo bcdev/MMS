@@ -70,18 +70,18 @@ public class MatchupToolIntegrationTest_AMSUA_point extends AbstractUsecaseInteg
             final int matchupCount = NetCDFUtils.getDimensionLength(FiduceoConstants.MATCHUP_COUNT, mmd);
             assertEquals(1, matchupCount);
 
-            NCTestUtils.assert3DVariable("amsua-ma_SCENE_RADIANCE_01", 0, 0, 0, 10912, mmd);
-            NCTestUtils.assert3DVariable("amsua-ma_SCENE_RADIANCE_07", 1, 0, 0, 61606, mmd);
-            NCTestUtils.assert3DVariable("amsua-ma_SCENE_RADIANCE_14", 2, 0, 0, 74835, mmd);
-            NCTestUtils.assert3DVariable("amsua-ma_SURFACE_PROPERTIES", 0, 1, 0, 0, mmd);
-            NCTestUtils.assert3DVariable("amsua-ma_acquisition_time", 1, 1, 0, 1451693029, mmd);
-            NCTestUtils.assert3DVariable("amsua-ma_longitude", 2, 1, 0, 1494646, mmd);
-            NCTestUtils.assert3DVariable("amsua-ma_satellite_zenith_angle", 0, 2, 0, 4035, mmd);
+            NCTestUtils.assert3DVariable("amsua-ma-l1b_SCENE_RADIANCE_01", 0, 0, 0, 10912, mmd);
+            NCTestUtils.assert3DVariable("amsua-ma-l1b_SCENE_RADIANCE_07", 1, 0, 0, 61606, mmd);
+            NCTestUtils.assert3DVariable("amsua-ma-l1b_SCENE_RADIANCE_14", 2, 0, 0, 74835, mmd);
+            NCTestUtils.assert3DVariable("amsua-ma-l1b_SURFACE_PROPERTIES", 0, 1, 0, 0, mmd);
+            NCTestUtils.assert3DVariable("amsua-ma-l1b_acquisition_time", 1, 1, 0, 1451693029, mmd);
+            NCTestUtils.assert3DVariable("amsua-ma-l1b_longitude", 2, 1, 0, 1494646, mmd);
+            NCTestUtils.assert3DVariable("amsua-ma-l1b_satellite_zenith_angle", 0, 2, 0, 4035, mmd);
         }
     }
 
     private void insert_AMSUA() throws IOException, SQLException {
-        final String sensorKey = "amsua-ma";
+        final String sensorKey = "amsua-ma-l1b";
         final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{sensorKey, "v8A", "2016", "01", "01", "AMSA_xxx_1B_M01_20160101234924Z_20160102013124Z_N_O_20160102003323Z.nat"}, true);
 
         final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "v8A");
@@ -90,16 +90,16 @@ public class MatchupToolIntegrationTest_AMSUA_point extends AbstractUsecaseInteg
 
     private MatchupToolTestUseCaseConfigBuilder createUseCaseConfigBuilder() {
         final List<Sensor> sensorList = new ArrayList<>();
-        final Sensor primary = new Sensor("amsua-ma");
+        final Sensor primary = new Sensor("amsua-ma-l1b");
         primary.setPrimary(true);
         sensorList.add(primary);
 
         final List<com.bc.fiduceo.core.Dimension> dimensions = new ArrayList<>();
-        dimensions.add(new com.bc.fiduceo.core.Dimension("amsua-ma", 3, 3));
+        dimensions.add(new com.bc.fiduceo.core.Dimension("amsua-ma-l1b", 3, 3));
 
-        return (MatchupToolTestUseCaseConfigBuilder) new MatchupToolTestUseCaseConfigBuilder("amsua-ma")
+        return (MatchupToolTestUseCaseConfigBuilder) new MatchupToolTestUseCaseConfigBuilder("amsua-ma-l1b")
                 .withSensors(sensorList)
-                .withOutputPath(new File(TestUtil.getTestDir().getPath(), "amsua-ma").getPath())
+                .withOutputPath(new File(TestUtil.getTestDir().getPath(), "amsua-ma-l1b").getPath())
                 .withDimensions(dimensions);
     }
 }
