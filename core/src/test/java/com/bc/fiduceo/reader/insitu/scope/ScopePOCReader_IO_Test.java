@@ -316,7 +316,7 @@ public class ScopePOCReader_IO_Test {
 
     private static File getPOCTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "POC", "SCOPE_POC_POC_1997_2020.txt"}, false
+            new String[]{"insitu", "scope", "POC", "SCOPE_POC_POC_1997_2020.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

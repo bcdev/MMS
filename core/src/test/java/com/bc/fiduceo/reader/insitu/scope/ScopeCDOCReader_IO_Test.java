@@ -323,7 +323,7 @@ public class ScopeCDOCReader_IO_Test {
 
     private static File getCDOCTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "wp23", "SCOPE_WP23_CDOC_1997_2022.txt"}, false
+            new String[]{"insitu", "scope", "wp23", "SCOPE_WP23_CDOC_1997_2022.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

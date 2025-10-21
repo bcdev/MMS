@@ -98,17 +98,6 @@ class ScopePPReader extends ScopeReader {
         acquisitionInfo.setSensingStart(new Date(minTime * 1000L));
         acquisitionInfo.setSensingStop(new Date(maxTime * 1000L));
         acquisitionInfo.setNodeType(NodeType.UNDEFINED);
-
-        // Set bounding geometry for the in-situ measurements
-        final com.bc.fiduceo.geometry.Polygon polygon = geometryFactory.createPolygon(Arrays.asList(
-                geometryFactory.createPoint(minLon, minLat),
-                geometryFactory.createPoint(minLon, maxLat),
-                geometryFactory.createPoint(maxLon, maxLat),
-                geometryFactory.createPoint(maxLon, minLat),
-                geometryFactory.createPoint(minLon, minLat)
-        ));
-        acquisitionInfo.setBoundingGeometry(polygon);
-
         return acquisitionInfo;
     }
 

@@ -1,11 +1,13 @@
 package com.bc.fiduceo.reader.insitu.scope;
 
+import com.bc.fiduceo.geometry.GeometryFactory;
+import com.bc.fiduceo.reader.Reader;
+import com.bc.fiduceo.reader.ReaderContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.Reader;
 
 import static org.junit.Assert.*;
 
@@ -22,11 +24,14 @@ import static org.junit.Assert.*;
 public class ScopeGenericReaderTest {
 
     private ScopeGenericReader reader;
+    private ReaderContext readerContext;
 
     @Before
     public void setUp() {
         // ARRANGE: Create a fresh generic reader before each test
-        reader = new ScopeGenericReader();
+        readerContext = new ReaderContext();
+        readerContext.setGeometryFactory(new GeometryFactory(GeometryFactory.Type.S2));
+        reader = new ScopeGenericReader(readerContext);
     }
 
     @After
@@ -278,13 +283,11 @@ public class ScopeGenericReaderTest {
     @Test
     public void testDetectAndCreateReader_CDOC() throws IOException {
         // ACT: Detect reader type from CDOC filename
-        com.bc.fiduceo.reader.Reader detectedReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP23_CDOC_1997_2022.txt");
+        Reader detectedReader = ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP23_CDOC_1997_2022.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Should create a ScopeCDOCReader
         assertNotNull("Reader should not be null", detectedReader);
-        assertTrue("Should create ScopeCDOCReader for CDOC file",
-                detectedReader instanceof ScopeCDOCReader);
+        assertTrue("Should create ScopeCDOCReader for CDOC file", detectedReader instanceof ScopeCDOCReader);
     }
 
     /**
@@ -293,13 +296,11 @@ public class ScopeGenericReaderTest {
     @Test
     public void testDetectAndCreateReader_DOC() throws IOException {
         // ACT: Detect reader type from DOC filename
-        com.bc.fiduceo.reader.Reader detectedReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP24_DOC_1998_2021.txt");
+       Reader detectedReader = ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP24_DOC_1998_2021.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Should create a ScopeDOCReader
         assertNotNull("Reader should not be null", detectedReader);
-        assertTrue("Should create ScopeDOCReader for DOC file",
-                detectedReader instanceof ScopeDOCReader);
+        assertTrue("Should create ScopeDOCReader for DOC file", detectedReader instanceof ScopeDOCReader);
     }
 
     /**
@@ -308,13 +309,11 @@ public class ScopeGenericReaderTest {
     @Test
     public void testDetectAndCreateReader_Phyto() throws IOException {
         // ACT: Detect reader type from Phyto filename
-        com.bc.fiduceo.reader.Reader detectedReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP25_PHYTO_CARBON_1997_2023.txt");
+        Reader detectedReader = ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP25_PHYTO_CARBON_1997_2023.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Should create a ScopePhytoReader
         assertNotNull("Reader should not be null", detectedReader);
-        assertTrue("Should create ScopePhytoReader for PHYTO file",
-                detectedReader instanceof ScopePhytoReader);
+        assertTrue("Should create ScopePhytoReader for PHYTO file", detectedReader instanceof ScopePhytoReader);
     }
 
     /**
@@ -323,13 +322,11 @@ public class ScopeGenericReaderTest {
     @Test
     public void testDetectAndCreateReader_PIC() throws IOException {
         // ACT: Detect reader type from PIC filename
-        com.bc.fiduceo.reader.Reader detectedReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_PIC_PIC_1998_2019.txt");
+        Reader detectedReader = ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_PIC_PIC_1998_2019.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Should create a ScopePICReader
         assertNotNull("Reader should not be null", detectedReader);
-        assertTrue("Should create ScopePICReader for PIC file",
-                detectedReader instanceof ScopePICReader);
+        assertTrue("Should create ScopePICReader for PIC file", detectedReader instanceof ScopePICReader);
     }
 
     /**
@@ -338,13 +335,11 @@ public class ScopeGenericReaderTest {
     @Test
     public void testDetectAndCreateReader_POC() throws IOException {
         // ACT: Detect reader type from POC filename
-        com.bc.fiduceo.reader.Reader detectedReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_POC_POC_1997_2020.txt");
+        Reader detectedReader = ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_POC_POC_1997_2020.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Should create a ScopePOCReader
         assertNotNull("Reader should not be null", detectedReader);
-        assertTrue("Should create ScopePOCReader for POC file",
-                detectedReader instanceof ScopePOCReader);
+        assertTrue("Should create ScopePOCReader for POC file", detectedReader instanceof ScopePOCReader);
     }
 
     /**
@@ -353,13 +348,11 @@ public class ScopeGenericReaderTest {
     @Test
     public void testDetectAndCreateReader_PP() throws IOException {
         // ACT: Detect reader type from PP filename
-        com.bc.fiduceo.reader.Reader detectedReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP26_PP_1958_2021.txt");
+        Reader detectedReader = ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP26_PP_1958_2021.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Should create a ScopePPReader
         assertNotNull("Reader should not be null", detectedReader);
-        assertTrue("Should create ScopePPReader for PP file",
-                detectedReader instanceof ScopePPReader);
+        assertTrue("Should create ScopePPReader for PP file", detectedReader instanceof ScopePPReader);
     }
 
     /**
@@ -368,20 +361,16 @@ public class ScopeGenericReaderTest {
     @Test
     public void testDetectAndCreateReader_CaseInsensitive() throws IOException {
         // ACT: Test lowercase DOC filename
-        com.bc.fiduceo.reader.Reader lowercaseReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("scope_wp24_doc_1998_2021.txt");
+        Reader lowercaseReader = ScopeGenericReader.detectAndCreateReaderFromFilename("scope_wp24_doc_1998_2021.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Should still detect as DOC
-        assertTrue("Should detect lowercase DOC filename",
-                lowercaseReader instanceof ScopeDOCReader);
+        assertTrue("Should detect lowercase DOC filename", lowercaseReader instanceof ScopeDOCReader);
 
         // ACT: Test mixed case CDOC filename
-        com.bc.fiduceo.reader.Reader mixedCaseReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("ScOpE_WP23_CdOc_1997_2022.txt");
+       Reader mixedCaseReader = ScopeGenericReader.detectAndCreateReaderFromFilename("ScOpE_WP23_CdOc_1997_2022.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Should still detect as CDOC
-        assertTrue("Should detect mixed case CDOC filename",
-                mixedCaseReader instanceof ScopeCDOCReader);
+        assertTrue("Should detect mixed case CDOC filename", mixedCaseReader instanceof ScopeCDOCReader);
     }
 
     /**
@@ -391,7 +380,7 @@ public class ScopeGenericReaderTest {
     public void testDetectAndCreateReader_UnknownFormat() {
         // ACT & ASSERT: Unknown format should throw IOException
         try {
-            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP99_UNKNOWN_2020_2021.txt");
+            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP99_UNKNOWN_2020_2021.txt", readerContext.getGeometryFactory());
             fail("Should throw IOException for unknown format");
         } catch (IOException e) {
             // Expected exception
@@ -409,8 +398,7 @@ public class ScopeGenericReaderTest {
     @Test
     public void testDetectAndCreateReader_CDOCPrecedence() throws IOException {
         // ACT: Create reader from CDOC filename
-        com.bc.fiduceo.reader.Reader detectedReader =
-            ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP23_CDOC_1997_2022.txt");
+        Reader detectedReader = ScopeGenericReader.detectAndCreateReaderFromFilename("SCOPE_WP23_CDOC_1997_2022.txt", readerContext.getGeometryFactory());
 
         // ASSERT: Must be CDOC, not DOC
         assertTrue("CDOC file must create ScopeCDOCReader, not ScopeDOCReader",

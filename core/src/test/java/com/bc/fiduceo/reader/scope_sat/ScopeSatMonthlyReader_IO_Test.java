@@ -329,7 +329,7 @@ public class ScopeSatMonthlyReader_IO_Test {
 
     private static File getPPTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"satellite", "scope-merge", "wp26", "2016", "04", "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc"},
+            new String[]{"scope-merge", "wp26", "2016", "04", "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc"},
             false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);

@@ -276,7 +276,7 @@ public class ScopeSatTimeSeriesReader_IO_Test {
 
     private static File getFCO2TestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"satellite", "scope-merge", "wp21", "UExP-FNN-U_physics_carbonatesystem_ESASCOPE_v5.nc"},
+            new String[]{"scope-merge", "wp21", "UExP-FNN-U_physics_carbonatesystem_ESASCOPE_v5.nc"},
             false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);

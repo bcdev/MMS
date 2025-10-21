@@ -1,7 +1,6 @@
 package com.bc.fiduceo.reader.insitu.scope;
 
 import com.bc.fiduceo.IOTestRunner;
-import com.bc.fiduceo.NCTestUtils;
 import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
@@ -23,7 +22,7 @@ import static org.junit.Assert.*;
 
 /**
  * Integration tests for ScopeDOCReader using real data files.
- *
+ * <p>
  * Tests the complete reader functionality with actual SCOPE DOC files.
  * Follows the same pattern as NdbcCWReader_IO_Test.
  */
@@ -225,7 +224,7 @@ public class ScopeDOCReader_IO_Test {
     }
 
     @Test
-    public void testReadScaled_3x3Window() throws Exception{
+    public void testReadScaled_3x3Window() throws Exception {
         final File testFile = getDOCTestFile();
 
         try {
@@ -327,7 +326,7 @@ public class ScopeDOCReader_IO_Test {
 
     private static File getDOCTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "wp24", "SCOPE_WP24_DOC_1998_2021.txt"}, false
+                new String[]{"insitu", "scope", "wp24", "SCOPE_WP24_DOC_1998_2021.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

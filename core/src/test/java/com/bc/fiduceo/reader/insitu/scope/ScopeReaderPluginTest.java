@@ -2,6 +2,7 @@ package com.bc.fiduceo.reader.insitu.scope;
 
 import com.bc.fiduceo.reader.DataType;
 import com.bc.fiduceo.reader.Reader;
+import com.bc.fiduceo.reader.ReaderContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,7 +10,7 @@ import static org.junit.Assert.*;
 
 /**
  * Tests for ScopeReaderPlugin - verifies plugin registration and reader creation.
- *
+ * <p>
  * This is Layer 1 testing: Plugin/Factory behavior
  * - Tests sensor key registration
  * - Tests data type declaration
@@ -27,7 +28,7 @@ public class ScopeReaderPluginTest {
 
     /**
      * Test that the plugin reports all 6 supported SCOPE sensor keys.
-     *
+     * <p>
      * SCOPE has 6 data types:
      * - scope-coastal-doc (WP23 - Coastal DOC)
      * - scope-doc (WP24 - Open ocean DOC)
@@ -56,7 +57,7 @@ public class ScopeReaderPluginTest {
 
     /**
      * Test that the plugin declares INSITU as its data type.
-     *
+     * <p>
      * SCOPE readers handle in-situ oceanographic measurements,
      * not satellite/polar orbiting data.
      */
@@ -72,18 +73,17 @@ public class ScopeReaderPluginTest {
 
     /**
      * Test that the plugin creates a ScopeGenericReader instance.
-     *
+     * <p>
      * The plugin should create a generic reader that detects
      * the specific SCOPE format from the filename.
      */
     @Test
     public void testCreateReader() {
         // ACT: Create a reader using the plugin
-        final Reader reader = plugin.createReader(null);
+        final Reader reader = plugin.createReader(new ReaderContext());
 
         // ASSERT: Verify reader was created and is correct type
         assertNotNull("Reader should not be null", reader);
-        assertTrue("Should create a ScopeGenericReader instance",
-                   reader instanceof ScopeGenericReader);
+        assertTrue("Should create a ScopeGenericReader instance", reader instanceof ScopeGenericReader);
     }
 }

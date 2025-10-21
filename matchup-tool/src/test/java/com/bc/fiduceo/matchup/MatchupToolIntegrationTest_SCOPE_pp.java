@@ -59,7 +59,7 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
 
     private void insert_scope_pp_insitu() throws IOException, SQLException {
         final String sensorKey = "scope-pp";
-        final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"insitu", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, true);
+        final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"insitu", "scope", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, true);
 
         final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "v1");
         storage.insert(satelliteObservation);
@@ -67,7 +67,7 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
 
     private void insert_scope_sat_pp_April_2016() throws IOException, SQLException {
         final String sensorKey = "scope-sat-pp";
-        final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"satellite", "scope-merge", "wp26", "2016", "04", "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc"}, true);
+        final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"scope-merge", "wp26", "2016", "04", "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc"}, true);
 
         final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "v1");
         storage.insert(satelliteObservation);

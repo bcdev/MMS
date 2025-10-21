@@ -352,7 +352,7 @@ public class ScopePICReader_IO_Test {
 
     private static File getPICTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "PIC", "SCOPE_PIC_PIC_1998_2019.txt"}, false
+            new String[]{"insitu", "scope", "PIC", "SCOPE_PIC_PIC_1998_2019.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

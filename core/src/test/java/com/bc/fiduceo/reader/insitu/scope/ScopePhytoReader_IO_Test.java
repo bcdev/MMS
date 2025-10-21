@@ -316,7 +316,7 @@ public class ScopePhytoReader_IO_Test {
 
     private static File getPhytoTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "wp25", "SCOPE_WP25_PHYTO_CARBON_1997_2023.txt"}, false
+            new String[]{"insitu", "scope", "wp25", "SCOPE_WP25_PHYTO_CARBON_1997_2023.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

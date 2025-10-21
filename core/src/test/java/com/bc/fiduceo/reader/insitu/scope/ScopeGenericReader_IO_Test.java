@@ -4,7 +4,9 @@ import com.bc.fiduceo.IOTestRunner;
 import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.reader.AcquisitionInfo;
+import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import org.junit.After;
 import org.junit.Before;
@@ -35,7 +37,9 @@ public class ScopeGenericReader_IO_Test {
 
     @Before
     public void setUp() {
-        reader = new ScopeGenericReader();
+        final ReaderContext readerContext = new ReaderContext();
+        readerContext.setGeometryFactory(new GeometryFactory(GeometryFactory.Type.S2));
+        reader = new ScopeGenericReader(readerContext);
     }
 
     @After
@@ -383,21 +387,21 @@ public class ScopeGenericReader_IO_Test {
 
     private static File getPPTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, false
+            new String[]{"insitu", "scope", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }
 
     private static File getDOCTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "wp24", "SCOPE_WP24_DOC_1998_2021.txt"}, false
+            new String[]{"insitu", "scope", "wp24", "SCOPE_WP24_DOC_1998_2021.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }
 
     private static File getCDOCTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "wp23", "SCOPE_WP23_CDOC_1997_2022.txt"}, false
+            new String[]{"insitu", "scope", "wp23", "SCOPE_WP23_CDOC_1997_2022.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

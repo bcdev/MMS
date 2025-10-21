@@ -24,10 +24,8 @@ class ScopeGenericReader implements Reader {
     protected GeometryFactory geometryFactory;
 
     public ScopeGenericReader(ReaderContext readerContext) {
-
-    geometryFactory = readerContext.getGeometryFactory();
+        geometryFactory = readerContext.getGeometryFactory();
     }
-
 
     @Override
     public void open(File file) throws IOException {
