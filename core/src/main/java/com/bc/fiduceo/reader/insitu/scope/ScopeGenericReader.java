@@ -68,7 +68,13 @@ class ScopeGenericReader implements Reader {
 
     @Override
     public int[] extractYearMonthDayFromFilename(String fileName) {
-        return actualReader.extractYearMonthDayFromFilename(fileName);
+        int[] ymd = new int[3];
+        String[] parts = fileName.split("_");
+        String yearPart = parts[parts.length - 2];
+        ymd[0] = Integer.parseInt(yearPart);
+        ymd[1] = 1;
+        ymd[2] = 1;
+        return ymd;
     }
 
     @Override

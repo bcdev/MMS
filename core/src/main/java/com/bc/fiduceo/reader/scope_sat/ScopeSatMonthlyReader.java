@@ -261,9 +261,9 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         return geometryFactory.createPolygon(
                 java.util.Arrays.asList(
                         geometryFactory.createPoint(lonMin, latMin),
-                        geometryFactory.createPoint(lonMin, latMax),
-                        geometryFactory.createPoint(lonMax, latMax),
                         geometryFactory.createPoint(lonMax, latMin),
+                        geometryFactory.createPoint(lonMax, latMax),
+                        geometryFactory.createPoint(lonMin, latMax),
                         geometryFactory.createPoint(lonMin, latMin)
                 )
         );

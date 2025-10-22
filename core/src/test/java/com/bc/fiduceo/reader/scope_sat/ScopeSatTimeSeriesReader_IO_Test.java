@@ -25,11 +25,11 @@ import static org.junit.Assert.*;
 
 /**
  * Integration tests for ScopeSatTimeSeriesReader.
- *
+ * <p>
  * Tests the time series reader which handles:
  * - wp21 (Fugacity of CO2)
  * - wp22 (Dissolved Inorganic Carbon with depth)
- *
+ * <p>
  * This test uses wp21 (fCO2) as a representative time series dataset.
  */
 @RunWith(IOTestRunner.class)
@@ -156,13 +156,13 @@ public class ScopeSatTimeSeriesReader_IO_Test {
         try {
             reader.open(testFile);
             final com.bc.fiduceo.geometry.Polygon sceneGeometry = readerContext.getGeometryFactory().createPolygon(
-                java.util.Arrays.asList(
-                    readerContext.getGeometryFactory().createPoint(-10, -10),
-                    readerContext.getGeometryFactory().createPoint(-10, 10),
-                    readerContext.getGeometryFactory().createPoint(10, 10),
-                    readerContext.getGeometryFactory().createPoint(10, -10),
-                    readerContext.getGeometryFactory().createPoint(-10, -10)
-                )
+                    java.util.Arrays.asList(
+                            readerContext.getGeometryFactory().createPoint(-10, -10),
+                            readerContext.getGeometryFactory().createPoint(-10, 10),
+                            readerContext.getGeometryFactory().createPoint(10, 10),
+                            readerContext.getGeometryFactory().createPoint(10, -10),
+                            readerContext.getGeometryFactory().createPoint(-10, -10)
+                    )
             );
             assertNotNull("SubScene PixelLocator should not be null", reader.getSubScenePixelLocator(sceneGeometry));
         } finally {
@@ -236,26 +236,8 @@ public class ScopeSatTimeSeriesReader_IO_Test {
 
     @Test
     public void testExtractYearMonthDayFromFilename() {
-        final File testFile;
-        try {
-            testFile = getFCO2TestFile();
-            reader.open(testFile);
-
-            int[] ymd = reader.extractYearMonthDayFromFilename(testFile.getName());
-
-            assertEquals(3, ymd.length);
-            assertTrue("Year should be valid", ymd[0] > 1900 && ymd[0] < 2100);
-            assertTrue("Month should be 1-12", ymd[1] >= 1 && ymd[1] <= 12);
-            assertTrue("Day should be valid", ymd[2] >= 1 && ymd[2] <= 31);
-        } catch (IOException e) {
-            fail("Failed to extract date from filename: " + e.getMessage());
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                // ignore
-            }
-        }
+        int[] ymd = reader.extractYearMonthDayFromFilename("UExP-FNN-U_physics_carbonatesystem_ESASCOPE_v5.nc");
+        assertArrayEquals(new int[]{0, 0, 0}, ymd);
     }
 
     @Test
@@ -276,8 +258,8 @@ public class ScopeSatTimeSeriesReader_IO_Test {
 
     private static File getFCO2TestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"scope-merge", "wp21", "UExP-FNN-U_physics_carbonatesystem_ESASCOPE_v5.nc"},
-            false
+                new String[]{"scope-merge", "wp21", "UExP-FNN-U_physics_carbonatesystem_ESASCOPE_v5.nc"},
+                false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

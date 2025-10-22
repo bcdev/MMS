@@ -17,17 +17,21 @@ import ucar.nc2.Variable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Generic reader for SCOPE satellite data that auto-detects the file type.
- *
+ * <p>
  * Handles two types of SCOPE satellite data:
  * 1. Monthly composites (wp23-26, wpPIC, wpPOC): Files organized in year/month folders, no time dimension
  * 2. Time series (wp21-wp22): Single files with time dimension (time = 384-468)
- *
+ * <p>
  * The reader opens the NetCDF file, checks for time dimension, and delegates to the appropriate reader.
  */
 class ScopeSatGenericReader implements Reader {
+
+    private static final String MONTHLY_REG_EX = ".*_(\\d{6})[-_].*\\.nc";
 
     private final ReaderContext readerContext;
     private Reader actualReader;
@@ -78,7 +82,22 @@ class ScopeSatGenericReader implements Reader {
 
     @Override
     public int[] extractYearMonthDayFromFilename(String fileName) {
-        return actualReader.extractYearMonthDayFromFilename(fileName);
+        // Extract YYYYMM from filename
+        final Pattern pattern = Pattern.compile(MONTHLY_REG_EX);
+        final Matcher matcher = pattern.matcher(fileName);
+
+        final int[] ymd = new int[3];
+        if (!matcher.matches()) {
+            return ymd;
+        }
+
+        final String datePart = matcher.group(1);
+
+        ymd[0] = Integer.parseInt(datePart.substring(0, 4));  // year
+        ymd[1] = Integer.parseInt(datePart.substring(4, 6));  // month
+        ymd[2] = 1;  // day - set to 1st of month for monthly data
+
+        return ymd;
     }
 
     @Override
@@ -121,7 +140,7 @@ class ScopeSatGenericReader implements Reader {
 
     /**
      * Detects the type of SCOPE satellite file and creates the appropriate reader.
-     *
+     * <p>
      * Detection logic:
      * 1. Opens NetCDF file temporarily
      * 2. Checks for "time" dimension

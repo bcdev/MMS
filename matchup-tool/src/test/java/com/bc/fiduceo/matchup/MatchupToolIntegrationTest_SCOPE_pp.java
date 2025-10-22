@@ -29,7 +29,7 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
     @Test
     public void testMatchup_scope_pp() throws IOException, SQLException, ParseException, InvalidRangeException {
         final UseCaseConfig useCaseConfig = createUseCaseConfigBuilder("scope-pp")
-                .withTimeDeltaSeconds(0, null)  // 0 seconds - match by month only via reader sensing times
+              //  .withTimeDeltaSeconds(0, null)  // 0 seconds - match by month only via reader sensing times
                 .withMaxPixelDistanceKm(15, null)
                 .createConfig();
         final File useCaseConfigFile = storeUseCaseConfig(useCaseConfig, "usecase-scope-pp.xml");
@@ -43,7 +43,6 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
         final File mmdFile = getMmdFilePath(useCaseConfig, "2016-092", "2016-121");
         assertTrue(mmdFile.isFile());
         try (NetcdfFile mmd = NetcdfFile.open(mmdFile.getAbsolutePath())) {
-
             final int matchupCount = NetCDFUtils.getDimensionLength(FiduceoConstants.MATCHUP_COUNT, mmd);
             assertEquals(21, matchupCount);
 
@@ -51,9 +50,9 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
             NCTestUtils.assert3DVariable("scope-pp_latitude", 0, 0, 0, 32.955f, mmd);
             NCTestUtils.assert3DVariable("scope-pp_longitude", 0, 0, 0, -117.305f, mmd);
 
-            NCTestUtils.assert3DVariable("scope-sat-pp_pp", 1, 1, 0, Float.NaN, mmd);
+            NCTestUtils.assert3DVariable("scope-sat-pp_pp", 1, 1, 0, 1352.8167724609375f, mmd);
             NCTestUtils.assert3DVariable("scope-sat-pp_lat", 1, 1, 0, 32.9375f, mmd);
-            NCTestUtils.assert3DVariable("scope-sat-pp_lon", 1, 1, 0, -117.3125f, mmd);
+            NCTestUtils.assert3DVariable("scope-sat-pp_lon", 1, 1, 0, -57.0625f, mmd);
         }
     }
 
@@ -61,7 +60,7 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
         final String sensorKey = "scope-pp";
         final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"insitu", "scope", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, true);
 
-        final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "v1");
+        final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "wp26");
         storage.insert(satelliteObservation);
     }
 

@@ -312,19 +312,9 @@ public class ScopeSatMonthlyReader_IO_Test {
     }
 
     @Test
-    public void testExtractYearMonthDay_InvalidFilename() throws IOException {
-        final File testFile = getPPTestFile();
-
-        try {
-            reader.open(testFile);
-            reader.extractYearMonthDayFromFilename("invalid_filename.nc");
-            fail("Should throw IllegalArgumentException for invalid filename");
-        } catch (IllegalArgumentException expected) {
-            assertTrue("Exception message should mention pattern",
-                       expected.getMessage().contains("pattern"));
-        } finally {
-            reader.close();
-        }
+    public void testExtractYearMonthDay_otherFileName() throws IOException {
+        int[] ints = reader.extractYearMonthDayFromFilename("invalid_filename.nc");
+        assertArrayEquals(new int[]{0, 0, 0}, ints);
     }
 
     private static File getPPTestFile() throws IOException {

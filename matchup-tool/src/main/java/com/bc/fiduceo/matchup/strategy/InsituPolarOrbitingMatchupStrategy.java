@@ -84,7 +84,7 @@ class InsituPolarOrbitingMatchupStrategy extends AbstractMatchupStrategy {
         // @todo 2 se/?? ... renaming of class SatelliteObservation ... 2017-05-15
         // see Trello https://trello.com/c/RvivyMUF
         final List<SatelliteObservation> insituObservations = getPrimaryObservations(context);
-        if (insituObservations.size() == 0) {
+        if (insituObservations.isEmpty()) {
             logger.warning("No insitu data in time interval:" + context.getStartDate() + " - " + context.getEndDate());
             return new MatchupCollection();
         }
@@ -346,7 +346,7 @@ class InsituPolarOrbitingMatchupStrategy extends AbstractMatchupStrategy {
         final List<Sample> insituSamples = getInsituSamples(processingInterval, insituReader);
         for (final Sample insituSample : insituSamples) {
             final List<SatelliteObservation> candidatesByTime = getCandidatesByTime(secondaryObservations, new Date(insituSample.getTime()), timeDeltaInMillis);
-            if (candidatesByTime.size() == 0) {
+            if (candidatesByTime.isEmpty()) {
                 continue;
             }
             final Geometry point = geometryFactory.createPoint(insituSample.getLon(), insituSample.getLat());

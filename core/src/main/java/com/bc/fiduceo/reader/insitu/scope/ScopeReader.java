@@ -24,6 +24,16 @@ abstract class ScopeReader implements Reader {
     static final String TIME = "time";
 
     @Override
+    public String getLongitudeVariableName() {
+        return LONGITUDE;
+    }
+
+    @Override
+    public String getLatitudeVariableName() {
+        return LATITUDE;
+    }
+
+    @Override
     public int[] extractYearMonthDayFromFilename(String fileName) {
         int[] ymd = new int[3];
         String[] parts = fileName.split("_");
@@ -34,15 +44,6 @@ abstract class ScopeReader implements Reader {
         return ymd;
     }
 
-    @Override
-    public String getLongitudeVariableName() {
-        return LONGITUDE;
-    }
-
-    @Override
-    public String getLatitudeVariableName() {
-        return LATITUDE;
-    }
 
     static void createMeasurementTimeVariable(ArrayList<Variable> variables) {
         List<Attribute> attributes;
