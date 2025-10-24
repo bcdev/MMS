@@ -2,6 +2,7 @@ package com.bc.fiduceo.reader.insitu.ndbc;
 
 import com.bc.fiduceo.reader.DataType;
 import com.bc.fiduceo.reader.Reader;
+import com.bc.fiduceo.reader.insitu.generic.GenericCsvReader;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +35,6 @@ public class NdbcSMReaderPluginTest {
     public void testCreateReader() {
         final Reader reader = plugin.createReader(null);
         assertNotNull(reader);
-        assertTrue(reader instanceof NdbcSMReader);
+        assertTrue(reader instanceof GenericCsvReader);
     }
 }

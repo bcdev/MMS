@@ -4,6 +4,8 @@ import com.bc.fiduceo.reader.DataType;
 import com.bc.fiduceo.reader.Reader;
 import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.ReaderPlugin;
+import com.bc.fiduceo.reader.insitu.generic.GenericCsvHelper;
+import com.bc.fiduceo.reader.insitu.generic.GenericCsvReader;
 
 public class NdbcSMReaderPlugin implements ReaderPlugin {
 
@@ -11,7 +13,7 @@ public class NdbcSMReaderPlugin implements ReaderPlugin {
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
-        return new NdbcSMReader();
+        return new GenericCsvReader(GenericCsvHelper.RESOURCE_KEY_NDBC_SM);
     }
 
     @Override
