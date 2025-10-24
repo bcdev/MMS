@@ -3,7 +3,6 @@ package com.bc.fiduceo.reader.insitu.generic;
 import org.esa.snap.core.datamodel.ProductData;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -173,7 +172,7 @@ public class CsvFormatConfigTest {
         assertEquals(ProductData.TYPE_INT16, var9.getProductData());
         assertEquals('v', var9.getOrigin());
         assertEquals((short) -999, var9.getFillValue(), .00001);
-        assertEquals("", var9.getUnits());
+        assertEquals("1", var9.getUnits());
         assertEquals("down_flag", var9.getAncillaryVariables());
 
         StationDatabase database = config.getStationDatabase();
