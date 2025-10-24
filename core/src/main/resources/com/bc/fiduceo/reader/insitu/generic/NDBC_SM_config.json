@@ -2,7 +2,7 @@
   "name": "NDBC_SM",
   "delimiter": "space",
   "comment_char": "#",
-  "regex": "\\\\w{5}h\\\\d{4}\\.txt",
+  "regex": "\\w{5}h\\d{4}.txt",
   "longitude_name": "longitude",
   "latitude_name": "latitude",
   "time_vars": ["YY", "MM", "DD", "hh", "mm"],

@@ -16,7 +16,7 @@ public class CsvFormatConfigTest {
         assertEquals("NDBC_SM", config.getName());
         assertEquals("space", config.getDelimiter());
         assertEquals('#', config.getCommentChar());
-        assertEquals("\\\\w{5}h\\\\d{4}\\.txt", config.getRegex());
+        assertEquals("\\w{5}h\\d{4}.txt", config.getRegex());
         assertEquals("longitude", config.getLongitudeName());
         assertEquals("latitude", config.getLatitudeName());
         assertEquals("time", config.getTimeName());
@@ -89,7 +89,7 @@ public class CsvFormatConfigTest {
         assertEquals("NDBC_CW", config.getName());
         assertEquals("space", config.getDelimiter());
         assertEquals('#', config.getCommentChar());
-        assertEquals("\\\\w{5}c\\\\d{4}\\.txt", config.getRegex());
+        assertEquals("\\w{5}c\\d{4}.txt", config.getRegex());
         assertEquals("longitude", config.getLongitudeName());
         assertEquals("latitude", config.getLatitudeName());
         assertEquals("time", config.getTimeName());
