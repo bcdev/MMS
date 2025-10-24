@@ -17,30 +17,10 @@ import java.util.List;
 
 public class GenericCsvHelper {
 
-    public static final String[] SUPPORTED_KEYS_NDBC_SM = {"ndbc-sm-ob", "ndbc-sm-cb", "ndbc-sm-lb", "ndbc-sm-os", "ndbc-sm-cs", "ndbc-sm-ls"};
-    public static final String[] SUPPORTED_KEYS_NDBC_CW = {"ndbc-cw-ob", "ndbc-cw-cb", "ndbc-cw-lb", "ndbc-cw-os", "ndbc-cw-cs", "ndbc-cw-ls"};
-    public static final String[] SUPPORTED_KEYS_GBOV = {"gbov"};
-
     public static final String RESOURCE_KEY_NDBC_SM = "NDBC_SM";
     public static final String RESOURCE_KEY_NDBC_CW = "NDBC_CW";
     public static final String RESOURCE_KEY_GBOV = "GBOV";
 
-
-    public static String getResourceKeyFromPath(String filePath) {
-        String lowerPath = filePath.toLowerCase();
-
-        if (Arrays.stream(SUPPORTED_KEYS_NDBC_SM).anyMatch(lowerPath::contains)) {
-            return RESOURCE_KEY_NDBC_SM;
-        }
-        if (Arrays.stream(SUPPORTED_KEYS_NDBC_CW).anyMatch(lowerPath::contains)) {
-            return RESOURCE_KEY_NDBC_CW;
-        }
-        if (Arrays.stream(SUPPORTED_KEYS_GBOV).anyMatch(lowerPath::contains)) {
-            return RESOURCE_KEY_GBOV;
-        }
-
-        throw new IllegalArgumentException("Unsupported format for file: " + filePath);
-    }
 
     public static int[] extractYearMonthDayFromFilename(String filename, String resourceKey) {
         int[] ymd = new int[3];

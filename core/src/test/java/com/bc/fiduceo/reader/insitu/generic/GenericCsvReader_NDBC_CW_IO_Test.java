@@ -31,7 +31,7 @@ public class GenericCsvReader_NDBC_CW_IO_Test {
 
     @Before
     public void setUp() {
-        reader = new GenericCsvReader();
+        reader = new GenericCsvReader(GenericCsvHelper.RESOURCE_KEY_NDBC_CW);
     }
 
     @Test
@@ -252,7 +252,7 @@ public class GenericCsvReader_NDBC_CW_IO_Test {
 
         try {
             reader.open(testFile);
-            assertEquals("\\\\w{5}c\\\\d{4}\\.txt", reader.getRegEx());
+            assertEquals("\\w{5}c\\d{4}.txt", reader.getRegEx());
         } finally {
             reader.close();
         }

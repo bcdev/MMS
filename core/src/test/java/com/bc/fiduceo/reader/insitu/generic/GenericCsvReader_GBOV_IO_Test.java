@@ -31,7 +31,7 @@ public class GenericCsvReader_GBOV_IO_Test {
 
     @Before
     public void setUp() {
-        reader = new GenericCsvReader();
+        reader = new GenericCsvReader(GenericCsvHelper.RESOURCE_KEY_GBOV);
     }
 
     @Test

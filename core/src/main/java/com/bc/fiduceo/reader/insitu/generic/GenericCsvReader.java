@@ -36,9 +36,12 @@ public class GenericCsvReader implements Reader {
     private List<GenericRecord> records;
     private GenericRecord stationDatabaseRecord;
 
+    public GenericCsvReader(String resourceKey) {
+        this.resourceKey = resourceKey;
+    }
+
     @Override
     public void open(File file) throws IOException {
-        resourceKey = GenericCsvHelper.getResourceKeyFromPath(file.getAbsolutePath());
         config = CsvFormatConfig.loadConfig(resourceKey);
         records = GenericCsvHelper.parseData(file, config, resourceKey);
         variables = config.getAllVariables();
@@ -106,6 +109,9 @@ public class GenericCsvReader implements Reader {
 
     @Override
     public String getRegEx() {
+        if (config == null) {
+            config = CsvFormatConfig.loadConfig(resourceKey);
+        }
         return config.getRegex();
     }
 
