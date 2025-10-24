@@ -225,10 +225,20 @@ public class CsvFormatConfigTest {
     @Test
     public void testLoadCsvFormatConfig_resourceNotFound() {
         try {
+            CsvFormatConfig.loadConfig("YY");
+            fail();
+        } catch (Exception e) {
+            assertEquals("Resource not found: YY_config.json", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testLoadCsvFormatConfig_failedToLoadConfig() {
+        try {
             CsvFormatConfig.loadConfig("XX");
             fail();
         } catch (Exception e) {
-            assertEquals("Resource not found: XX_config.json", e.getMessage());
+            assertTrue(e.getMessage().contains("Failed to load config from: "));
         }
     }
 
