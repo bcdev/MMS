@@ -7,6 +7,7 @@ import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.reader.AcquisitionInfo;
+import com.bc.fiduceo.reader.netcdf.StringVariable;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import com.bc.fiduceo.util.VariableProxy;
 import org.junit.Before;
@@ -173,12 +174,12 @@ public class GenericCsvReader_NDBC_CW_IO_Test {
             assertFalse(vars.isEmpty());
             assertEquals(11, vars.size());
 
-            VariableProxy var = (VariableProxy) vars.get(0);
-            assertEquals("id", var.getFullName());
-            assertEquals(DataType.STRING, var.getDataType());
-            assertEquals(3, var.getAttributes().size());
+            StringVariable stringVar = (StringVariable) vars.get(0);
+            assertEquals("id", stringVar.getShortName());
+            assertEquals(DataType.STRING, stringVar.getDataType());
+            assertEquals(3, stringVar.getAttributes().size());
 
-            var = (VariableProxy) vars.get(1);
+            VariableProxy var = (VariableProxy) vars.get(1);
             assertEquals("latitude", var.getFullName());
             assertEquals(DataType.FLOAT, var.getDataType());
             assertEquals(4, var.getAttributes().size());

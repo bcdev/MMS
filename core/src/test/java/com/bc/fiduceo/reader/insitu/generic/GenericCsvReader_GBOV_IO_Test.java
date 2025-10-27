@@ -7,6 +7,7 @@ import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.reader.AcquisitionInfo;
+import com.bc.fiduceo.reader.netcdf.StringVariable;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import com.bc.fiduceo.util.VariableProxy;
 import org.junit.Before;
@@ -441,25 +442,25 @@ public class GenericCsvReader_GBOV_IO_Test {
             assertFalse(vars.isEmpty());
             assertEquals(67, vars.size());
 
-            VariableProxy var = (VariableProxy) vars.get(0);
-            assertEquals("site", var.getFullName());
-            assertEquals(DataType.STRING, var.getDataType());
-            assertEquals(2, var.getAttributes().size());
+            StringVariable stringVar = (StringVariable) vars.get(0);
+            assertEquals("site", stringVar.getShortName());
+            assertEquals(DataType.STRING, stringVar.getDataType());
+            assertEquals(2, stringVar.getAttributes().size());
 
-            var = (VariableProxy) vars.get(1);
-            assertEquals("station", var.getFullName());
-            assertEquals(DataType.STRING, var.getDataType());
-            assertEquals(3, var.getAttributes().size());
+            stringVar = (StringVariable) vars.get(1);
+            assertEquals("station", stringVar.getShortName());
+            assertEquals(DataType.STRING, stringVar.getDataType());
+            assertEquals(3, stringVar.getAttributes().size());
 
-            var = (VariableProxy) vars.get(2);
+            VariableProxy var = (VariableProxy) vars.get(2);
             assertEquals("elevation", var.getFullName());
             assertEquals(DataType.FLOAT, var.getDataType());
             assertEquals(4, var.getAttributes().size());
 
-            var = (VariableProxy) vars.get(3);
-            assertEquals("IGBP_class", var.getFullName());
-            assertEquals(DataType.STRING, var.getDataType());
-            assertEquals(2, var.getAttributes().size());
+            stringVar = (StringVariable) vars.get(3);
+            assertEquals("IGBP_class", stringVar.getShortName());
+            assertEquals(DataType.STRING, stringVar.getDataType());
+            assertEquals(2, stringVar.getAttributes().size());
 
             var = (VariableProxy) vars.get(4);
             assertEquals("Lat_IS", var.getFullName());
@@ -802,15 +803,8 @@ public class GenericCsvReader_GBOV_IO_Test {
     }
 
     @Test
-    public void test_getRegex_GBOV() throws IOException {
-        final File testFile = getGBOV();
-
-        try {
-            reader.open(testFile);
-            assertEquals("^GBOV__(.*?)__(.*?)__([0-9]{8}T[0-9]{6}Z)__([0-9]{8}T[0-9]{6}Z)\\.csv$", reader.getRegEx());
-        } finally {
-            reader.close();
-        }
+    public void test_getRegex_GBOV() {
+        assertEquals("^GBOV__(.*?)__(.*?)__([0-9]{8}T[0-9]{6}Z)__([0-9]{8}T[0-9]{6}Z)\\.csv$", reader.getRegEx());
     }
 
     @Test

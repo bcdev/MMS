@@ -140,4 +140,22 @@ public class GenericCsvHelperTest {
             fail();
         } catch (RuntimeException ignore) {}
     }
+
+    @Test
+    public void testCastFillValue() {
+        Number num = GenericCsvHelper.castFillValue(1.0, "byte");
+        assertEquals((byte) 1, num);
+        num = GenericCsvHelper.castFillValue(1.0, "short");
+        assertEquals((short) 1, num);
+        num = GenericCsvHelper.castFillValue(1.0, "int");
+        assertEquals(1, num);
+        num = GenericCsvHelper.castFillValue(1.0, "long");
+        assertEquals((long) 1, num);
+        num = GenericCsvHelper.castFillValue(1.0, "float");
+        assertEquals((float) 1, num);
+        num = GenericCsvHelper.castFillValue(1.0, "double");
+        assertEquals(1.0, num);
+        num = GenericCsvHelper.castFillValue(1.0, "sdyhgsr");
+        assertEquals(1.0, num);
+    }
 }

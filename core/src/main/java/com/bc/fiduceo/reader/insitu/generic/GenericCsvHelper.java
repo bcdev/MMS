@@ -222,4 +222,22 @@ public class GenericCsvHelper {
                 throw new RuntimeException("not implemented for type " + type);
         }
     }
+
+    public static Number castFillValue(Double fillValue, String type) {
+        switch (type.toLowerCase()) {
+            case "byte":
+                return fillValue.byteValue();
+            case "short":
+                return fillValue.shortValue();
+            case "int":
+                return fillValue.intValue();
+            case "long":
+                return fillValue.longValue();
+            case "float":
+                return fillValue.floatValue();
+            case "double":
+            default:
+                return fillValue;
+        }
+    }
 }

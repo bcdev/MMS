@@ -7,6 +7,7 @@ import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.Reader;
+import com.bc.fiduceo.reader.netcdf.StringVariable;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import com.bc.fiduceo.reader.time.TimeLocator_MillisSince1970;
 import com.bc.fiduceo.util.NetCDFUtils;
@@ -186,7 +187,13 @@ public class GenericCsvReader implements Reader {
 
             DataType ncDataType = GenericCsvHelper.getNcDataType(var.getType());
             VariableProxy varProxy = new VariableProxy(var.getName(), ncDataType, attributes);
-            variables.add(varProxy);
+
+            if (ncDataType == DataType.STRING) {
+                StringVariable stringVar = new StringVariable(varProxy, 50);
+                variables.add(stringVar);
+            } else {
+                variables.add(varProxy);
+            }
         }
 
         return variables;
@@ -248,7 +255,8 @@ public class GenericCsvReader implements Reader {
             attributes.add(new Attribute(NetCDFUtils.CF_UNITS_NAME, var.getUnits()));
         }
         if (var.getFillValue() != null) {
-            attributes.add(new Attribute(NetCDFUtils.CF_FILL_VALUE_NAME, var.getFillValue()));
+            Number typedFillValue = GenericCsvHelper.castFillValue(var.getFillValue(), var.getType());
+            attributes.add(new Attribute(NetCDFUtils.CF_FILL_VALUE_NAME, typedFillValue));
         } else {
             if (!var.getType().equals("string")) {
                 Number fillValue = NetCDFUtils.getDefaultFillValue(GenericCsvHelper.getFillValueClass(var.getType()));
