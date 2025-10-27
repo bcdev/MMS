@@ -20,7 +20,7 @@ public class MHS_L1B_ReaderPluginTest {
 
     @Test
     public void testGetSupportedSensorKeys() {
-        final String[] expected = {"mhs-ma", "mhs-mb", "mhs-mc"};
+        final String[] expected = {"mhs-ma-l1b", "mhs-mb-l1b", "mhs-mc-l1b"};
 
         final String[] sensorKeys = plugin.getSupportedSensorKeys();
         assertArrayEquals(expected, sensorKeys);

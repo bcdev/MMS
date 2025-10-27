@@ -385,7 +385,7 @@ public class IngestionToolIntegrationTest {
 
     @Test
     public void testIngest_MHS_L1B_MC() throws SQLException, ParseException {
-        final String[] args = new String[]{"-c", configDir.getAbsolutePath(), "-s", "mhs-mc", "-start", "2025-232", "-end", "2025-232", "-v", "v10"};
+        final String[] args = new String[]{"-c", configDir.getAbsolutePath(), "-s", "mhs-mc-l1b", "-start", "2025-232", "-end", "2025-232", "-v", "v10"};
 
         IngestionToolMain.main(args);
         final List<SatelliteObservation> satelliteObservations = storage.get();
@@ -394,9 +394,9 @@ public class IngestionToolIntegrationTest {
         final SatelliteObservation observation = getSatelliteObservation("MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat", satelliteObservations);
         TestUtil.assertCorrectUTCDate(2025, 8, 20, 6, 3, 50, 0, observation.getStartTime());
         TestUtil.assertCorrectUTCDate(2025, 8, 20, 7, 45, 50, 0, observation.getStopTime());
-        assertEquals("mhs-mc", observation.getSensor().getName());
+        assertEquals("mhs-mc-l1b", observation.getSensor().getName());
 
-        final String expectedPath = TestUtil.assembleFileSystemPath(new String[]{"mhs-mc", "v10", "2025", "08", "20", "MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat"}, false);
+        final String expectedPath = TestUtil.assembleFileSystemPath(new String[]{"mhs-mc-l1b", "v10", "2025", "08", "20", "MHSx_xxx_1B_M03_20250820060350Z_20250820074550Z_N_O_20250820074043Z.nat"}, false);
         assertEquals(expectedPath, observation.getDataFilePath().toString());
 
         assertEquals(NodeType.UNDEFINED, observation.getNodeType());
