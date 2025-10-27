@@ -1225,6 +1225,38 @@ public class IngestionToolIntegrationTest {
     }
 
     @Test
+    public void testIngest_gbov() throws SQLException, ParseException {
+        final String[] args = new String[]{"-c", configDir.getAbsolutePath(), "-s", "gbov", "-start", "2016-156", "-end", "2016-156", "-v", "v1"};
+
+        IngestionToolMain.main(args);
+
+        final List<SatelliteObservation> observations = storage.get();
+        assertEquals(2, observations.size());
+
+        SatelliteObservation observation = getSatelliteObservation("GBOV__Bartlett--Experimental--Forest__BART_047__20160601T000000Z__20160628T000000Z.csv", observations);
+        TestUtil.assertCorrectUTCDate(2016, 6, 1, 0, 0, 0, observation.getStartTime());
+        TestUtil.assertCorrectUTCDate(2016, 6, 28, 0, 0, 0, observation.getStopTime());
+
+        assertEquals("gbov", observation.getSensor().getName());
+        assertEquals("v1", observation.getVersion());
+        assertEquals(NodeType.UNDEFINED, observation.getNodeType());
+
+        assertNull(observation.getGeoBounds());
+        assertNull(observation.getTimeAxes());
+
+        observation = getSatelliteObservation("GBOV__Barrow__Barrow__20160601T000000Z__20160630T235900Z.csv", observations);
+        TestUtil.assertCorrectUTCDate(2016, 6, 1, 0, 0, 0, observation.getStartTime());
+        TestUtil.assertCorrectUTCDate(2016, 6, 30, 23, 59, 0, observation.getStopTime());
+
+        assertEquals("gbov", observation.getSensor().getName());
+        assertEquals("v1", observation.getVersion());
+        assertEquals(NodeType.UNDEFINED, observation.getNodeType());
+
+        assertNull(observation.getGeoBounds());
+        assertNull(observation.getTimeAxes());
+    }
+
+    @Test
     public void testIngest_TAO() throws SQLException, ParseException {
         final String[] args = new String[]{"-c", configDir.getAbsolutePath(), "-s", "tao-sss", "-start", "2017-275", "-end", "2017-275", "-v", "v1"};
 
