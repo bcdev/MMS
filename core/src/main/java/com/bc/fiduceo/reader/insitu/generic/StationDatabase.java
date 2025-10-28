@@ -97,10 +97,10 @@ public class StationDatabase {
                 secondaryFound = true;
             }
 
-            if (siteId != null && siteId.equals(primaryIdValue)) {
+            if (siteId != null && siteId.equalsIgnoreCase(primaryIdValue)) {
                 primaryFound = true;
             }
-            if (secondaryId != null && stationId != null && stationId.equals(secondaryIdValue)) {
+            if (secondaryId != null && stationId != null && stationId.equalsIgnoreCase(secondaryIdValue)) {
                 secondaryFound = true;
             }
 
