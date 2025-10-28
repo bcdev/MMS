@@ -44,18 +44,19 @@ public class CsvFormatConfigTest {
         assertEquals("id", stationIdIdentifier);
 
         List<GenericVariable> stationVars = database.getVariables();
-        assertEquals(8, stationVars.size());
+        assertEquals(9, stationVars.size());
 
         assertEquals("id", stationVars.get(0).getName());
         assertEquals("latitude", stationVars.get(1).getName());
         assertEquals("longitude", stationVars.get(2).getName());
-        assertEquals("type", stationVars.get(3).getName());
-        assertEquals("anemometer_height", stationVars.get(4).getName());
-        assertEquals("air_temp_height", stationVars.get(5).getName());
-        assertEquals("barometer_height", stationVars.get(6).getName());
-        assertEquals("sst_depth", stationVars.get(7).getName());
+        assertEquals("station_type", stationVars.get(3).getName());
+        assertEquals("measurement_type", stationVars.get(4).getName());
+        assertEquals("anemometer_height", stationVars.get(5).getName());
+        assertEquals("air_temp_height", stationVars.get(6).getName());
+        assertEquals("barometer_height", stationVars.get(7).getName());
+        assertEquals("sst_depth", stationVars.get(8).getName());
 
-        GenericVariable stationAirTempHeight = stationVars.get(5);
+        GenericVariable stationAirTempHeight = stationVars.get(6);
         assertEquals("float", stationAirTempHeight.getType());
         assertEquals(ProductData.TYPE_FLOAT32, stationAirTempHeight.getProductData());
         assertEquals('s', stationAirTempHeight.getOrigin());
@@ -70,16 +71,17 @@ public class CsvFormatConfigTest {
         assertEquals(444, stations.size());
 
         List<Object> station = stations.get(443);
-        assertEquals(8, station.size());
+        assertEquals(9, station.size());
 
         assertEquals("YGNN6", station.get(0));
         assertEquals(43.262, station.get(1));
         assertEquals(-79.064, station.get(2));
         assertEquals(5, station.get(3));
-        assertEquals(10.00, station.get(4));
-        assertEquals(6.00, station.get(5));
-        assertEquals(75.30, station.get(6));
-        assertNull(station.get(7));
+        assertEquals(1, station.get(4));
+        assertEquals(10.00, station.get(5));
+        assertEquals(6.00, station.get(6));
+        assertEquals(75.30, station.get(7));
+        assertNull(station.get(8));
     }
 
     @Test
@@ -117,15 +119,16 @@ public class CsvFormatConfigTest {
         assertEquals("id", stationIdIdentifier);
 
         List<GenericVariable> stationVars = database.getVariables();
-        assertEquals(5, stationVars.size());
+        assertEquals(6, stationVars.size());
 
         assertEquals("id", stationVars.get(0).getName());
         assertEquals("latitude", stationVars.get(1).getName());
         assertEquals("longitude", stationVars.get(2).getName());
-        assertEquals("type", stationVars.get(3).getName());
-        assertEquals("anemometer_height", stationVars.get(4).getName());
+        assertEquals("station_type", stationVars.get(3).getName());
+        assertEquals("measurement_type", stationVars.get(4).getName());
+        assertEquals("anemometer_height", stationVars.get(5).getName());
 
-        GenericVariable stationAnemometerHeight = stationVars.get(4);
+        GenericVariable stationAnemometerHeight = stationVars.get(5);
         assertEquals("float", stationAnemometerHeight.getType());
         assertEquals(ProductData.TYPE_FLOAT32, stationAnemometerHeight.getProductData());
         assertEquals('s', stationAnemometerHeight.getOrigin());
@@ -140,13 +143,14 @@ public class CsvFormatConfigTest {
         assertEquals(115, stations.size());
 
         List<Object> station = stations.get(114);
-        assertEquals(5, station.size());
+        assertEquals(6, station.size());
 
         assertEquals("STDM4", station.get(0));
         assertEquals(47.184, station.get(1));
         assertEquals(-87.225, station.get(2));
         assertEquals(5, station.get(3));
-        assertEquals(35.2, station.get(4));
+        assertEquals(0, station.get(4));
+        assertEquals(35.2, station.get(5));
     }
 
     @Test
@@ -259,7 +263,7 @@ public class CsvFormatConfigTest {
         List<GenericVariable> vars = config.getAllVariables();
         assertNotNull(vars);
         assertFalse(vars.isEmpty());
-        assertEquals(11, vars.size());
+        assertEquals(12, vars.size());
     }
 
     @Test
@@ -269,6 +273,6 @@ public class CsvFormatConfigTest {
         List<GenericVariable> vars = config.getAllVariables();
         assertNotNull(vars);
         assertFalse(vars.isEmpty());
-        assertEquals(22, vars.size());
+        assertEquals(23, vars.size());
     }
 }

@@ -101,7 +101,11 @@ public class GenericCsvReader_NDBC_CW_IO_Test {
             assertEquals(DataType.STRING, array.getDataType());
             assertEquals("42002", array.getObject(0));
 
-            array = reader.readRaw(7, 4, new Interval(1, 1), "type");
+            array = reader.readRaw(7, 4, new Interval(1, 1), "station_type");
+            assertEquals(DataType.BYTE, array.getDataType());
+            assertEquals(0, array.getByte(0));
+
+            array = reader.readRaw(7, 4, new Interval(1, 1), "measurement_type");
             assertEquals(DataType.BYTE, array.getDataType());
             assertEquals(0, array.getByte(0));
 
@@ -172,7 +176,7 @@ public class GenericCsvReader_NDBC_CW_IO_Test {
 
             assertNotNull(vars);
             assertFalse(vars.isEmpty());
-            assertEquals(11, vars.size());
+            assertEquals(12, vars.size());
 
             StringVariable stringVar = (StringVariable) vars.get(0);
             assertEquals("id", stringVar.getShortName());
@@ -190,41 +194,46 @@ public class GenericCsvReader_NDBC_CW_IO_Test {
             assertEquals(4, var.getAttributes().size());
 
             var = (VariableProxy) vars.get(3);
-            assertEquals("type", var.getFullName());
+            assertEquals("station_type", var.getFullName());
             assertEquals(DataType.BYTE, var.getDataType());
             assertEquals(3, var.getAttributes().size());
 
             var = (VariableProxy) vars.get(4);
+            assertEquals("measurement_type", var.getFullName());
+            assertEquals(DataType.BYTE, var.getDataType());
+            assertEquals(3, var.getAttributes().size());
+
+            var = (VariableProxy) vars.get(5);
             assertEquals("anemometer_height", var.getFullName());
             assertEquals(DataType.FLOAT, var.getDataType());
             assertEquals(3, var.getAttributes().size());
 
-            var = (VariableProxy) vars.get(5);
+            var = (VariableProxy) vars.get(6);
             assertEquals("time", var.getFullName());
             assertEquals(DataType.INT, var.getDataType());
             assertEquals(3, var.getAttributes().size());
 
-            var = (VariableProxy) vars.get(6);
+            var = (VariableProxy) vars.get(7);
             assertEquals("WDIR", var.getFullName());
             assertEquals(DataType.SHORT, var.getDataType());
             assertEquals(4, var.getAttributes().size());
 
-            var = (VariableProxy) vars.get(7);
+            var = (VariableProxy) vars.get(8);
             assertEquals("WSPD", var.getFullName());
             assertEquals(DataType.FLOAT, var.getDataType());
             assertEquals(4, var.getAttributes().size());
 
-            var = (VariableProxy) vars.get(8);
+            var = (VariableProxy) vars.get(9);
             assertEquals("GDR", var.getFullName());
             assertEquals(DataType.SHORT, var.getDataType());
             assertEquals(4, var.getAttributes().size());
 
-            var = (VariableProxy) vars.get(9);
+            var = (VariableProxy) vars.get(10);
             assertEquals("GST", var.getFullName());
             assertEquals(DataType.FLOAT, var.getDataType());
             assertEquals(4, var.getAttributes().size());
 
-            var = (VariableProxy) vars.get(10);
+            var = (VariableProxy) vars.get(11);
             assertEquals("GTIME", var.getFullName());
             assertEquals(DataType.SHORT, var.getDataType());
             assertEquals(3, var.getAttributes().size());

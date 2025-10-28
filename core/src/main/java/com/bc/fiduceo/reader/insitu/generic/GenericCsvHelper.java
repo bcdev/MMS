@@ -140,8 +140,16 @@ public class GenericCsvHelper {
 
     public static Object parseValue(String token, String type) {
         if (token == null || token.isEmpty()) {
-            return null;
+            switch (type) {
+                case "float":
+                    return Float.NaN;
+                case "double":
+                    return Double.NaN;
+                default:
+                    return null;
+            }
         }
+
         token = token.trim();
 
         switch (type) {
