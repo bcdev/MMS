@@ -15,6 +15,8 @@ import com.bc.fiduceo.reader.time.TimeLocator;
 import com.bc.fiduceo.util.NetCDFUtils;
 import com.bc.fiduceo.util.TimeUtils;
 import ucar.ma2.Array;
+import ucar.ma2.ArrayDouble;
+import ucar.ma2.ArrayFloat;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -178,6 +180,11 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         final Array array = arrayCache.get(variableName);
         final Number fillValue = arrayCache.getNumberAttributeValue(NetCDFUtils.CF_FILL_VALUE_NAME, variableName);
 
+        // Special handling for longitude: it's a 1D array indexed by X, not Y
+        if ("lon".equals(variableName) && array.getRank() == 1) {
+            return readLongitudeWindow(centerX, centerY, interval, fillValue, array);
+        }
+
         return RawDataReader.read(centerX, centerY, interval, fillValue, array, getProductSize());
     }
 
@@ -267,6 +274,70 @@ class ScopeSatMonthlyReader extends NetCDFReader {
                         geometryFactory.createPoint(lonMin, latMin)
                 )
         );
+    }
+
+    private Array readLongitudeWindow(int centerX, int centerY, Interval interval, Number fillValue, Array array)
+            throws IOException {
+        final int halfWidth = interval.getX() / 2;
+
+        final int offsetX = centerX - halfWidth;
+        final int windowWidth = interval.getX();
+        final int windowHeight = interval.getY();
+
+        final Dimension productSize = getProductSize();
+        final int rawWidth = productSize.getNx();  // Size of the lon array (8640)
+
+        // Handle different data types
+        if (array.getElementType() == float.class) {
+            return readLongitudeWindowFloat(offsetX, windowWidth, windowHeight, fillValue, (ArrayFloat.D1) array, rawWidth);
+        } else if (array.getElementType() == double.class) {
+            return readLongitudeWindowDouble(offsetX, windowWidth, windowHeight, fillValue, (ArrayDouble.D1) array, rawWidth);
+        } else {
+            // Fallback to default behavior for other types
+            return RawDataReader.read(centerX, centerY, interval, fillValue, array, getProductSize());
+        }
+    }
+
+    private Array readLongitudeWindowFloat(int offsetX, int windowWidth, int windowHeight, Number fillValue,
+                                           ArrayFloat.D1 lonArray, int rawWidth) {
+        final ArrayFloat.D2 windowArray = new ArrayFloat.D2(windowHeight, windowWidth);
+        final float fillVal = fillValue.floatValue();
+
+        for (int y = 0; y < windowHeight; y++) {
+            for (int x = 0; x < windowWidth; x++) {
+                final int xRaw = x + offsetX;
+
+                if (xRaw >= 0 && xRaw < rawWidth) {
+                    // Use X index for longitude, not Y
+                    windowArray.set(y, x, lonArray.get(xRaw));
+                } else {
+                    windowArray.set(y, x, fillVal);
+                }
+            }
+        }
+
+        return windowArray;
+    }
+
+    private Array readLongitudeWindowDouble(int offsetX, int windowWidth, int windowHeight, Number fillValue,
+                                            ArrayDouble.D1 lonArray, int rawWidth) {
+        final ArrayDouble.D2 windowArray = new ArrayDouble.D2(windowHeight, windowWidth);
+        final double fillVal = fillValue.doubleValue();
+
+        for (int y = 0; y < windowHeight; y++) {
+            for (int x = 0; x < windowWidth; x++) {
+                final int xRaw = x + offsetX;
+
+                if (xRaw >= 0 && xRaw < rawWidth) {
+                    // Use X index for longitude, not Y
+                    windowArray.set(y, x, lonArray.get(xRaw));
+                } else {
+                    windowArray.set(y, x, fillVal);
+                }
+            }
+        }
+
+        return windowArray;
     }
 
     private void setSensingTimes(AcquisitionInfo acquisitionInfo) {
