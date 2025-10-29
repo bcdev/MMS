@@ -1,9 +1,6 @@
 package com.bc.fiduceo.db;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -18,7 +15,7 @@ public class DbMaintenanceToolMain {
             return;
         }
 
-        final CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(DbMaintenanceTool.getOptions(), args);
         if (commandLine.hasOption("h") || commandLine.hasOption("--help")) {
             maintenanceTool.printUsageTo(System.out);

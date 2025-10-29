@@ -23,15 +23,12 @@ package com.bc.fiduceo.post;
 
 import com.bc.fiduceo.log.FiduceoLogger;
 import com.bc.fiduceo.tool.ShutdownHook;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 
 public class PostProcessingToolMain {
 
     public static void main(String[] args) {
-        final CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine;
         try {
             commandLine = parser.parse(PostProcessingTool.getOptions(), args);

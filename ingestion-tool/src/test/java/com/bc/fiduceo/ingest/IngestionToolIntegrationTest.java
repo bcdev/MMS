@@ -34,8 +34,8 @@ import com.bc.fiduceo.reader.ReaderFactory;
 import com.bc.fiduceo.tool.ToolContext;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -117,7 +117,7 @@ public class IngestionToolIntegrationTest {
                 "-start", "2001-004",
                 "-end", "2001-001"
         };
-        final CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(IngestionTool.getOptions(), args);
 
         final IngestionTool ingestionTool = new IngestionTool();

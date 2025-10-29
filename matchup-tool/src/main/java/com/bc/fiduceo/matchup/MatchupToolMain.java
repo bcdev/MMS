@@ -21,10 +21,7 @@
 package com.bc.fiduceo.matchup;
 
 import com.bc.fiduceo.log.FiduceoLogger;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 
 public class MatchupToolMain {
 
@@ -36,7 +33,7 @@ public class MatchupToolMain {
             return;
         }
 
-        final CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(MatchupTool.getOptions(), args);
         if (commandLine.hasOption("h") || commandLine.hasOption("--help")) {
             matchupTool.printUsageTo(System.err);

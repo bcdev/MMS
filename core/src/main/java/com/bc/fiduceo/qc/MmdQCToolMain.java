@@ -1,10 +1,7 @@
 package com.bc.fiduceo.qc;
 
 import com.bc.fiduceo.log.FiduceoLogger;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli.*;
 
 public class MmdQCToolMain {
 
@@ -16,7 +13,7 @@ public class MmdQCToolMain {
             return;
         }
 
-        final CommandLineParser parser = new PosixParser();
+        final CommandLineParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(MmdQCTool.getOptions(), args);
         if (commandLine.hasOption("h") || commandLine.hasOption("--help")) {
             MmdQCTool.printUsageTo(System.err);

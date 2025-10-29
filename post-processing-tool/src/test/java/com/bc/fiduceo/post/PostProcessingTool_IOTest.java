@@ -24,8 +24,8 @@ import com.bc.fiduceo.IOTestRunner;
 import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.SystemConfig;
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.PosixParser;
 import org.esa.snap.core.datamodel.ProductData;
 import org.esa.snap.core.util.io.FileUtils;
 import org.jdom2.Element;
@@ -83,7 +83,7 @@ public class PostProcessingTool_IOTest {
     }
 
     @After
-    public void tearDown()  {
+    public void tearDown() {
         if (testDir.isDirectory()) {
             FileUtils.deleteTree(testDir);
         }
@@ -92,7 +92,7 @@ public class PostProcessingTool_IOTest {
     @Test
     public void testInitialisation() throws Exception {
         final Options options = PostProcessingTool.getOptions();
-        final PosixParser parser = new PosixParser();
+        final DefaultParser parser = new DefaultParser();
         final CommandLine commandLine = parser.parse(options, new String[]{
                 "-j", processingConfigName,
                 "-i", "/mmd_files",
