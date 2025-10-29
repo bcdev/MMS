@@ -47,7 +47,7 @@
             <root>/<sensor-platform>/<version>/<year>/<month>(/<day>)
         -->
         <root-path>
-            /usr/local/data/fiduceo
+            /media/jorge/scope/data
         </root-path>
 
         <!--
@@ -81,6 +81,15 @@
         <rule sensors="gruan-uleic">
             insitu/SENSOR/VERSION
         </rule>
+
+        <rule sensors="scope-pp">
+            insitu/wp26
+        </rule>
+
+        <rule sensors="scope-sat-pp">
+            satellite/wp26/YEAR/MONTH
+        </rule>
+
 
     </archive>
 </system-config>

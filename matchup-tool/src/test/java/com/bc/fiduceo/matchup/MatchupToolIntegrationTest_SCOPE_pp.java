@@ -52,13 +52,27 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
 
             NCTestUtils.assert3DVariable("scope-sat-pp_pp", 1, 1, 0, 1352.8167724609375f, mmd);
             NCTestUtils.assert3DVariable("scope-sat-pp_lat", 1, 1, 0, 32.9375f, mmd);
-            NCTestUtils.assert3DVariable("scope-sat-pp_lon", 1, 1, 0, -57.0625f, mmd);
+            NCTestUtils.assert3DVariable("scope-sat-pp_lon", 1, 1, 0, -117.3125f, mmd);
         }
+    }
+    @Test
+    public void testMatchup_scope_pp_everything() throws IOException, SQLException, ParseException, InvalidRangeException {
+        final UseCaseConfig useCaseConfig = createUseCaseConfigBuilder("scope-pp")
+                //  .withTimeDeltaSeconds(0, null)  // 0 seconds - match by month only via reader sensing times
+                .withMaxPixelDistanceKm(15, null)
+                .createConfig();
+        final File useCaseConfigFile = storeUseCaseConfig(useCaseConfig, "usecase-scope-pp.xml");
+
+        insert_scope_pp_insitu();
+        insert_scope_sat_pp_April_2016();
+
+        final String[] args = new String[]{"-c", configDir.getAbsolutePath(), "-u", useCaseConfigFile.getName(), "-start", "2016-092", "-end", "2016-121"};
+        MatchupToolMain.main(args);
     }
 
     private void insert_scope_pp_insitu() throws IOException, SQLException {
         final String sensorKey = "scope-pp";
-        final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"insitu", "scope", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, true);
+        final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"insitu", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, true);
 
         final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "wp26");
         storage.insert(satelliteObservation);
@@ -66,7 +80,7 @@ public class MatchupToolIntegrationTest_SCOPE_pp extends AbstractUsecaseIntegrat
 
     private void insert_scope_sat_pp_April_2016() throws IOException, SQLException {
         final String sensorKey = "scope-sat-pp";
-        final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"scope-merge", "wp26", "2016", "04", "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc"}, true);
+        final String relativeArchivePath = TestUtil.assembleFileSystemPath(new String[]{"satellite", "wp26", "2016", "04", "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_201604-fv6.0.out.nc"}, true);
 
         final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "v1");
         storage.insert(satelliteObservation);

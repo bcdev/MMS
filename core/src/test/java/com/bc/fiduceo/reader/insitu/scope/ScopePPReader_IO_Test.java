@@ -336,7 +336,7 @@ public class ScopePPReader_IO_Test {
 
     private static File getPPTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "scope", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, false
+            new String[]{"insitu","wp26", "SCOPE_WP26_PP_1958_2021.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }
