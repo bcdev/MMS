@@ -1,19 +1,18 @@
-package com.bc.fiduceo.reader.insitu.ndbc;
+package com.bc.fiduceo.reader.insitu.generic;
 
 import com.bc.fiduceo.reader.DataType;
 import com.bc.fiduceo.reader.Reader;
 import com.bc.fiduceo.reader.ReaderContext;
 import com.bc.fiduceo.reader.ReaderPlugin;
-import com.bc.fiduceo.reader.insitu.generic.GenericCsvHelper;
-import com.bc.fiduceo.reader.insitu.generic.GenericCsvReader;
 
-public class NdbcSMReaderPlugin implements ReaderPlugin {
 
-    private final String[] SUPPORTED_KEYS = {"ndbc-sm-ob", "ndbc-sm-cb", "ndbc-sm-lb", "ndbc-sm-os", "ndbc-sm-cs", "ndbc-sm-ls"};
+public class GbovReaderPlugin implements ReaderPlugin {
+
+    private final String[] SUPPORTED_KEYS = {"gbov"};
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
-        return new GenericCsvReader(GenericCsvHelper.RESOURCE_KEY_NDBC_SM);
+        return new GenericCsvReader(GenericCsvHelper.RESOURCE_KEY_GBOV);
     }
 
     @Override

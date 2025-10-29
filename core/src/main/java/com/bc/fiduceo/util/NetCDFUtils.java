@@ -42,6 +42,7 @@ public class NetCDFUtils {
     public static final String CF_VALID_RANGE_NAME = "valid_range";
     public static final String CF_UNITS_NAME = "units";
     public static final String CF_STANDARD_NAME = "standard_name";
+    public static final String CF_ANCILLARY_VARIABLES_NAME = "ancillary_variables";
     public static final String CF_LONG_NAME = "long_name";
     public static final String CF_FLAG_MEANINGS_NAME = "flag_meanings";
     public static final String CF_FLAG_MASKS_NAME = "flag_masks";
