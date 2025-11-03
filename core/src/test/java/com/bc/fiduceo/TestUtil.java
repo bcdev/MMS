@@ -164,11 +164,29 @@ public class TestUtil {
                 "        <rule sensors=\"tao-sss, pirata-sss\">\n" +
                 "            insitu/SENSOR/VERSION/YEAR/MONTH\n" +
                 "        </rule>" +
-                "        <rule sensors=\"scope-pp, scope-doc, scope-cdoc, scope-poc, scope-pic, scope-phyto\">\n" +
+                "        <rule sensors=\"scope-pp\">\n" +
                 "            insitu/wp26\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-doc\">\n" +
+                "            insitu/wp24\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-phyto\">\n" +
+                "            insitu/wp25\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-poc\">\n" +
+                "            insitu/POC\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-poc\">\n" +
+                "            satellite/POC/YEAR/MONTH\n" +
                 "        </rule>" +
                 "        <rule sensors=\"scope-sat-pp\">\n" +
                 "            satellite/wp26/YEAR/MONTH\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-doc\">\n" +
+                "            satellite/wp24/YEAR/MONTH\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-phytoplankton\">\n" +
+                "            satellite/wp25/YEAR/MONTH\n" +
                 "        </rule>" +
                 "    </archive>" +
                 "    <temp-directory>" +

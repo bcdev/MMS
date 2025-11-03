@@ -5,6 +5,7 @@ import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import org.junit.Before;
@@ -33,7 +34,7 @@ public class ScopeDOCReader_IO_Test {
 
     @Before
     public void setUp() {
-        reader = new ScopeDOCReader();
+        reader = new ScopeDOCReader(new GeometryFactory(GeometryFactory.Type.S2));
     }
 
     @Test
@@ -45,12 +46,9 @@ public class ScopeDOCReader_IO_Test {
 
             final AcquisitionInfo info = reader.read();
             assertNotNull(info);
-
             assertNotNull("Sensing start should not be null", info.getSensingStart());
             assertNotNull("Sensing stop should not be null", info.getSensingStop());
-
             assertEquals(NodeType.UNDEFINED, info.getNodeType());
-
             assertNull(info.getBoundingGeometry());
         } finally {
             reader.close();
@@ -63,7 +61,6 @@ public class ScopeDOCReader_IO_Test {
 
         try {
             reader.open(testFile);
-
             final Dimension productSize = reader.getProductSize();
 
             assertNotNull(productSize);
@@ -326,7 +323,7 @@ public class ScopeDOCReader_IO_Test {
 
     private static File getDOCTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-                new String[]{"insitu", "scope", "wp24", "SCOPE_WP24_DOC_1998_2021.txt"}, false
+                new String[]{"insitu", "wp24", "SCOPE_WP24_DOC_1998_2021.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

@@ -19,6 +19,7 @@ import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
+import ucar.ma2.Index;
 import ucar.ma2.InvalidRangeException;
 
 import java.awt.geom.Rectangle2D;
@@ -54,9 +55,10 @@ class ScopeSatMonthlyReader extends NetCDFReader {
     // SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_202001-fv6.0.out.nc (wp26)
     // SCOPE_NCEO_PC-MARANON_ESA-OC-L3S-MERGED-1M_MONTHLY_4km_mapped-202001-fv6.0.out.nc (wp25)
     // SCOPE_NCEO_POC_ESA-OC-L3S-MERGED-1M_MONTHLY_4km_mapped-202001-fv6.0.out.nc (wpPOC)
-    // SCOPE_NCEO_DOC_ESA-OC-L3S-MERGED-1M_MONTHLY_4km_mapped-202001-fv6.0.out.nc (wp24)
+    // DOC_new_OC_199801.out.nc (wp24)
+    // Global_DOC_199801.out.nc (wp23)
     // PIC_Prediction_202001.out.nc (wpPIC)
-    private static final String REG_EX = ".*_(\\d{6})[-_].*\\.nc";
+    private static final String REG_EX = ".*[-_](\\d{6})[-_.].*\\.nc";
 
     private static final Rectangle2D.Float BOUNDARY = new Rectangle2D.Float(-180.f, -90.f, 360.f, 180.f);
 
@@ -179,6 +181,11 @@ class ScopeSatMonthlyReader extends NetCDFReader {
             throws IOException, InvalidRangeException {
         final Array array = arrayCache.get(variableName);
         final Number fillValue = arrayCache.getNumberAttributeValue(NetCDFUtils.CF_FILL_VALUE_NAME, variableName);
+
+        // Handle scalar variables (rank 0) - e.g., time, depth in monthly files
+        if (array.getRank() == 0) {
+            return readScalarAsWindow(centerX, centerY, interval, fillValue, array);
+        }
 
         // Special handling for longitude: it's a 1D array indexed by X, not Y
         if ("lon".equals(variableName) && array.getRank() == 1) {
@@ -334,6 +341,30 @@ class ScopeSatMonthlyReader extends NetCDFReader {
                 } else {
                     windowArray.set(y, x, fillVal);
                 }
+            }
+        }
+
+        return windowArray;
+    }
+
+    private Array readScalarAsWindow(int centerX, int centerY, Interval interval, Number fillValue, Array array) {
+        // Handle scalar variables (rank 0) like time, depth
+        // Create a 2D window filled with the scalar value
+        final int windowHeight = interval.getY();
+        final int windowWidth = interval.getX();
+
+        // Get the scalar value
+        final Object scalarValue = array.getObject(0);
+
+        // Create output array with same data type as input
+        final Array windowArray = Array.factory(array.getDataType(), new int[]{windowHeight, windowWidth});
+        final Index index = windowArray.getIndex();
+
+        // Fill entire window with the scalar value
+        for (int y = 0; y < windowHeight; y++) {
+            for (int x = 0; x < windowWidth; x++) {
+                index.set(y, x);
+                windowArray.setObject(index, scalarValue);
             }
         }
 

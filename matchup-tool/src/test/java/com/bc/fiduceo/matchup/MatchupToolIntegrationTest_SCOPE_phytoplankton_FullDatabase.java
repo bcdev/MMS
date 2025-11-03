@@ -17,73 +17,73 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Integration test for running SCOPE-PP matchups on the entire SCOPE-PP database.
- * This test ingests all available SCOPE-PP satellite data (1998-2022) and runs
- * matchup detection against the in-situ SCOPE-PP measurements.
+ * Integration test for running SCOPE-Phytoplankton matchups on the entire SCOPE-Phytoplankton database.
+ * This test ingests all available SCOPE-Phytoplankton satellite data (1998-2023) and runs
+ * matchup detection against the in-situ SCOPE-Phytoplankton measurements.
  */
 @RunWith(DbAndIOTestRunner.class)
-public class MatchupToolIntegrationTest_SCOPE_pp_FullDatabase extends AbstractUsecaseIntegrationTest {
+public class MatchupToolIntegrationTest_SCOPE_phytoplankton_FullDatabase extends AbstractUsecaseIntegrationTest {
 
     /**
-     * Run matchups on the complete SCOPE-PP dataset (1998-2022)
+     * Run matchups on the complete SCOPE-Phytoplankton dataset (1998-2023)
      * This test:
-     * 1. Inserts the SCOPE-PP in-situ data
-     * 2. Inserts ALL SCOPE-PP satellite data from all available years
+     * 1. Inserts the SCOPE-Phytoplankton in-situ data
+     * 2. Inserts ALL SCOPE-Phytoplankton satellite data from all available years
      * 3. Runs the matchup tool on the full date range
      * 4. Generates matchup output for the entire time series
      */
     @Test
-    public void testMatchup_scope_pp_full_database() throws IOException, SQLException, ParseException, InvalidRangeException {
-        final UseCaseConfig useCaseConfig = createUseCaseConfigBuilder("scope-pp")
-                .withMaxPixelDistanceKm(7, null)
+    public void testMatchup_scope_phytoplankton_full_database() throws IOException, SQLException, ParseException, InvalidRangeException {
+        final UseCaseConfig useCaseConfig = createUseCaseConfigBuilder("scope-phytoplankton")
+                .withMaxPixelDistanceKm(3, null)
                 .createConfig();
-        final File useCaseConfigFile = storeUseCaseConfig(useCaseConfig, "usecase-scope-pp.xml");
+        final File useCaseConfigFile = storeUseCaseConfig(useCaseConfig, "usecase-scope-phytoplankton.xml");
 
         // Insert in-situ data
-        insert_scope_pp_insitu();
+        insert_scope_phytoplankton_insitu();
 
-        // Insert ALL satellite data from all years (1998-2022)
-        insert_all_scope_sat_pp_data();
+        // Insert ALL satellite data from all years (1998-2023)
+        insert_all_scope_sat_phytoplankton_data();
 
         // Run matchups for the complete time range
-        // Date range: 1998-001 (Jan 1, 1998) to 2022-365 (Dec 31, 2022)
+        // Date range: 1998-001 (Jan 1, 1998) to 2023-365 (Dec 31, 2023)
         final String[] args = new String[]{
             "-c", configDir.getAbsolutePath(),
             "-u", useCaseConfigFile.getName(),
             "-start", "1998-001",
-            "-end", "2022-365"
+            "-end", "2023-365"
         };
         MatchupToolMain.main(args);
     }
 
     /**
-     * Insert SCOPE-PP in-situ measurements (1958-2021)
+     * Insert SCOPE-Phytoplankton in-situ measurements (1997-2023)
      */
-    private void insert_scope_pp_insitu() throws IOException, SQLException {
-        final String sensorKey = "scope-pp";
+    private void insert_scope_phytoplankton_insitu() throws IOException, SQLException {
+        final String sensorKey = "scope-phytoplankton";
         final String relativeArchivePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "wp26", "SCOPE_WP26_PP_1958_2021.txt"}, true);
+            new String[]{"insitu", "wp25", "SCOPE_WP25_PHYTO_CARBON_1997_2023.txt"}, true);
 
-        final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "wp26");
+        final SatelliteObservation satelliteObservation = readSatelliteObservation(sensorKey, relativeArchivePath, "wp25");
         storage.insert(satelliteObservation);
     }
 
     /**
-     * Insert ALL SCOPE-PP satellite data from 1998-2022
+     * Insert ALL SCOPE-Phytoplankton satellite data from 1998-2023
      * This method inserts all monthly files for all available data
      */
-    private void insert_all_scope_sat_pp_data() throws IOException, SQLException {
-        final String sensorKey = "scope-sat-pp";
+    private void insert_all_scope_sat_phytoplankton_data() throws IOException, SQLException {
+        final String sensorKey = "scope-sat-phytoplankton";
 
-        // Insert data for all years from 1998 to 2022, all months
-        for (int year = 1998; year <= 2022; year++) {
+        // Insert data for all years from 1998 to 2023, all months
+        for (int year = 1998; year <= 2023; year++) {
             for (int month = 1; month <= 12; month++) {
                 String monthStr = String.format("%02d", month);
                 String yearMonthStr = String.format("%04d%02d", year, month);
 
                 final String relativeArchivePath = TestUtil.assembleFileSystemPath(
-                    new String[]{"satellite", "wp26", String.valueOf(year), monthStr,
-                        "SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_" + yearMonthStr + "-fv6.0.out.nc"},
+                    new String[]{"satellite", "wp25", String.valueOf(year), monthStr,
+                        "SCOPE_NCEO_PC-MARANON_ESA-OC-L3S-MERGED-1M_MONTHLY_4km_mapped-" + yearMonthStr + "-fv6.0.out.nc"},
                     true);
 
                 try {
@@ -98,20 +98,20 @@ public class MatchupToolIntegrationTest_SCOPE_pp_FullDatabase extends AbstractUs
     }
 
     /**
-     * Create use case configuration for SCOPE-PP matchups
+     * Create use case configuration for SCOPE-Phytoplankton matchups
      */
     private MatchupToolTestUseCaseConfigBuilder createUseCaseConfigBuilder(String primarySensor) {
         final List<Sensor> sensorList = new ArrayList<>();
         final Sensor primary = new Sensor(primarySensor);
         primary.setPrimary(true);
         sensorList.add(primary);
-        sensorList.add(new Sensor("scope-sat-pp"));
+        sensorList.add(new Sensor("scope-sat-phytoplankton"));
 
         final List<com.bc.fiduceo.core.Dimension> dimensions = new ArrayList<>();
         dimensions.add(new com.bc.fiduceo.core.Dimension(primarySensor, 1, 1));
-        dimensions.add(new com.bc.fiduceo.core.Dimension("scope-sat-pp", 3, 3));
+        dimensions.add(new com.bc.fiduceo.core.Dimension("scope-sat-phytoplankton", 3, 3));
 
-        return (MatchupToolTestUseCaseConfigBuilder) new MatchupToolTestUseCaseConfigBuilder("mmd-scope-pp")
+        return (MatchupToolTestUseCaseConfigBuilder) new MatchupToolTestUseCaseConfigBuilder("mmd-scope-phytoplankton")
                 .withSensors(sensorList)
                 .withOutputPath("/media/jorge/scope/data/matchups/")
                 .withDimensions(dimensions);

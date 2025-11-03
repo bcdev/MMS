@@ -5,6 +5,7 @@ import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import org.junit.Before;
@@ -27,7 +28,7 @@ public class ScopePOCReader_IO_Test {
 
     @Before
     public void setUp() {
-        reader = new ScopePOCReader();
+        reader = new ScopePOCReader(new GeometryFactory(GeometryFactory.Type.S2));
     }
 
     @Test
@@ -281,8 +282,8 @@ public class ScopePOCReader_IO_Test {
 
     @Test
     public void testGetRegEx() {
-        assertEquals("SCOPE_WP26_POC.*\\.txt", reader.getRegEx());
-        assertTrue("SCOPE_WP26_POC_1997_2020.txt".matches(reader.getRegEx()));
+        assertEquals("SCOPE_POC_POC.*\\.txt", reader.getRegEx());
+        assertTrue("SCOPE_POC_POC_1997_2020.txt".matches(reader.getRegEx()));
     }
 
     @Test
@@ -316,7 +317,7 @@ public class ScopePOCReader_IO_Test {
 
     private static File getPOCTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "scope", "POC", "SCOPE_POC_POC_1997_2020.txt"}, false
+            new String[]{"insitu", "POC", "SCOPE_POC_POC_1997_2020.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }

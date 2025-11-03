@@ -5,6 +5,7 @@ import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import org.junit.Before;
@@ -27,7 +28,7 @@ public class ScopePhytoReader_IO_Test {
 
     @Before
     public void setUp() {
-        reader = new ScopePhytoReader();
+        reader = new ScopePhytoReader(new GeometryFactory(GeometryFactory.Type.S2));
     }
 
     @Test
@@ -316,7 +317,7 @@ public class ScopePhytoReader_IO_Test {
 
     private static File getPhytoTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "scope", "wp25", "SCOPE_WP25_PHYTO_CARBON_1997_2023.txt"}, false
+            new String[]{"insitu", "wp25", "SCOPE_WP25_PHYTO_CARBON_1997_2023.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }
