@@ -119,7 +119,7 @@ class ScopeGenericReader implements Reader {
         // Detect format based on filename pattern
         // Check _CDOC_ first (more specific than _DOC_)
         if (upperFileName.contains("_CDOC_")) {
-            return new ScopeCDOCReader();
+            return new ScopeCDOCReader(geometryFactory);
         } else if (upperFileName.contains("_DOC_")) {
             return new ScopeDOCReader(geometryFactory);
         } else if (upperFileName.contains("PHYTO")) {

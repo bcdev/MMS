@@ -3,6 +3,7 @@ package com.bc.fiduceo.reader.insitu.scope;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
@@ -39,6 +40,12 @@ class ScopeCDOCReader extends ScopeReader {
 
     private ArrayList<CdocRecord> records;
     private TimeLocator timeLocator;
+    private GeometryFactory geometryFactory;
+
+    public ScopeCDOCReader(GeometryFactory geometryFactory) {
+        super();
+        this.geometryFactory = geometryFactory;
+    }
 
     @Override
     public void open(File file) throws IOException {
@@ -60,6 +67,11 @@ class ScopeCDOCReader extends ScopeReader {
 
         int minTime = Integer.MAX_VALUE;
         int maxTime = Integer.MIN_VALUE;
+        double minLat = Double.MAX_VALUE;
+        double maxLat = -Double.MAX_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double maxLon = -Double.MAX_VALUE;
+
         for (final CdocRecord record : records) {
             if (record.utc < minTime) {
                 minTime = record.utc;
@@ -67,12 +79,23 @@ class ScopeCDOCReader extends ScopeReader {
             if (record.utc > maxTime) {
                 maxTime = record.utc;
             }
+            if (record.latitude < minLat) {
+                minLat = record.latitude;
+            }
+            if (record.latitude > maxLat) {
+                maxLat = record.latitude;
+            }
+            if (record.longitude < minLon) {
+                minLon = record.longitude;
+            }
+            if (record.longitude > maxLon) {
+                maxLon = record.longitude;
+            }
         }
 
         acquisitionInfo.setSensingStart(new Date(minTime * 1000L));
         acquisitionInfo.setSensingStop(new Date(maxTime * 1000L));
         acquisitionInfo.setNodeType(NodeType.UNDEFINED);
-
         return acquisitionInfo;
     }
 

@@ -194,6 +194,12 @@ public class TestUtil {
                 "        <rule sensors=\"scope-sat-pic\">\n" +
                 "            satellite/PIC/YEAR/MONTH\n" +
                 "        </rule>" +
+                "        <rule sensors=\"scope-coastal-doc\">\n" +
+                "            insitu/wp23\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-coastal-doc\">\n" +
+                "            satellite/wp23/YEAR/MONTH\n" +
+                "        </rule>" +
                 "    </archive>" +
                 "    <temp-directory>" +
                 "            " + TestUtil.getTestDir().getAbsolutePath() +

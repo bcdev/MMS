@@ -5,6 +5,7 @@ import com.bc.fiduceo.TestUtil;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.reader.AcquisitionInfo;
 import com.bc.fiduceo.reader.time.TimeLocator;
 import org.junit.Before;
@@ -28,7 +29,7 @@ public class ScopeCDOCReader_IO_Test {
 
     @Before
     public void setUp() {
-        reader = new ScopeCDOCReader();
+        reader = new ScopeCDOCReader(new GeometryFactory(GeometryFactory.Type.S2));
     }
 
     @Test
@@ -323,7 +324,7 @@ public class ScopeCDOCReader_IO_Test {
 
     private static File getCDOCTestFile() throws IOException {
         final String relativePath = TestUtil.assembleFileSystemPath(
-            new String[]{"insitu", "scope", "wp23", "SCOPE_WP23_CDOC_1997_2022.txt"}, false
+            new String[]{"insitu", "wp23", "SCOPE_WP23_CDOC_1997_2022.txt"}, false
         );
         return TestUtil.getTestDataFileAsserted(relativePath);
     }
