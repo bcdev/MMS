@@ -125,7 +125,7 @@ class ScopeGenericReader implements Reader {
         } else if (upperFileName.contains("PHYTO")) {
             return new ScopePhytoReader(geometryFactory);
         } else if (upperFileName.contains("_PIC_")) {
-            return new ScopePICReader();
+            return new ScopePICReader(geometryFactory);
         } else if (upperFileName.contains("_POC_")) {
             return new ScopePOCReader(geometryFactory);
         } else if (upperFileName.contains("_PP_")) {

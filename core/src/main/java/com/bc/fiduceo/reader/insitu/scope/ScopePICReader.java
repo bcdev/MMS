@@ -3,6 +3,7 @@ package com.bc.fiduceo.reader.insitu.scope;
 import com.bc.fiduceo.core.Dimension;
 import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
+import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.location.PixelLocator;
 import com.bc.fiduceo.reader.AcquisitionInfo;
@@ -32,7 +33,7 @@ import static com.bc.fiduceo.util.NetCDFUtils.*;
 
 class ScopePICReader extends ScopeReader {
 
-    private static final String REG_EX_PIC = "SCOPE_WP26_PIC.*\\.txt";
+    private static final String REG_EX_PIC = "SCOPE_PIC_PIC.*\\.txt";
 
     private static final String PIC = "PIC";
     private static final String DATA = "data";
@@ -41,6 +42,12 @@ class ScopePICReader extends ScopeReader {
 
     private ArrayList<PicRecord> records;
     private TimeLocator timeLocator;
+    private GeometryFactory geometryFactory;
+
+    public ScopePICReader(GeometryFactory geometryFactory) {
+        super();
+        this.geometryFactory = geometryFactory;
+    }
 
     @Override
     public void open(File file) throws IOException {
@@ -62,6 +69,11 @@ class ScopePICReader extends ScopeReader {
 
         int minTime = Integer.MAX_VALUE;
         int maxTime = Integer.MIN_VALUE;
+        double minLat = Double.MAX_VALUE;
+        double maxLat = -Double.MAX_VALUE;
+        double minLon = Double.MAX_VALUE;
+        double maxLon = -Double.MAX_VALUE;
+
         for (final PicRecord record : records) {
             if (record.utc < minTime) {
                 minTime = record.utc;
@@ -69,12 +81,23 @@ class ScopePICReader extends ScopeReader {
             if (record.utc > maxTime) {
                 maxTime = record.utc;
             }
+            if (record.latitude < minLat) {
+                minLat = record.latitude;
+            }
+            if (record.latitude > maxLat) {
+                maxLat = record.latitude;
+            }
+            if (record.longitude < minLon) {
+                minLon = record.longitude;
+            }
+            if (record.longitude > maxLon) {
+                maxLon = record.longitude;
+            }
         }
 
         acquisitionInfo.setSensingStart(new Date(minTime * 1000L));
         acquisitionInfo.setSensingStop(new Date(maxTime * 1000L));
         acquisitionInfo.setNodeType(NodeType.UNDEFINED);
-
         return acquisitionInfo;
     }
 

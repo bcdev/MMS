@@ -170,7 +170,7 @@ public class TestUtil {
                 "        <rule sensors=\"scope-doc\">\n" +
                 "            insitu/wp24\n" +
                 "        </rule>" +
-                "        <rule sensors=\"scope-phyto\">\n" +
+                "        <rule sensors=\"scope-phytoplankton\">\n" +
                 "            insitu/wp25\n" +
                 "        </rule>" +
                 "        <rule sensors=\"scope-poc\">\n" +
@@ -187,6 +187,12 @@ public class TestUtil {
                 "        </rule>" +
                 "        <rule sensors=\"scope-sat-phytoplankton\">\n" +
                 "            satellite/wp25/YEAR/MONTH\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-pic\">\n" +
+                "            insitu/PIC\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-pic\">\n" +
+                "            satellite/PIC/YEAR/MONTH\n" +
                 "        </rule>" +
                 "    </archive>" +
                 "    <temp-directory>" +

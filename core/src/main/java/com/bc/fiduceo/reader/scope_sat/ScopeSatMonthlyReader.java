@@ -115,9 +115,17 @@ class ScopeSatMonthlyReader extends NetCDFReader {
             final Array longitudes = arrayCache.get("lon");
             final Array latitudes = arrayCache.get("lat");
 
+            float[] latArray = (float[]) latitudes.get1DJavaArray(DataType.FLOAT);
+
+            // RasterPixelLocator requires latitudes in ascending order
+            // If descending (last < first), reverse the array
+            if (latArray.length > 1 && latArray[latArray.length - 1] < latArray[0]) {
+                latArray = reverseArray(latArray);
+            }
+
             pixelLocator = new RasterPixelLocator(
                     (float[]) longitudes.get1DJavaArray(DataType.FLOAT),
-                    (float[]) latitudes.get1DJavaArray(DataType.FLOAT),
+                    latArray,
                     BOUNDARY);
         }
 
@@ -255,12 +263,16 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         final double[] minMax = new double[4];
 
         int size = (int) longitudes.getSize();
-        minMax[0] = longitudes.getDouble(0);           // lonMin
-        minMax[1] = longitudes.getDouble(size - 1);    // lonMax
+        final double lon0 = longitudes.getDouble(0);
+        final double lon1 = longitudes.getDouble(size - 1);
+        minMax[0] = Math.min(lon0, lon1);  // lonMin
+        minMax[1] = Math.max(lon0, lon1);  // lonMax
 
         size = (int) latitudes.getSize();
-        minMax[2] = latitudes.getDouble(0);            // latMin
-        minMax[3] = latitudes.getDouble(size - 1);     // latMax
+        final double lat0 = latitudes.getDouble(0);
+        final double lat1 = latitudes.getDouble(size - 1);
+        minMax[2] = Math.min(lat0, lat1);  // latMin
+        minMax[3] = Math.max(lat0, lat1);  // latMax
 
         return minMax;
     }
@@ -399,5 +411,13 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         utcCalendar.set(Calendar.SECOND, 59);
         utcCalendar.set(Calendar.MILLISECOND, 999);
         acquisitionInfo.setSensingStop(utcCalendar.getTime());
+    }
+
+    private static float[] reverseArray(float[] array) {
+        final float[] reversed = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            reversed[i] = array[array.length - 1 - i];
+        }
+        return reversed;
     }
 }

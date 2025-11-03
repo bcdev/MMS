@@ -90,6 +90,45 @@
             satellite/wp26/YEAR/MONTH
         </rule>
 
+        <rule sensors="scope-phytoplankton">
+            insitu/wp25
+        </rule>
+
+        <rule sensors="scope-sat-phytoplankton">
+            satellite/wp25/YEAR/MONTH
+        </rule>
+
+        <rule sensors="scope-doc">
+            insitu/wp24
+        </rule>
+
+        <rule sensors="scope-sat-doc">
+            satellite/wp24/YEAR/MONTH
+        </rule>
+
+        <rule sensors="scope-poc">
+            insitu/POC
+        </rule>
+
+        <rule sensors="scope-sat-poc">
+            satellite/POC/YEAR/MONTH
+        </rule>
+
+        <rule sensors="scope-pic">
+            insitu/PIC
+        </rule>
+
+        <rule sensors="scope-sat-pic">
+            satellite/PIC/YEAR/MONTH
+        </rule>
+
+        <rule sensors="scope-coastal-doc">
+            insitu/wp23
+        </rule>
+
+        <rule sensors="scope-sat-coastal-doc">
+            satellite/wp23/YEAR/MONTH
+        </rule>
 
     </archive>
 </system-config>

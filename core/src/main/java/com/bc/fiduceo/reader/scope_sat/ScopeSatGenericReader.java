@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  */
 class ScopeSatGenericReader implements Reader {
 
-    private static final String MONTHLY_REG_EX = ".*_(\\d{6})[-_.].*\\.nc";
+    private static final String MONTHLY_REG_EX = ".*[-_](\\d{6})[-_.].*\\.nc";
 
     private final ReaderContext readerContext;
     private Reader actualReader;
