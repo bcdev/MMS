@@ -2,6 +2,7 @@ package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.FiduceoConstants;
 import com.bc.fiduceo.core.IntRange;
+import com.bc.fiduceo.log.FiduceoLogger;
 import com.bc.fiduceo.reader.ReaderUtils;
 import com.bc.fiduceo.util.NetCDFUtils;
 import ucar.ma2.Array;
@@ -239,10 +240,17 @@ class SatelliteFields extends FieldsProcessor {
             throw new IllegalStateException("unsupport input data rank");
         }
 
-        Array era5Data = variable.read(offsets, shape);
-        if (ReaderUtils.mustScale(scaleFactor, offset)) {
-            era5Data = NetCDFUtils.scale(era5Data, scaleFactor, offset);
+        Array era5Data;
+        try {
+            era5Data = variable.read(offsets, shape);
+            if (ReaderUtils.mustScale(scaleFactor, offset)) {
+                era5Data = NetCDFUtils.scale(era5Data, scaleFactor, offset);
+            }
+        } catch (Exception e) {
+            FiduceoLogger.getLogger().severe("Unable to read: " + variable.getFullName());
+            throw e;
         }
+
         return era5Data;
     }
 
