@@ -41,8 +41,8 @@ import java.util.regex.Pattern;
  * - wp24 (Dissolved Organic Carbon)
  * - wp25 (Phytoplankton Carbon)
  * - wp26 (Primary Production)
- * - wpPIC (Particulate Inorganic Carbon)
- * - wpPOC (Particulate Organic Carbon)
+ * - PIC (Particulate Inorganic Carbon)
+ * - POC (Particulate Organic Carbon)
  *
  * File organization: product/YYYY/MM/filename.nc
  * Temporal: Monthly composites (one file per month)
@@ -54,10 +54,10 @@ class ScopeSatMonthlyReader extends NetCDFReader {
     // Examples:
     // SCOPE_NCEO_PP_ESA-OC-L3S-MERGED-1M_MONTHLY_9km_mapped_202001-fv6.0.out.nc (wp26)
     // SCOPE_NCEO_PC-MARANON_ESA-OC-L3S-MERGED-1M_MONTHLY_4km_mapped-202001-fv6.0.out.nc (wp25)
-    // SCOPE_NCEO_POC_ESA-OC-L3S-MERGED-1M_MONTHLY_4km_mapped-202001-fv6.0.out.nc (wpPOC)
+    // SCOPE_NCEO_POC_ESA-OC-L3S-MERGED-1M_MONTHLY_4km_mapped-202001-fv6.0.out.nc (POC)
     // DOC_new_OC_199801.out.nc (wp24)
     // Global_DOC_199801.out.nc (wp23)
-    // PIC_Prediction_202001.out.nc (wpPIC)
+    // PIC_Prediction_202001.out.nc (PIC)
     private static final String REG_EX = ".*[-_](\\d{6})[-_.].*\\.nc";
 
     private static final Rectangle2D.Float BOUNDARY = new Rectangle2D.Float(-180.f, -90.f, 360.f, 180.f);
@@ -65,6 +65,7 @@ class ScopeSatMonthlyReader extends NetCDFReader {
     private final ReaderContext readerContext;
     private PixelLocator pixelLocator;
     private TimeLocator timeLocator;
+    private Boolean latitudesDescending;  // Cached state: null = not checked, true/false = checked
 
     ScopeSatMonthlyReader(ReaderContext readerContext) {
         this.readerContext = readerContext;
@@ -115,9 +116,20 @@ class ScopeSatMonthlyReader extends NetCDFReader {
             final Array longitudes = arrayCache.get("lon");
             final Array latitudes = arrayCache.get("lat");
 
+            float[] latArray = (float[]) latitudes.get1DJavaArray(DataType.FLOAT);
+
+            // RasterPixelLocator requires latitudes in ascending order
+            // If descending (last < first), reverse the array
+            if (latArray.length > 1 && latArray[latArray.length - 1] < latArray[0]) {
+                latArray = reverseArray(latArray);
+                latitudesDescending = true;
+            } else {
+                latitudesDescending = false;
+            }
+
             pixelLocator = new RasterPixelLocator(
                     (float[]) longitudes.get1DJavaArray(DataType.FLOAT),
-                    (float[]) latitudes.get1DJavaArray(DataType.FLOAT),
+                    latArray,
                     BOUNDARY);
         }
 
@@ -192,7 +204,11 @@ class ScopeSatMonthlyReader extends NetCDFReader {
             return readLongitudeWindow(centerX, centerY, interval, fillValue, array);
         }
 
-        return RawDataReader.read(centerX, centerY, interval, fillValue, array, getProductSize());
+        // Adjust Y coordinate for descending latitudes
+        final Dimension productSize = getProductSize();
+        final int mappedCenterY = mapYCoordinate(centerY, productSize.getNy());
+
+        return RawDataReader.read(centerX, mappedCenterY, interval, fillValue, array, productSize);
     }
 
     @Override
@@ -255,12 +271,16 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         final double[] minMax = new double[4];
 
         int size = (int) longitudes.getSize();
-        minMax[0] = longitudes.getDouble(0);           // lonMin
-        minMax[1] = longitudes.getDouble(size - 1);    // lonMax
+        final double lon0 = longitudes.getDouble(0);
+        final double lon1 = longitudes.getDouble(size - 1);
+        minMax[0] = Math.min(lon0, lon1);  // lonMin
+        minMax[1] = Math.max(lon0, lon1);  // lonMax
 
         size = (int) latitudes.getSize();
-        minMax[2] = latitudes.getDouble(0);            // latMin
-        minMax[3] = latitudes.getDouble(size - 1);     // latMax
+        final double lat0 = latitudes.getDouble(0);
+        final double lat1 = latitudes.getDouble(size - 1);
+        minMax[2] = Math.min(lat0, lat1);  // latMin
+        minMax[3] = Math.max(lat0, lat1);  // latMax
 
         return minMax;
     }
@@ -371,6 +391,29 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         return windowArray;
     }
 
+    private boolean isLatitudesDescending() throws IOException {
+        if (latitudesDescending == null) {
+            final Array latitudes = arrayCache.get("lat");
+            final int size = (int) latitudes.getSize();
+            if (size > 1) {
+                final double lat0 = latitudes.getDouble(0);
+                final double lat1 = latitudes.getDouble(size - 1);
+                latitudesDescending = lat1 < lat0;
+            } else {
+                latitudesDescending = false;
+            }
+        }
+        return latitudesDescending;
+    }
+
+    private int mapYCoordinate(int centerY, int rawHeight) throws IOException {
+        if (isLatitudesDescending()) {
+            // Flip Y coordinate for descending latitudes
+            return rawHeight - 1 - centerY;
+        }
+        return centerY;
+    }
+
     private void setSensingTimes(AcquisitionInfo acquisitionInfo) {
         final String location = netcdfFile.getLocation();
         final Path path = Paths.get(location);
@@ -399,5 +442,13 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         utcCalendar.set(Calendar.SECOND, 59);
         utcCalendar.set(Calendar.MILLISECOND, 999);
         acquisitionInfo.setSensingStop(utcCalendar.getTime());
+    }
+
+    private static float[] reverseArray(float[] array) {
+        final float[] reversed = new float[array.length];
+        for (int i = 0; i < array.length; i++) {
+            reversed[i] = array[array.length - 1 - i];
+        }
+        return reversed;
     }
 }
