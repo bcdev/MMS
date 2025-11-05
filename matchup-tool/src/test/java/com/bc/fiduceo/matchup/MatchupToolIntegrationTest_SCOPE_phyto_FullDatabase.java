@@ -22,7 +22,7 @@ import java.util.List;
  * matchup detection against the in-situ SCOPE-Phytoplankton measurements.
  */
 @RunWith(DbAndIOTestRunner.class)
-public class MatchupToolIntegrationTest_SCOPE_phytoplankton_FullDatabase extends AbstractUsecaseIntegrationTest {
+public class MatchupToolIntegrationTest_SCOPE_phyto_FullDatabase extends AbstractUsecaseIntegrationTest {
 
     /**
      * Run matchups on the complete SCOPE-Phytoplankton dataset (1998-2023)
