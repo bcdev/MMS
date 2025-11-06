@@ -45,6 +45,9 @@ public class MatchupToolIntegrationTest_SCOPE_poc_FullDatabase extends AbstractU
         // Insert ALL satellite data from all years (1998-2020)
         insert_all_scope_sat_poc_data();
 
+        // Write SCOPE-POC specific mmd-writer-config
+        writeScopeMmdWriterConfig();
+
         // Run matchups for the complete time range
         // Date range: 1998-001 (Jan 1, 1998) to 2020-365 (Dec 31, 2020)
         final String[] args = new String[]{
@@ -115,5 +118,30 @@ public class MatchupToolIntegrationTest_SCOPE_poc_FullDatabase extends AbstractU
                 .withSensors(sensorList)
                 .withOutputPath("/media/jorge/scope/data/matchups/")
                 .withDimensions(dimensions);
+    }
+
+    /**
+     * Write SCOPE-POC specific mmd-writer-config with sensor name renaming
+     */
+    private void writeScopeMmdWriterConfig() throws IOException {
+        final String config = "<mmd-writer-config>" +
+                "    <overwrite>false</overwrite>" +
+                "    <cache-size>512</cache-size>" +
+                "    <reader-cache-size>3</reader-cache-size>" +
+                "    <netcdf-format>N4</netcdf-format>" +
+                "    <variables-configuration>" +
+                "        <sensor-rename source-name=\"scope-poc\" target-name=\"scope_poc\"/>" +
+                "        <sensor-rename source-name=\"scope-sat-poc\" target-name=\"scope_sat_poc\"/>" +
+                "        <separator sensor-names=\"scope_poc, scope_sat_poc\" separator=\"_\"/>" +
+                "    </variables-configuration>" +
+                "</mmd-writer-config>";
+
+        // Delete existing config file if it exists
+        final File configFile = new File(configDir, "mmd-writer-config.xml");
+        if (configFile.exists()) {
+            configFile.delete();
+        }
+
+        TestUtil.writeMmdWriterConfigFile(configDir, config);
     }
 }

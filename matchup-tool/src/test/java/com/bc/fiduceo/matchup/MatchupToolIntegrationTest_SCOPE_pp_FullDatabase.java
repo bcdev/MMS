@@ -45,6 +45,9 @@ public class MatchupToolIntegrationTest_SCOPE_pp_FullDatabase extends AbstractUs
         // Insert ALL satellite data from all years (1998-2022)
         insert_all_scope_sat_pp_data();
 
+        // Write SCOPE-PP specific mmd-writer-config
+        writeScopeMmdWriterConfig();
+
         // Run matchups for the complete time range
         // Date range: 1998-001 (Jan 1, 1998) to 2022-365 (Dec 31, 2022)
         final String[] args = new String[]{
@@ -115,5 +118,30 @@ public class MatchupToolIntegrationTest_SCOPE_pp_FullDatabase extends AbstractUs
                 .withSensors(sensorList)
                 .withOutputPath("/media/jorge/scope/data/matchups/")
                 .withDimensions(dimensions);
+    }
+
+    /**
+     * Write SCOPE-PP specific mmd-writer-config with sensor name renaming
+     */
+    private void writeScopeMmdWriterConfig() throws IOException {
+        final String config = "<mmd-writer-config>" +
+                "    <overwrite>false</overwrite>" +
+                "    <cache-size>512</cache-size>" +
+                "    <reader-cache-size>3</reader-cache-size>" +
+                "    <netcdf-format>N4</netcdf-format>" +
+                "    <variables-configuration>" +
+                "        <sensor-rename source-name=\"scope-pp\" target-name=\"scope_pp\"/>" +
+                "        <sensor-rename source-name=\"scope-sat-pp\" target-name=\"scope_sat_pp\"/>" +
+                "        <separator sensor-names=\"scope_pp, scope_sat_pp\" separator=\"_\"/>" +
+                "    </variables-configuration>" +
+                "</mmd-writer-config>";
+
+        // Delete existing config file if it exists
+        final File configFile = new File(configDir, "mmd-writer-config.xml");
+        if (configFile.exists()) {
+            configFile.delete();
+        }
+
+        TestUtil.writeMmdWriterConfigFile(configDir, config);
     }
 }

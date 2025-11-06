@@ -45,6 +45,9 @@ public class MatchupToolIntegrationTest_SCOPE_pic_FullDatabase extends AbstractU
         // Insert ALL satellite data from all years
         insert_all_scope_sat_pic_data();
 
+        // Write SCOPE-PIC specific mmd-writer-config
+        writeScopeMmdWriterConfig();
+
         // Run matchups for the complete time range
         final String[] args = new String[]{
             "-c", configDir.getAbsolutePath(),
@@ -118,5 +121,29 @@ public class MatchupToolIntegrationTest_SCOPE_pic_FullDatabase extends AbstractU
                 .withSensors(sensorList)
                 .withOutputPath("/media/jorge/scope/data/matchups/")
                 .withDimensions(dimensions);
+    }
+
+    /**
+     * Write SCOPE-PIC specific mmd-writer-config with sensor name renaming
+     */
+    private void writeScopeMmdWriterConfig() throws IOException {
+        final String config = "<mmd-writer-config>" +
+                "    <overwrite>false</overwrite>" +
+
+                "    <netcdf-format>N4</netcdf-format>" +
+                "    <variables-configuration>" +
+                "        <sensor-rename source-name=\"scope-pic\" target-name=\"scope_pic\"/>" +
+                "        <sensor-rename source-name=\"scope-sat-pic\" target-name=\"scope_sat_pic\"/>" +
+                "        <separator sensor-names=\"scope_pic, scope_sat_pic\" separator=\"_\"/>" +
+                "    </variables-configuration>" +
+                "</mmd-writer-config>";
+
+        // Delete existing config file if it exists
+        final File configFile = new File(configDir, "mmd-writer-config.xml");
+        if (configFile.exists()) {
+            configFile.delete();
+        }
+
+        TestUtil.writeMmdWriterConfigFile(configDir, config);
     }
 }
