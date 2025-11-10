@@ -14,6 +14,7 @@ import java.io.IOException;
 class Era5PostProcessing extends PostProcessing {
 
     private static final double EPS = 0.00000001;
+    public static final int DATA_ARRAY_WIDTH = 1440;
 
     private final Configuration configuration;
 
@@ -59,7 +60,11 @@ class Era5PostProcessing extends PostProcessing {
         final Index latIdx = latArray.getIndex();
         for (int y = 0; y < shape[0]; y++) {
             for (int x = 0; x < shape[1]; x++) {
-                lonIdx.set(y, x);
+                if (x >= DATA_ARRAY_WIDTH) {
+                    lonIdx.set(y, x - DATA_ARRAY_WIDTH);
+                } else {
+                    lonIdx.set(y, x);
+                }
                 latIdx.set(y, x);
 
                 final float lon = lonArray.getFloat(lonIdx);
@@ -81,7 +86,6 @@ class Era5PostProcessing extends PostProcessing {
                 context.set(x, y, interpolator);
             }
         }
-
 
         return context;
     }

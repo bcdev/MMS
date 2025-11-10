@@ -13,7 +13,9 @@ import ucar.nc2.*;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
+import static com.bc.fiduceo.post.plugin.era5.Era5PostProcessing.DATA_ARRAY_WIDTH;
 import static com.bc.fiduceo.post.plugin.era5.VariableUtils.*;
 import static com.bc.fiduceo.post.util.PPUtils.convertToFitTheRangeMinus180to180;
 
@@ -227,8 +229,8 @@ class SatelliteFields extends FieldsProcessor {
 
         final int yMin = yRange.getMin();
         final int xMin = xRange.getMin();
-        int yLength = yRange.getLength() + 1;
-        int xlength = xRange.getLength() + 1;
+        int yLength = yRange.getLength();
+        int xlength = xRange.getLength();
 
         if (rank == 3) {
             offsets = new int[]{0, yMin, xMin};
@@ -247,7 +249,10 @@ class SatelliteFields extends FieldsProcessor {
                 era5Data = NetCDFUtils.scale(era5Data, scaleFactor, offset);
             }
         } catch (Exception e) {
-            FiduceoLogger.getLogger().severe("Unable to read: " + variable.getFullName());
+            final Logger logger = FiduceoLogger.getLogger();
+            logger.severe("Unable to read: " + variable.getFullName());
+            logger.severe("offsets: " + yMin + ", " + xMin);
+            logger.severe("shape: " + yLength + ", " + xlength);
             throw e;
         }
 

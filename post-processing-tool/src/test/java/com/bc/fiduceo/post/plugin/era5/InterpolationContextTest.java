@@ -3,6 +3,8 @@ package com.bc.fiduceo.post.plugin.era5;
 import com.bc.fiduceo.core.IntRange;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.*;
 
 public class InterpolationContextTest {
@@ -187,5 +189,35 @@ public class InterpolationContextTest {
         final IntRange yRange = context.getYRange();
         assertEquals(7, yRange.getMin());
         assertEquals(9, yRange.getMax());
+    }
+
+    @Test
+    public void testGetXRange() {
+        final BilinearInterpolator interpolator = new BilinearInterpolator(0.3, 0.5, 100, 7);
+
+        final IntRange currentRange = new IntRange();
+        final ArrayList<IntRange> xRanges = new ArrayList<>();
+        IntRange xRange = InterpolationContext.getXRange(interpolator, currentRange, xRanges);
+        assertEquals(100, xRange.getMin());
+        assertEquals(101, xRange.getMax());
+
+        // nothing added, we're not splitting at anti-meridian tb 2025-10-08
+        assertEquals(0, xRanges.size());
+    }
+
+    @Test
+    public void testGetXRange_antiMeridianCase() {
+        final BilinearInterpolator interpolator = new BilinearInterpolator(0.3, 0.5, 1439, 7);
+
+        final IntRange currentRange = new IntRange();
+        final ArrayList<IntRange> xRanges = new ArrayList<>();
+        IntRange xRange = InterpolationContext.getXRange(interpolator, currentRange, xRanges);
+        assertEquals(0, xRange.getMin());
+        assertEquals(1, xRange.getMax());
+
+        assertEquals(1, xRanges.size());
+        xRange = xRanges.get(0);
+        assertEquals(1438, xRange.getMin());
+        assertEquals(1439, xRange.getMax());
     }
 }

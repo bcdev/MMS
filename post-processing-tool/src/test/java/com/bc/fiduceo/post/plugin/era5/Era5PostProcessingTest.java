@@ -108,6 +108,7 @@ public class Era5PostProcessingTest {
         assertEquals(1344, Era5PostProcessing.getEra5LonMin(-23.8f));
         assertEquals(1438, Era5PostProcessing.getEra5LonMin(-0.26f));
         assertEquals(1439, Era5PostProcessing.getEra5LonMin(-0.18f));
+        assertEquals(1439, Era5PostProcessing.getEra5LonMin(-0.01236f));
         assertEquals(0, Era5PostProcessing.getEra5LonMin(0.f));
         assertEquals(173, Era5PostProcessing.getEra5LonMin(43.32f));
         assertEquals(718, Era5PostProcessing.getEra5LonMin(179.58f));
@@ -158,6 +159,10 @@ public class Era5PostProcessingTest {
         interpolator = Era5PostProcessing.createInterpolator(-0.18f, 0.f, 1439, 359);
         assertEquals(0.2799999713897705, interpolator.getA(), 1e-8);
         assertEquals(1.0, interpolator.getB(), 1e-8);
+
+        interpolator = Era5PostProcessing.createInterpolator(-0.01236f, 0.f, 1439, 359);
+        assertEquals(1439, interpolator.getXMin(), 1e-8);
+        assertEquals(359, interpolator.getYMin(), 1e-8);
 
         interpolator = Era5PostProcessing.createInterpolator(43.32f, -22.19f, 173, 448);
         assertEquals(0.279998779296875, interpolator.getA(), 1e-8);

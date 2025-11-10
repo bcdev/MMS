@@ -34,16 +34,15 @@ public class JDomUtils {
 
     public static Attribute getMandatoryAttribute(final Element element, final String name) {
         final Attribute attribute = element.getAttribute(name);
-        String elementName = element.getName();
         if (attribute == null) {
-            throw new RuntimeException(ATTRIBUTE + " '" + name + "' expected at element '" + elementName + "'");
+            throw new RuntimeException(ATTRIBUTE + " '" + name + "' expected at element '" + element.getName() + "'");
         }
         return attribute;
     }
 
     public static String getMandatoryText(final Element element) {
         final String textTrim = element.getTextTrim();
-        if (textTrim.length() == 0) {
+        if (textTrim.isEmpty()) {
             throw new RuntimeException(VALUE + " of element '" + element.getName() + "' expected");
         }
         return textTrim;

@@ -28,9 +28,11 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
     private static final String ATT_NAME_LONG_NAME = "long_name";
     private static final String ATT_NAME_STANDARD_NAME = "standard_name";
     private static final String ATT_NAME_FILL_VALUE = "_FillValue";
+    private static final String ATT_NAME_LENGTH = "length";
 
     private static final Set<String> KNOWN_ATTRIB_NAMES = new TreeSet<>(
             Arrays.asList(ATT_NAME_UNITS, ATT_NAME_LONG_NAME, ATT_NAME_STANDARD_NAME, ATT_NAME_FILL_VALUE));
+
 
     static Configuration createConfiguration(Element rootElement, PostProcessingContext context) {
         final Configuration configuration = new Configuration();
@@ -75,7 +77,7 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
             if (xDimElement != null) {
                 final Attribute nameElement = JDomUtils.getMandatoryAttribute(xDimElement, "name");
                 satelliteFieldsConfiguration.set_x_dim_name(nameElement.getValue());
-                final Attribute lengthElement = JDomUtils.getMandatoryAttribute(xDimElement, "length");
+                final Attribute lengthElement = JDomUtils.getMandatoryAttribute(xDimElement, ATT_NAME_LENGTH);
                 satelliteFieldsConfiguration.set_x_dim(Integer.parseInt(lengthElement.getValue()));
             }
 
@@ -83,7 +85,7 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
             if (yDimElement != null) {
                 final Attribute nameElement = JDomUtils.getMandatoryAttribute(yDimElement, "name");
                 satelliteFieldsConfiguration.set_y_dim_name(nameElement.getValue());
-                final Attribute lengthElement = JDomUtils.getMandatoryAttribute(yDimElement, "length");
+                final Attribute lengthElement = JDomUtils.getMandatoryAttribute(yDimElement, ATT_NAME_LENGTH);
                 satelliteFieldsConfiguration.set_y_dim(Integer.parseInt(lengthElement.getValue()));
             }
 
@@ -91,7 +93,7 @@ public class Era5PostProcessingPlugin implements PostProcessingPlugin {
             if (zDimElement != null) {
                 final Attribute nameElement = JDomUtils.getMandatoryAttribute(zDimElement, "name");
                 satelliteFieldsConfiguration.set_z_dim_name(nameElement.getValue());
-                final Attribute lengthElement = JDomUtils.getMandatoryAttribute(zDimElement, "length");
+                final Attribute lengthElement = JDomUtils.getMandatoryAttribute(zDimElement, ATT_NAME_LENGTH);
                 satelliteFieldsConfiguration.set_z_dim(Integer.parseInt(lengthElement.getValue()));
             }
 

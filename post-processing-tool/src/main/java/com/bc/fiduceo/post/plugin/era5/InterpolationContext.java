@@ -5,6 +5,8 @@ import com.bc.fiduceo.core.IntRange;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.bc.fiduceo.post.plugin.era5.Era5PostProcessing.DATA_ARRAY_WIDTH;
+
 class InterpolationContext {
 
     private final BilinearInterpolator[][] interpolators;
@@ -45,32 +47,23 @@ class InterpolationContext {
         return xRanges;
     }
 
+    void setXRanges(IntRange[] xRanges) {
+        this.xRanges = xRanges;
+        initialize();
+    }
+
     private void initialize() {
-        final List<IntRange> ranges = new ArrayList<>();
+        final List<IntRange> tempXRanges = new ArrayList<>();
         IntRange current = new IntRange();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (interpolators[y][x] != null) {
-                    int min = interpolators[y][x].getXMin();
-                    int max = (min + 1) % 1440;
+                final BilinearInterpolator interpolator = interpolators[y][x];
+                if (interpolator != null) {
+                    current = getXRange(interpolator, current, tempXRanges);
+                    int max;
+                    int min;
 
-                    if (max == 0 && min > 0) {
-                        // we wrap around antimeridian
-                        // finish current range with min = 1439
-                        current.setMax(min);
-                        ranges.add(current);
-                        // start new range with xmin = xmax = 0
-                        current = new IntRange(0, 0);
-                    }
-
-                    if (current.getMin() > min) {
-                        current.setMin(min);
-                    }
-                    if (current.getMax() < max) {
-                        current.setMax(max);
-                    }
-
-                    min = interpolators[y][x].getYMin();
+                    min = interpolator.getYMin();
                     max = min + 1;
                     if (yRange.getMin() > min) {
                         yRange.setMin(min);
@@ -81,17 +74,42 @@ class InterpolationContext {
                 }
             }
         }
-        ranges.add(current);
-        xRanges = ranges.toArray(new IntRange[0]);
+
+        tempXRanges.add(current);
+        xRanges = tempXRanges.toArray(new IntRange[0]);
 
         setRelativeInterpolatorOffsets();
 
         mustInitialise = false;
     }
 
+    // package access for testing only tb 2025-10-08
+    static IntRange getXRange(BilinearInterpolator interpolator, IntRange current, List<IntRange> xRanges) {
+        int min = interpolator.getXMin();
+        int max = (min + 1) % DATA_ARRAY_WIDTH;
+
+        if (max == 0 && min > 0) {
+            // we wrap around antimeridian
+            // finish current range with min = 1439
+            current.setMin(1438);
+            current.setMax(1439);
+            xRanges.add(current);
+            // start new range with xmin = 0 xmax = 1 - should always be the case
+            current = new IntRange(0, 1);
+            return current;
+        }
+
+        if (current.getMin() > min) {
+            current.setMin(min);
+        }
+        if (current.getMax() < max) {
+            current.setMax(max);
+        }
+        return current;
+    }
+
     private void setRelativeInterpolatorOffsets() {
         final int yMinValue = yRange.getMin();
-
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {

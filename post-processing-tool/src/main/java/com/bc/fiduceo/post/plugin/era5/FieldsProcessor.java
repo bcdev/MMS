@@ -8,9 +8,9 @@ import ucar.ma2.InvalidRangeException;
 import java.awt.*;
 import java.io.IOException;
 
-class FieldsProcessor {
+import static com.bc.fiduceo.post.plugin.era5.Era5PostProcessing.DATA_ARRAY_WIDTH;
 
-    private static final int RASTER_WIDTH = 1440;
+class FieldsProcessor {
 
     TemplateVariable createTemplate(String name, String units, String longName, String standardName, boolean is3d) {
         return new TemplateVariable(name, units, longName, standardName, is3d);
@@ -25,7 +25,7 @@ class FieldsProcessor {
                 final int xMax = era5RasterPosition.width + era5RasterPosition.x;
                 mergeArrays_3D(leftSubset, rightSubset, era5RasterPosition, mergedArray, xMax);
             } else {
-                final int xMax = RASTER_WIDTH - era5RasterPosition.x;
+                final int xMax = DATA_ARRAY_WIDTH - era5RasterPosition.x;
                 mergeArrays_3D(rightSubset, leftSubset, era5RasterPosition, mergedArray, xMax);
             }
         } else {
@@ -34,7 +34,7 @@ class FieldsProcessor {
                 final int xMax = era5RasterPosition.width + era5RasterPosition.x;
                 mergeArrays(leftSubset, rightSubset, era5RasterPosition, mergedArray, xMax);
             } else {
-                final int xMax = RASTER_WIDTH - era5RasterPosition.x;
+                final int xMax = DATA_ARRAY_WIDTH - era5RasterPosition.x;
                 mergeArrays(rightSubset, leftSubset, era5RasterPosition, mergedArray, xMax);
             }
         }

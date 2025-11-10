@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.*;
 
+import static com.bc.fiduceo.post.plugin.era5.Era5PostProcessing.DATA_ARRAY_WIDTH;
 import static com.bc.fiduceo.post.plugin.era5.VariableUtils.*;
 
 class MatchupFields extends FieldsProcessor {
@@ -138,7 +139,7 @@ class MatchupFields extends FieldsProcessor {
                         }
 
                         final int offsetX = bilinearInterpolator.getXMin();
-                        final int offsetX1 = (offsetX + 1) % 1440;
+                        final int offsetX1 = (offsetX + 1) % DATA_ARRAY_WIDTH;
                         final int offsetY = bilinearInterpolator.getYMin();
 
                             Array leftSide = variable.read(new int[]{0, offsetY, offsetX}, new int[]{1, 2, 1}).reduce();
