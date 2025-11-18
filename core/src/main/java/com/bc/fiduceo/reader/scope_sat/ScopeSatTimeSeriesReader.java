@@ -18,7 +18,6 @@ import ucar.ma2.Array;
 import ucar.ma2.ArrayInt;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
-import ucar.nc2.Attribute;
 
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -217,9 +216,7 @@ class ScopeSatTimeSeriesReader extends NetCDFReader {
         final Array timeArray = arrayCache.get("time");
 
         // Get first and last time values
-        final float firstTimeDays = timeArray.getFloat(0);
-        final int lastIndex = (int) timeArray.getSize() - 1;
-        final float lastTimeDays = timeArray.getFloat(lastIndex);
+        final float timeDays = timeArray.getFloat(0);
 
         // Time is in "days since 1970-01-15"
         final Calendar calendar = TimeUtils.getUTCCalendar();
@@ -227,13 +224,16 @@ class ScopeSatTimeSeriesReader extends NetCDFReader {
         calendar.set(Calendar.MILLISECOND, 0);
 
         // Sensing start
-        calendar.add(Calendar.DAY_OF_YEAR, (int) firstTimeDays);
+        calendar.add(Calendar.DAY_OF_YEAR, (int) timeDays);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
         acquisitionInfo.setSensingStart(calendar.getTime());
 
         // Sensing stop
         calendar.set(1970, Calendar.JANUARY, 15, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.DAY_OF_YEAR, (int) lastTimeDays);
+        calendar.add(Calendar.DAY_OF_YEAR, (int) timeDays);
+        final int lastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        calendar.set(Calendar.DAY_OF_MONTH, lastDay);
         acquisitionInfo.setSensingStop(calendar.getTime());
     }
 
