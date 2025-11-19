@@ -130,5 +130,37 @@
             satellite/wp23/YEAR/MONTH
         </rule>
 
+        <rule sensors="scope-pH">
+            insitu/wp21
+        </rule>
+
+        <rule sensors="scope-sat-pH">
+            satellite/wp21/YEAR/MONTH
+        </rule>
+
+        <rule sensors="scope-ta">
+            insitu/wp21
+        </rule>
+
+        <rule sensors="scope-sat-ta">
+            satellite/wp21/YEAR/MONTH
+        </rule>
+
+        <rule sensors="scope-fco2">
+            insitu/wp21
+        </rule>
+
+        <rule sensors="scope-sat-fco2">
+            satellite/wp21/YEAR/MONTH
+        </rule>
+
+        <rule sensors="scope-dic">
+            insitu/wp21
+        </rule>
+
+        <rule sensors="scope-sat-dic">
+            satellite/wp21/YEAR/MONTH
+        </rule>
+
     </archive>
 </system-config>

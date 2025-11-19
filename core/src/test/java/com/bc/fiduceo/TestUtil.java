@@ -200,6 +200,30 @@ public class TestUtil {
                 "        <rule sensors=\"scope-sat-coastal-doc\">\n" +
                 "            satellite/wp23/YEAR/MONTH\n" +
                 "        </rule>" +
+                "        <rule sensors=\"scope-pH\">\n" +
+                "            insitu/wp21\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-pH\">\n" +
+                "            satellite/wp21/YEAR/MONTH\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-ta\">\n" +
+                "            insitu/wp21\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-ta\">\n" +
+                "            satellite/wp21/YEAR/MONTH\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-fco2\">\n" +
+                "            insitu/wp21\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-fco2\">\n" +
+                "            satellite/wp21/YEAR/MONTH\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-dic\">\n" +
+                "            insitu/wp21\n" +
+                "        </rule>" +
+                "        <rule sensors=\"scope-sat-dic\">\n" +
+                "            satellite/wp21/YEAR/MONTH\n" +
+                "        </rule>" +
                 "    </archive>" +
                 "    <temp-directory>" +
                 "            " + TestUtil.getTestDir().getAbsolutePath() +

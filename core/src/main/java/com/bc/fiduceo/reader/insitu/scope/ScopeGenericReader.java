@@ -122,6 +122,14 @@ class ScopeGenericReader implements Reader {
             return new ScopeCDOCReader(geometryFactory);
         } else if (upperFileName.contains("_DOC_")) {
             return new ScopeDOCReader(geometryFactory);
+        } else if (upperFileName.contains("_TA_")) {
+            return new ScopeTaReader(geometryFactory);
+        } else if (upperFileName.contains("FCO2")) {
+            return new ScopeFco2Reader(geometryFactory);
+        } else if (upperFileName.contains("DIC")) {
+            return new ScopeDicReader(geometryFactory);
+        } else if (upperFileName.contains("_PH_")) {
+            return new ScopepHReader(geometryFactory);
         } else if (upperFileName.contains("PHYTO")) {
             return new ScopePhytoReader(geometryFactory);
         } else if (upperFileName.contains("_PIC_")) {

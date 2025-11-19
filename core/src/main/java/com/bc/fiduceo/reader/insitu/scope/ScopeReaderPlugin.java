@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class ScopeReaderPlugin implements ReaderPlugin {
 
-    private final String[] SUPPORTED_KEYS = {"scope-coastal-doc", "scope-doc", "scope-phytoplankton", "scope-pic", "scope-poc","scope-pp"};
+    private final String[] SUPPORTED_KEYS = {"scope-coastal-doc", "scope-doc", "scope-ta", "scope-fco2", "scope-dic", "scope-pH", "scope-phytoplankton", "scope-pic", "scope-poc","scope-pp"};
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
