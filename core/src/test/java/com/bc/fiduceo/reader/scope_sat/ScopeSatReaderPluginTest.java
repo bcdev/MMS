@@ -19,7 +19,7 @@ public class ScopeSatReaderPluginTest {
 
     @Test
     public void testGetSupportedSensorKeys() {
-        final String[] expected = {"scope-sat-fco2", "scope-sat-dic", "scope-sat-coastal-doc", "scope-sat-doc",
+        final String[] expected = {"scope-sat-fco2", "scope-sat-pH", "scope-sat-ta", "scope-sat-dic", "scope-sat-coastal-doc", "scope-sat-doc",
                 "scope-sat-phytoplankton", "scope-sat-pp", "scope-sat-pic", "scope-sat-poc"};
         final String[] keys = plugin.getSupportedSensorKeys();
 

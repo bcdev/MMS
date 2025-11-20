@@ -177,7 +177,7 @@ class ScopeSatReader extends NetCDFReader {
         final Calendar calendar = TimeUtils.getUTCCalendar();
         calendar.set(Calendar.YEAR, ymd[0]);
         calendar.set(Calendar.MONTH, ymd[1] - 1);  // month is zero-based
-        calendar.set(Calendar.DAY_OF_MONTH, ymd[3]);  // middle of month
+        calendar.set(Calendar.DAY_OF_MONTH, ymd[2]);  // middle of month
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -191,14 +191,14 @@ class ScopeSatReader extends NetCDFReader {
         final Matcher matcher = pattern.matcher(fileName);
 
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Filename does not match expected pattern: " + fileName);
+            return new int[]{0, 0, 0};
         }
 
         final String datePart = matcher.group(1);
         final int[] ymd = new int[3];
         ymd[0] = Integer.parseInt(datePart.substring(0, 4));  // year
         ymd[1] = Integer.parseInt(datePart.substring(4, 6));  // month
-        ymd[2] = 15;  // middle of month
+        ymd[2] = 1;  // first day of month
 
         return ymd;
     }
@@ -375,7 +375,7 @@ class ScopeSatReader extends NetCDFReader {
 
     private boolean areLatitudesDescending() throws IOException {
         if (latitudesDescending == null) {
-            final Array latArray = arrayCache.get("lat");
+            final Array latArray = arrayCache.get(getLatVarName());
             final int size = (int) latArray.getSize();
             if (size > 1) {
                 final double startLat = latArray.getDouble(0);
