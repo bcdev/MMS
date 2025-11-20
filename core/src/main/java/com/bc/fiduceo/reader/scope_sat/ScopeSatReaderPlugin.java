@@ -7,9 +7,7 @@ import com.bc.fiduceo.reader.ReaderPlugin;
 
 /**
  * Plugin for SCOPE satellite data reader.
- *
  * Uses a generic reader that auto-detects file type (monthly vs time-series).
- *
  * Supported products:
  * - wp21 (Fugacity of CO2) - time series
  * - wp22 (Dissolved Inorganic Carbon) - time series with depth
