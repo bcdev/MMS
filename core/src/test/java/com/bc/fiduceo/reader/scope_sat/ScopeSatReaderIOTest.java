@@ -7,6 +7,7 @@ import com.bc.fiduceo.core.Interval;
 import com.bc.fiduceo.core.NodeType;
 import com.bc.fiduceo.geometry.GeometryFactory;
 import com.bc.fiduceo.reader.AcquisitionInfo;
+import com.bc.fiduceo.reader.Reader;
 import com.bc.fiduceo.reader.ReaderContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,28 +25,28 @@ import static org.junit.Assert.*;
 
 /**
  * Integration tests for ScopeSatMonthlyReader.
- *
  * Tests the monthly composite reader which handles:
+ * - wp21 (Carbonate System)
+ * - wp22 (Interior DIC)
  * - wp23 (Coastal DOC)
  * - wp24 (DOC)
  * - wp25 (Phytoplankton Carbon)
  * - wp26 (Primary Production)
  * - wpPIC (Particulate Inorganic Carbon)
  * - wpPOC (Particulate Organic Carbon)
- *
  * This test uses wp26 (PP) April 2016 as a representative monthly dataset.
  */
 @RunWith(IOTestRunner.class)
-public class ScopeSatMonthlyReader_IO_Test {
+public class ScopeSatReaderIOTest {
 
-    private ScopeSatGenericReader reader;
+    private Reader reader;
     private ReaderContext readerContext;
 
     @Before
     public void setUp() {
         readerContext = new ReaderContext();
         readerContext.setGeometryFactory(new GeometryFactory(GeometryFactory.Type.S2));
-        reader = new ScopeSatGenericReader(readerContext);
+        reader = new ScopeSatReader(readerContext);
     }
 
     @Test
@@ -99,7 +100,7 @@ public class ScopeSatMonthlyReader_IO_Test {
             final List<Variable> variables = reader.getVariables();
 
             assertNotNull(variables);
-            assertTrue("Should have variables", variables.size() > 0);
+            assertFalse("Should have variables", variables.isEmpty());
 
             boolean hasLon = false;
             boolean hasLat = false;
@@ -312,7 +313,7 @@ public class ScopeSatMonthlyReader_IO_Test {
     }
 
     @Test
-    public void testExtractYearMonthDay_otherFileName() throws IOException {
+    public void testExtractYearMonthDay_otherFileName() {
         int[] ints = reader.extractYearMonthDayFromFilename("invalid_filename.nc");
         assertArrayEquals(new int[]{0, 0, 0}, ints);
     }

@@ -6,6 +6,9 @@ import com.bc.fiduceo.reader.ReaderContext;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -40,19 +43,25 @@ public class ScopeReaderPluginTest {
     @Test
     public void testGetSupportedSensorKeys() {
         // ACT: Get the sensor keys from the plugin
-        final String[] sensorKeys = plugin.getSupportedSensorKeys();
+        final List<String> sensorKeys =
+                Arrays.asList(plugin.getSupportedSensorKeys());
 
         // ASSERT: Verify we have exactly 6 keys
         assertNotNull("Sensor keys should not be null", sensorKeys);
-        assertEquals("Should support 6 SCOPE sensor types", 6, sensorKeys.length);
+        assertEquals("Should support 10 SCOPE sensor types", 10,
+                sensorKeys.size());
 
-        // ASSERT: Verify the specific keys (order matters - matches plugin definition)
-        assertEquals("scope-coastal-doc", sensorKeys[0]);
-        assertEquals("scope-doc", sensorKeys[1]);
-        assertEquals("scope-phytoplankton", sensorKeys[2]);
-        assertEquals("scope-pic", sensorKeys[3]);
-        assertEquals("scope-poc", sensorKeys[4]);
-        assertEquals("scope-pp", sensorKeys[5]);
+        // ASSERT: Verify the specific keys
+        assertTrue(sensorKeys.contains("scope-coastal-doc"));
+        assertTrue(sensorKeys.contains("scope-doc"));
+        assertTrue(sensorKeys.contains("scope-phytoplankton"));
+        assertTrue(sensorKeys.contains("scope-pic"));
+        assertTrue(sensorKeys.contains("scope-poc"));
+        assertTrue(sensorKeys.contains("scope-pp"));
+        assertTrue(sensorKeys.contains("scope-ta"));
+        assertTrue(sensorKeys.contains("scope-fco2"));
+        assertTrue(sensorKeys.contains("scope-dic"));
+        assertTrue(sensorKeys.contains("scope-pH"));
     }
 
     /**
