@@ -177,7 +177,7 @@ class ScopeSatReader extends NetCDFReader {
         final Calendar calendar = TimeUtils.getUTCCalendar();
         calendar.set(Calendar.YEAR, ymd[0]);
         calendar.set(Calendar.MONTH, ymd[1] - 1);  // month is zero-based
-        calendar.set(Calendar.DAY_OF_MONTH, ymd[2]);  // middle of month
+        calendar.set(Calendar.DAY_OF_MONTH, ymd[2]);  // first day of month
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
