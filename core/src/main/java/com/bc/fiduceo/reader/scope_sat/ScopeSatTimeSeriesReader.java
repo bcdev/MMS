@@ -72,10 +72,10 @@ class ScopeSatTimeSeriesReader extends NetCDFReader {
         final Array longitudes = arrayCache.get("longitude");
         final Array latitudes = arrayCache.get("latitude");
 
-        final double[] geoMinMax = ScopeSatMonthlyReader.extractMinMax(longitudes, latitudes);
+        final double[] geoMinMax = ScopeSatReader.extractMinMax(longitudes, latitudes);
 
         final GeometryFactory geometryFactory = readerContext.getGeometryFactory();
-        final Polygon polygon = ScopeSatMonthlyReader.createPolygonFromMinMax(geoMinMax, geometryFactory);
+        final Polygon polygon = ScopeSatReader.createPolygonFromMinMax(geoMinMax, geometryFactory);
         acquisitionInfo.setBoundingGeometry(polygon);
 
         // Extract sensing times from time variable

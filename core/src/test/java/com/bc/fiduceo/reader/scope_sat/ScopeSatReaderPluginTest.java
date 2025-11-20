@@ -6,10 +6,7 @@ import com.bc.fiduceo.reader.ReaderContext;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ScopeSatReaderPluginTest {
 
@@ -22,16 +19,8 @@ public class ScopeSatReaderPluginTest {
 
     @Test
     public void testGetSupportedSensorKeys() {
-        final String[] expected = {
-                "scope-sat-fco2",
-                "scope-sat-dic",
-                "scope-sat-coastal-doc",
-                "scope-sat-doc",
-                "scope-sat-phytoplankton",
-                "scope-sat-pp",
-                "scope-sat-pic",
-                "scope-sat-poc"
-        };
+        final String[] expected = {"scope-sat-fco2", "scope-sat-dic", "scope-sat-coastal-doc", "scope-sat-doc",
+                "scope-sat-phytoplankton", "scope-sat-pp", "scope-sat-pic", "scope-sat-poc"};
         final String[] keys = plugin.getSupportedSensorKeys();
 
         assertArrayEquals(expected, keys);
@@ -46,6 +35,6 @@ public class ScopeSatReaderPluginTest {
     public void testCreateReader() {
         final Reader reader = plugin.createReader(new ReaderContext());
         assertNotNull(reader);
-        assertTrue(reader instanceof ScopeSatGenericReader);
+        assertTrue(reader instanceof ScopeSatReader);
     }
 }

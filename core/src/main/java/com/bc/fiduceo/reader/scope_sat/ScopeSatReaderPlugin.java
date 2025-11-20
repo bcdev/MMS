@@ -36,7 +36,7 @@ public class ScopeSatReaderPlugin implements ReaderPlugin {
 
     @Override
     public Reader createReader(ReaderContext readerContext) {
-        return new ScopeSatGenericReader(readerContext);
+        return new ScopeSatReader(readerContext);
     }
 
     @Override
