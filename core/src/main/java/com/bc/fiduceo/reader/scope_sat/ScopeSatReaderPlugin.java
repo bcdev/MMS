@@ -25,6 +25,8 @@ public class ScopeSatReaderPlugin implements ReaderPlugin {
     // Sensor keys for different SCOPE satellite products
     private static final String[] SUPPORTED_SENSOR_KEYS = {
             "scope-sat-fco2",             // wp21 - Fugacity of CO2
+            "scope-sat-pH",               // wp21 - pH measurements
+            "scope-sat-ta",               // wp21 - Total Alkalinity
             "scope-sat-dic",              // wp22 - Dissolved Inorganic Carbon
             "scope-sat-coastal-doc",      // wp23 - Coastal Dissolved Organic Carbon
             "scope-sat-doc",              // wp24 - Dissolved Organic Carbon

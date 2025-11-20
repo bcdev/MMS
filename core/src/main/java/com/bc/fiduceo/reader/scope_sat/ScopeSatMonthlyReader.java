@@ -88,8 +88,8 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         final AcquisitionInfo acquisitionInfo = new AcquisitionInfo();
 
         // Get lat/lon arrays to determine bounding geometry
-        final Array longitudes = arrayCache.get("lon");
-        final Array latitudes = arrayCache.get("lat");
+        final Array longitudes = getCoordinateArray("lon", "longitude");
+        final Array latitudes = getCoordinateArray("lat", "latitude");
 
         final double[] geoMinMax = extractMinMax(longitudes, latitudes);
 
@@ -113,8 +113,8 @@ class ScopeSatMonthlyReader extends NetCDFReader {
     @Override
     public PixelLocator getPixelLocator() throws IOException {
         if (pixelLocator == null) {
-            final Array longitudes = arrayCache.get("lon");
-            final Array latitudes = arrayCache.get("lat");
+            final Array longitudes = getCoordinateArray("lon", "longitude");
+            final Array latitudes = getCoordinateArray("lat", "latitude");
 
             float[] latArray = (float[]) latitudes.get1DJavaArray(DataType.FLOAT);
 
@@ -250,8 +250,8 @@ class ScopeSatMonthlyReader extends NetCDFReader {
 
     @Override
     public Dimension getProductSize() throws IOException {
-        final Array longitudes = arrayCache.get("lon");
-        final Array latitudes = arrayCache.get("lat");
+        final Array longitudes = getCoordinateArray("lon", "longitude");
+        final Array latitudes = getCoordinateArray("lat", "latitude");
 
         return new Dimension("size", (int) longitudes.getSize(), (int) latitudes.getSize());
     }
@@ -393,7 +393,7 @@ class ScopeSatMonthlyReader extends NetCDFReader {
 
     private boolean isLatitudesDescending() throws IOException {
         if (latitudesDescending == null) {
-            final Array latitudes = arrayCache.get("lat");
+            final Array latitudes = getCoordinateArray("lat", "latitude");
             final int size = (int) latitudes.getSize();
             if (size > 1) {
                 final double lat0 = latitudes.getDouble(0);
@@ -442,6 +442,29 @@ class ScopeSatMonthlyReader extends NetCDFReader {
         utcCalendar.set(Calendar.SECOND, 59);
         utcCalendar.set(Calendar.MILLISECOND, 999);
         acquisitionInfo.setSensingStop(utcCalendar.getTime());
+    }
+
+    /**
+     * Helper method to get coordinate array with fallback to alternate names.
+     * Some files use "lon"/"lat", others use "longitude"/"latitude".
+     *
+     * @param primaryName the primary name to try first
+     * @param alternateName the alternate name if primary not found
+     * @return the coordinate array
+     * @throws IOException if neither name exists in the file
+     */
+    private Array getCoordinateArray(String primaryName, String alternateName) throws IOException {
+        try {
+            return arrayCache.get(primaryName);
+        } catch (IOException e) {
+            // Try alternate name
+            try {
+                return arrayCache.get(alternateName);
+            } catch (IOException ex) {
+                // Both failed, re-throw original exception with more context
+                throw new IOException("Could not find coordinate variable '" + primaryName + "' or '" + alternateName + "'", e);
+            }
+        }
     }
 
     private static float[] reverseArray(float[] array) {
