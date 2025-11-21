@@ -282,7 +282,7 @@ class ScopeSatReader extends NetCDFReader {
     }
 
     private String getVariableName(String defaultName, String alternativeName) {
-        if (netcdfFile.getRootGroup().findVariable(alternativeName) != null) {
+        if (netcdfFile.getRootGroup().findVariable(defaultName) == null) {
             return alternativeName;
         }
         return defaultName;
