@@ -19,6 +19,7 @@ import ucar.ma2.*;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -191,7 +192,8 @@ class ScopeSatReader extends NetCDFReader {
         final Matcher matcher = pattern.matcher(fileName);
 
         if (!matcher.matches()) {
-            return new int[]{0, 0, 0};
+            throw new IllegalArgumentException(MessageFormat.format("Filename does not match expected pattern: {0}",
+                    fileName));
         }
 
         final String datePart = matcher.group(1);
