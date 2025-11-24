@@ -198,7 +198,7 @@ class ScopeSatReader extends NetCDFReader {
         final int[] ymd = new int[3];
         ymd[0] = Integer.parseInt(datePart.substring(0, 4));  // year
         ymd[1] = Integer.parseInt(datePart.substring(4, 6));  // month
-        ymd[2] = 15;  // middle of month
+        ymd[2] = 1;  // first day of month
 
         return ymd;
     }
@@ -375,7 +375,7 @@ class ScopeSatReader extends NetCDFReader {
 
     private boolean areLatitudesDescending() throws IOException {
         if (latitudesDescending == null) {
-            final Array latArray = arrayCache.get("lat");
+            final Array latArray = arrayCache.get(getLatVarName());
             final int size = (int) latArray.getSize();
             if (size > 1) {
                 final double startLat = latArray.getDouble(0);
