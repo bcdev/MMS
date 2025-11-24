@@ -19,26 +19,33 @@ package com.bc.fiduceo.matchup.screening;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 /* The XML template for this screening class looks like:
 
-    <scope-interior-dic-depth>
+    <depth>
         <!-- omit if name of primary depth is `depth` -->
         <primary-depth-variable name="depth1" />
 
         <!-- omit if name of secondary depth is `depth` -->
         <secondary-depth-variable name="depth2" />
 
-        <!-- omit if primary depth is not provided at nominal discrete depth levels -->
+        <!-- omit if primary depth is not provided at nominal depth levels -->
         <primary-is-nominal>true</primary-is-nominal>
-    </scope-interior-dic-depth>
+
+        <!-- omit to use default nominal depth levels (listed below, for instance) -->
+        <levels>0.0, 10.0, 20.0, 30.0, 50.0, 75.0, 100.0, 125.0, 150.0, 200.0, 250.0, 300.0, 400.0, 500.0, 600.0,
+        700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0, 1750.0, 2000.0, 2500.0, 3000.0, 3500.0,
+        4000.0, 4500.0, 5000.0, 5500.0</levels>
+    </depth>
  */
 
-public class ScopeInteriorDicDepthScreeningPlugin implements ScreeningPlugin {
+public class DepthScreeningPlugin implements ScreeningPlugin {
 
     // package access for testing only
-    static ScopeInteriorDicDepthScreening.Configuration createConfiguration(Element element) {
-        final ScopeInteriorDicDepthScreening.Configuration configuration =
-                new ScopeInteriorDicDepthScreening.Configuration();
+    static DepthScreening.Configuration createConfiguration(Element element) {
+        final DepthScreening.Configuration configuration = new DepthScreening.Configuration();
 
         final Element primaryDepthVariable = element.getChild("primary-depth-variable");
         if (primaryDepthVariable != null) {
@@ -61,20 +68,32 @@ public class ScopeInteriorDicDepthScreeningPlugin implements ScreeningPlugin {
             configuration.primaryIsNominal = Boolean.parseBoolean(primaryIsNominal.getValue().trim());
         }
 
+        final Element levels = element.getChild("levels");
+        if (levels != null) {
+            final String[] tokens = levels.getValue().split(",");
+            if (tokens.length < 2) {
+                throw new NumberFormatException(levels.getValue());
+            }
+            configuration.levels = new Double[tokens.length];
+            IntStream.range(0, tokens.length).forEach(i -> configuration.levels[i] =
+                    Double.parseDouble(tokens[i].trim()));
+            Arrays.sort(configuration.levels);
+        }
+
         return configuration;
     }
 
     @Override
     public Screening createScreening(Element element) {
-        final ScopeInteriorDicDepthScreening.Configuration configuration = createConfiguration(element);
-        final ScopeInteriorDicDepthScreening screening = new ScopeInteriorDicDepthScreening();
+        final DepthScreening.Configuration configuration = createConfiguration(element);
+        final DepthScreening screening = new DepthScreening();
         screening.configure(configuration);
         return screening;
     }
 
     @Override
     public String getScreeningName() {
-        return "scope-interior-dic-depth";
+        return "depth";
     }
 
 }

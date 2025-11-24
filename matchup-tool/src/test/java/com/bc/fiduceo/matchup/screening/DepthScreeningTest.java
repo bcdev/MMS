@@ -37,10 +37,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ScopeInteriorDicDepthScreeningTest {
+public class DepthScreeningTest {
 
-    private ScopeInteriorDicDepthScreening screening;
-    private ScopeInteriorDicDepthScreening.Configuration configuration;
+    private DepthScreening screening;
+    private DepthScreening.Configuration configuration;
     private String secondarySensorName;
     private HashMap<String, Reader> secondaryReaderMap;
 
@@ -54,8 +54,8 @@ public class ScopeInteriorDicDepthScreeningTest {
 
     @Before
     public void setUp() {
-        screening = new ScopeInteriorDicDepthScreening();
-        configuration = new ScopeInteriorDicDepthScreening.Configuration();
+        screening = new DepthScreening();
+        configuration = new DepthScreening.Configuration();
         screening.configure(configuration);
         secondarySensorName = SampleSet.getOnlyOneSecondaryKey();
         secondaryReaderMap = new HashMap<>();

@@ -35,20 +35,20 @@ import java.util.Map;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public class ScopeInteriorDicDepthScreening implements Screening {
+public class DepthScreening implements Screening {
 
     private static final String DEFAULT_DEPTH_NAME = "depth";
+    private static final Double[] DEFAULT_LEVELS = new Double[]{0.0, 10.0, 20.0, 30.0, 50.0, 75.0, 100.0, 125.0,
+            150.0, 200.0, 250.0, 300.0, 400.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0,
+            1400.0, 1500.0, 1750.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0};
     private final Interval singlePixel = new Interval(1, 1);
-    private final double[] nominal;
-    private ScopeInteriorDicDepthScreening.Configuration configuration;
+    private DepthScreening.Configuration configuration;
     private String objectiveDepthName;
     private String referenceDepthName;
+    private Double[] levels;
 
-    ScopeInteriorDicDepthScreening() {
-        configuration = new ScopeInteriorDicDepthScreening.Configuration();
-        nominal = new double[]{0.0, 10.0, 20.0, 30.0, 50.0, 75.0, 100.0, 125.0, 150.0, 200.0, 250.0, 300.0, 400.0,
-                500.0, 600.0, 700.0, 800.0, 900.0, 1000.0, 1100.0, 1200.0, 1300.0, 1400.0, 1500.0, 1750.0, 2000.0,
-                2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0};
+    DepthScreening() {
+        configuration = new DepthScreening.Configuration();
     }
 
     private static String getDepthName(String name) {
@@ -80,7 +80,7 @@ public class ScopeInteriorDicDepthScreening implements Screening {
         sampleSets.clear();
     }
 
-    void configure(ScopeInteriorDicDepthScreening.Configuration configuration) {
+    void configure(DepthScreening.Configuration configuration) {
         this.configuration = configuration;
         if (Boolean.TRUE.equals(configuration.primaryIsNominal)) {
             this.objectiveDepthName = getDepthName(configuration.secondaryDepthName);
@@ -88,6 +88,9 @@ public class ScopeInteriorDicDepthScreening implements Screening {
         } else {
             this.objectiveDepthName = getDepthName(configuration.primaryDepthName);
             this.referenceDepthName = getDepthName(configuration.secondaryDepthName);
+        }
+        if (configuration.levels == null) {
+            this.levels = DEFAULT_LEVELS;
         }
     }
 
@@ -106,16 +109,16 @@ public class ScopeInteriorDicDepthScreening implements Screening {
             return false;
         }
 
-        final int l = Arrays.binarySearch(nominal, referenceDepth);
+        final int l = Arrays.binarySearch(levels, referenceDepth);
         if (l < 0) {
             return false;  // reference depth is not nominal
         }
 
-        if (objectiveDepth < (0.5 * (referenceDepth + nominal[max(l - 1, 0)]))) {
+        if (objectiveDepth < (0.5 * (referenceDepth + levels[max(l - 1, 0)]))) {
             return false;  // objective depth is too shallow
         }
         //noinspection RedundantIfStatement
-        if (objectiveDepth > (0.5 * (referenceDepth + nominal[min(l + 1, nominal.length - 1)]))) {
+        if (objectiveDepth > (0.5 * (referenceDepth + levels[min(l + 1, levels.length - 1)]))) {
             return false;  // objective depth is too deep
         }
 
@@ -139,12 +142,13 @@ public class ScopeInteriorDicDepthScreening implements Screening {
     }
 
     private boolean isOutOfRange(double depth) {
-        return depth < nominal[0] || depth > nominal[nominal.length - 1];
+        return depth < DEFAULT_LEVELS[0] || depth > levels[DEFAULT_LEVELS.length - 1];
     }
 
     static class Configuration {
         String primaryDepthName;
         String secondaryDepthName;
         Boolean primaryIsNominal;
+        Double[] levels;
     }
 }
