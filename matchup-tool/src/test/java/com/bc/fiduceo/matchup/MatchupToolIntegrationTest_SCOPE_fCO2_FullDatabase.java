@@ -89,7 +89,7 @@ public class MatchupToolIntegrationTest_SCOPE_fCO2_FullDatabase extends Abstract
 
                 final String relativeArchivePath = TestUtil.assembleFileSystemPath(
                     new String[]{"satellite", "wp21", String.valueOf(year), monthStr,
-                        "UExP-FNN-U_physics_carbonatesystem_ESASCOPE_v5_" + yearMonthStr + ".out.nc"},
+                        "UExP-FNN-U_physics_carbonatesystem_ESASCOPE_v5_" + yearMonthStr + ".nc"},
                     true);
 
                 try {

@@ -191,7 +191,7 @@ class ScopeSatReader extends NetCDFReader {
         final Matcher matcher = pattern.matcher(fileName);
 
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Filename does not match expected pattern: " + fileName);
+            return new int[]{0, 0, 0};
         }
 
         final String datePart = matcher.group(1);
