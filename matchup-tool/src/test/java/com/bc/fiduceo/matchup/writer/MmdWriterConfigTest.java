@@ -214,7 +214,7 @@ public class MmdWriterConfigTest {
                                  "    <variables-configuration>" +
                                  "        <sensors names = \"sen1, sen2\">" +
                                  "            <rename-attribute source-name = \"attN1\" target-name = \"attN1_r\" />" +
-                                 "            <rename-attribute variable-names = \"var1\" source-name = \"attN2\" target-name = \"attN2_r\" />" +
+                                 "            <rename-attribute variable-name = \"var1\" source-name = \"attN2\" target-name = \"attN2_r\" />" +
                                  "            <rename-attribute variable-names = \"var1, var2\" source-name = \"attN3\" target-name = \"attN3_r\" />" +
                                  "        </sensors>" +
                                  "    </variables-configuration>" +

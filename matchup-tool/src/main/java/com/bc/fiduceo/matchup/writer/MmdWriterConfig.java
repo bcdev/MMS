@@ -53,6 +53,7 @@ public class MmdWriterConfig {
     private static final String SEPARATOR_ATTRIBUTE = "separator";
     private static final String SENSOR_NAMES_ATTRIBUTE = "sensor-names";
     private static final String NAMES_ATTRIBUTE = "names";
+    private static final String VARIABLE_NAME_ATTRIBUTE = "variable-name";
     private static final String VARIABLE_NAMES_ATTRIBUTE = "variable-names";
     private static final String SOURCE_NAME_ATTRIBUTE = "source-name";
     private static final String TARGET_NAME_ATTRIBUTE = "target-name";
@@ -244,12 +245,20 @@ public class MmdWriterConfig {
         final String[] sensorNames = trim(sensorNamesStr.split(","));
         final List<Element> renameAttributes = sensorElement.getChildren(RENAME_ATTRIBUTE_TAG);
         for (Element renameAttribute : renameAttributes) {
-            final Attribute varNamesAttr = renameAttribute.getAttribute(VARIABLE_NAMES_ATTRIBUTE);
             final String[] varNames;
-            if (varNamesAttr == null) {
-                varNames = new String[]{null};
+            // a single rename
+            final Attribute varNameAttr = renameAttribute.getAttribute(VARIABLE_NAME_ATTRIBUTE);
+            if (varNameAttr != null) {
+                varNames = new String[]{varNameAttr.getValue()};
             } else {
-                varNames = trim(varNamesAttr.getValue().split(","));
+                // rename more than one variable
+                final Attribute varNamesAttr = renameAttribute.getAttribute(VARIABLE_NAMES_ATTRIBUTE);
+
+                if (varNamesAttr == null) {
+                    varNames = new String[]{null};
+                } else {
+                    varNames = trim(varNamesAttr.getValue().split(","));
+                }
             }
             final String sourceName = getAttributeString(SOURCE_NAME_ATTRIBUTE, renameAttribute);
             final String targetName = getAttributeString(TARGET_NAME_ATTRIBUTE, renameAttribute);
