@@ -28,7 +28,7 @@ public class SMOSSectionParserTest {
         assertEquals(variables.size(), parser.getNumVariables());
 
         Variable variable = variables.get(1);
-        assertEquals("SMOS_latitude", variable.getShortName());
+        assertEquals("SMOS_longitude", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(4);

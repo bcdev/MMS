@@ -84,7 +84,7 @@ public class SciCciInsituReader_IO_Test {
             assertEquals(66, variables.size());
 
             Variable variable = variables.get(0);
-            assertEquals("longitude", variable.getShortName());
+            assertEquals("latitude", variable.getShortName());
             NCTestUtils.assertAttribute(variable, CF_FILL_VALUE_NAME, "9.969209968386869E36");
 
             variable = variables.get(5);
@@ -129,8 +129,8 @@ public class SciCciInsituReader_IO_Test {
             assertEquals(65, variables.size());
 
             Variable variable = variables.get(0);
-            assertEquals("longitude", variable.getShortName());
-            NCTestUtils.assertAttribute(variable, CF_UNITS_NAME, "degree_east");
+            assertEquals("latitude", variable.getShortName());
+            NCTestUtils.assertAttribute(variable, CF_UNITS_NAME, "degree_north");
 
             variable = variables.get(4);
             assertEquals("SIC", variable.getShortName());
@@ -174,8 +174,8 @@ public class SciCciInsituReader_IO_Test {
             assertEquals(93, variables.size());
 
             Variable variable = variables.get(0);
-            assertEquals("longitude", variable.getShortName());
-            NCTestUtils.assertAttribute(variable, CF_UNITS_NAME, "degree_east");
+            assertEquals("latitude", variable.getShortName());
+            NCTestUtils.assertAttribute(variable, CF_UNITS_NAME, "degree_north");
 
             variable = variables.get(13);
             assertEquals("Ice-type-secondary", variable.getShortName());
@@ -240,7 +240,6 @@ public class SciCciInsituReader_IO_Test {
 
         try {
             reader.open(testFile);
-
             reader.getPixelLocator();
             fail("RuntimeException expected");
         } catch (RuntimeException expected) {
@@ -439,10 +438,10 @@ public class SciCciInsituReader_IO_Test {
 
             // reference data
             Array array = reader.readRaw(7, 5, new Interval(3, 3), "SIC-total");
-            assertEquals(DataType.BYTE, array.getDataType());
-            NCTestUtils.assertValueAt(-127, 0, 0, array);
+            assertEquals(DataType.FLOAT, array.getDataType());
+            NCTestUtils.assertValueAt(2147483647, 0, 0, array);
             NCTestUtils.assertValueAt(10, 1, 1, array);
-            NCTestUtils.assertValueAt(-127, 2, 2, array);
+            NCTestUtils.assertValueAt(2147483647, 2, 2, array);
 
             // ERA5
             array = reader.readRaw(7, 6, new Interval(3, 3), "ERA_v10");

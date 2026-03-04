@@ -55,11 +55,11 @@ public class DMISIC0SectionParserTest {
         assertEquals(variables.size(), parser.getNumVariables());
 
         Variable variable = variables.get(0);
-        assertEquals("longitude", variable.getShortName());
+        assertEquals("latitude", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(1);
-        assertEquals("latitude", variable.getShortName());
+        assertEquals("longitude", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(2);

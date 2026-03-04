@@ -28,7 +28,7 @@ public class QSCATSectionParserTest {
         assertEquals(variables.size(), parser.getNumVariables());
 
         Variable variable = variables.get(0);
-        assertEquals("QSCAT_longitude", variable.getShortName());
+        assertEquals("QSCAT_latitude", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(4);

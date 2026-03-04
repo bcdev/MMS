@@ -27,7 +27,7 @@ public class AMSR2SectionParserTest {
         assertEquals(variables.size(), parser.getNumVariables());
 
         Variable variable = variables.get(0);
-        assertEquals("AMSR2_longitude", variable.getShortName());
+        assertEquals("AMSR2_latitude", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(2);

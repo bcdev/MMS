@@ -96,7 +96,9 @@ abstract public class Abstract_L1B_NatReader implements Reader {
             final Array lon = cache.getScaled(LON_VAR_NAME);
             final Array lat = cache.getScaled(LAT_VAR_NAME);
 
-            pixelLocator = new PixelGeoCodingPixelLocator(lon, lat, LON_VAR_NAME, LAT_VAR_NAME, 48.0, GeoChecks.POLES);
+            final PixelGeoCodingPixelLocator pixelGeoCodingPixelLocator = new PixelGeoCodingPixelLocator(lon, lat, LON_VAR_NAME, LAT_VAR_NAME, 48.0, GeoChecks.POLES);
+            pixelGeoCodingPixelLocator.setHasHalfPxOffset(false);
+            pixelLocator = pixelGeoCodingPixelLocator;
         }
         return pixelLocator;
     }

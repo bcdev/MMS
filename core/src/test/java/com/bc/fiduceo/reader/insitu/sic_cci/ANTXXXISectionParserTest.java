@@ -1,6 +1,7 @@
 package com.bc.fiduceo.reader.insitu.sic_cci;
 
 import com.bc.fiduceo.TestUtil;
+import org.esa.snap.core.util.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import ucar.ma2.Array;
@@ -33,11 +34,11 @@ public class ANTXXXISectionParserTest {
 
     @Test
     public void testParse() throws ParseException {
-        final String[] tokens = {"-66.33530", "-4.32590", "2015-12-15T20:00:00Z", "ASPeCt_ANT-XXXI_2_Polarstern",
+        String[] tokens = {"-66.33530", "-4.32590", "2015-12-15T20:00:00Z", "ASPeCt_ANT-XXXI_2_Polarstern",
                 "30", "10", "70", "0.9", "0.55", "1.0", "6", "0.20", "10", "70", "0.8", "0.25", "1.0", "6", "0.20", "10", "70",
                 "0.70", "0.15", "1.0", "6", "0.1", "-1.49", "-2.4", "2.7", "267", "97", "8", "2"};
 
-        final Section section = parser.parse(tokens, 0);
+        Section section = parser.parse(tokens, 0);
         assertEquals(-66.33530f, section.get("latitude").getFloat(0), 1e-8);
         assertEquals(-4.32590f, section.get("longitude").getFloat(0), 1e-8);
         assertEquals(1450209600, section.get("time").getInt(0));
@@ -85,7 +86,7 @@ public class ANTXXXISectionParserTest {
         assertEquals(variables.size(), parser.getNumVariables());
 
         Variable variable = variables.get(0);
-        assertEquals("longitude", variable.getShortName());
+        assertEquals("latitude", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(3);
@@ -94,11 +95,11 @@ public class ANTXXXISectionParserTest {
 
         variable = variables.get(4);
         assertEquals("SIC-total", variable.getShortName());
-        assertEquals(DataType.BYTE, variable.getDataType());
+        assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(5);
         assertEquals("SIC-primary", variable.getShortName());
-        assertEquals(DataType.BYTE, variable.getDataType());
+        assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(6);
         assertEquals("Ice-type-primary", variable.getShortName());
@@ -126,7 +127,7 @@ public class ANTXXXISectionParserTest {
 
         variable = variables.get(12);
         assertEquals("SIC-secondary", variable.getShortName());
-        assertEquals(DataType.BYTE, variable.getDataType());
+        assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(13);
         assertEquals("Ice-type-secondary", variable.getShortName());
@@ -154,7 +155,7 @@ public class ANTXXXISectionParserTest {
 
         variable = variables.get(19);
         assertEquals("SIC-tertiary", variable.getShortName());
-        assertEquals(DataType.BYTE, variable.getDataType());
+        assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(20);
         assertEquals("Ice-type-tertiary", variable.getShortName());
@@ -194,7 +195,7 @@ public class ANTXXXISectionParserTest {
 
         variable = variables.get(29);
         assertEquals("Wind-direction", variable.getShortName());
-        assertEquals(DataType.SHORT, variable.getDataType());
+        assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(30);
         assertEquals("Visibility", variable.getShortName());

@@ -2,6 +2,7 @@ package com.bc.fiduceo.reader.insitu.sic_cci;
 
 import com.bc.fiduceo.util.NetCDFUtils;
 import com.bc.fiduceo.util.VariableProxy;
+import org.esa.snap.core.util.StringUtils;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Variable;
@@ -21,16 +22,16 @@ class ANTXXXISectionParser extends ReferenceSectionParser {
         createCommonVariables(variables);
 
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
+        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(float.class)));
         attributes.add(new Attribute(CF_STANDARD_NAME, "sea_ice_area_fraction"));
         attributes.add(new Attribute(CF_UNITS_NAME, "percent"));
-        variables.add(new VariableProxy("SIC-total", DataType.BYTE, attributes));
+        variables.add(new VariableProxy("SIC-total", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
-        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
+        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(float.class)));
         attributes.add(new Attribute(CF_STANDARD_NAME, "sea_ice_area_fraction"));
         attributes.add(new Attribute(CF_UNITS_NAME, "percent"));
-        variables.add(new VariableProxy("SIC-primary", DataType.BYTE, attributes));
+        variables.add(new VariableProxy("SIC-primary", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
@@ -64,10 +65,10 @@ class ANTXXXISectionParser extends ReferenceSectionParser {
         variables.add(new VariableProxy("Snow-depth-primary", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
-        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
+        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(float.class)));
         attributes.add(new Attribute(CF_STANDARD_NAME, "sea_ice_area_fraction"));
         attributes.add(new Attribute(CF_UNITS_NAME, "percent"));
-        variables.add(new VariableProxy("SIC-secondary", DataType.BYTE, attributes));
+        variables.add(new VariableProxy("SIC-secondary", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
@@ -101,10 +102,10 @@ class ANTXXXISectionParser extends ReferenceSectionParser {
         variables.add(new VariableProxy("Snow-depth-secondary", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
-        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
+        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(float.class)));
         attributes.add(new Attribute(CF_STANDARD_NAME, "sea_ice_area_fraction"));
         attributes.add(new Attribute(CF_UNITS_NAME, "percent"));
-        variables.add(new VariableProxy("SIC-tertiary", DataType.BYTE, attributes));
+        variables.add(new VariableProxy("SIC-tertiary", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
@@ -156,9 +157,9 @@ class ANTXXXISectionParser extends ReferenceSectionParser {
         variables.add(new VariableProxy("Wind-speed", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
-        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(short.class)));
+        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(float.class)));
         attributes.add(new Attribute(CF_UNITS_NAME, "degree"));
-        variables.add(new VariableProxy("Wind-direction", DataType.SHORT, attributes));
+        variables.add(new VariableProxy("Wind-direction", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
@@ -166,7 +167,7 @@ class ANTXXXISectionParser extends ReferenceSectionParser {
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
-        variables.add(new VariableProxy("Cloud-cover", DataType.BYTE, attributes));
+            variables.add(new VariableProxy("Cloud-cover", DataType.BYTE, attributes));
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(byte.class)));
@@ -193,22 +194,22 @@ class ANTXXXISectionParser extends ReferenceSectionParser {
         section.add("longitude", parseFloat(tokens[offset + 1]));
         section.add("time", parseUtcTime(tokens[offset + 2]));
         section.add("reference-id", parseString(tokens[offset + 3]));
-        section.add("SIC-total", parseByte(tokens[offset + 4]));
-        section.add("SIC-primary", parseByte(tokens[offset + 5]));
+        section.add("SIC-total", parseFloat(tokens[offset + 4]));
+        section.add("SIC-primary", parseFloat(tokens[offset + 5]));
         section.add("Ice-type-primary", parseByte(tokens[offset + 6]));
         section.add("SIT-primary", parseFloat(tokens[offset + 7]));
         section.add("Ridged-ice-fraction-primary", parseFloat(tokens[offset + 8]));
         section.add("Ridge-height-primary", parseFloat(tokens[offset + 9]));
         section.add("Snow-cover-type-primary", parseByte(tokens[offset + 10]));
         section.add("Snow-depth-primary", parseFloat(tokens[offset + 11]));
-        section.add("SIC-secondary", parseByte(tokens[offset + 12]));
+        section.add("SIC-secondary", parseFloat(tokens[offset + 12]));
         section.add("Ice-type-secondary", parseByte(tokens[offset + 13]));
         section.add("SIT-secondary", parseFloat(tokens[offset + 14]));
         section.add("Ridged-ice-fraction-secondary", parseFloat(tokens[offset + 15]));
         section.add("Ridge-height-secondary", parseFloat(tokens[offset + 16]));
         section.add("Snow-cover-type-secondary", parseByte(tokens[offset + 17]));
         section.add("Snow-depth-secondary", parseFloat(tokens[offset + 18]));
-        section.add("SIC-tertiary", parseByte(tokens[offset + 19]));
+        section.add("SIC-tertiary", parseFloat(tokens[offset + 19]));
         section.add("Ice-type-tertiary", parseByte(tokens[offset + 20]));
         section.add("SIT-tertiary", parseFloat(tokens[offset + 21]));
         section.add("Ridged-ice-fraction-tertiary", parseFloat(tokens[offset + 22]));
@@ -218,7 +219,7 @@ class ANTXXXISectionParser extends ReferenceSectionParser {
         section.add("Sea-water-temperature", parseFloat(tokens[offset + 26]));
         section.add("Air-temperature", parseFloat(tokens[offset + 27]));
         section.add("Wind-speed", parseFloat(tokens[offset + 28]));
-        section.add("Wind-direction", parseShort(tokens[offset + 29]));
+        section.add("Wind-direction", parseFloat(tokens[offset + 29]));
         section.add("Visibility", parseByte(tokens[offset + 30]));
         section.add("Cloud-cover", parseByte(tokens[offset + 31]));
         section.add("Weather", parseByte(tokens[offset + 32]));

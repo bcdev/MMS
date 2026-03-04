@@ -13,6 +13,7 @@ import java.awt.geom.Point2D;
 public class PixelGeoCodingPixelLocator implements PixelLocator {
 
     private final ComponentGeoCoding geoCoding;
+    private boolean hasHalfPxOffset;
 
     public PixelGeoCodingPixelLocator(Array longitudes, Array latitudes, String lonVariableName, String latVariableName, double groundResolutionInKm, GeoChecks geoChecks) {
         final double[] lonArray = (double[]) longitudes.get1DJavaArray(DataType.DOUBLE);
@@ -24,11 +25,25 @@ public class PixelGeoCodingPixelLocator implements PixelLocator {
         final InverseCoding inverseCoding = ComponentFactory.getInverse(PixelQuadTreeInverse.KEY);
         geoCoding = new ComponentGeoCoding(geoRaster, forwardCoding, inverseCoding, geoChecks);
         geoCoding.initialize();
+
+        hasHalfPxOffset = true;
+    }
+
+    public void setHasHalfPxOffset(boolean hasHalfPxOffset) {
+        this.hasHalfPxOffset = hasHalfPxOffset;
     }
 
     @Override
     public Point2D getGeoLocation(double x, double y, Point2D g) {
-        final GeoPos geoPos = geoCoding.getGeoPos(new PixelPos(x + 0.5, y + 0.5), null);
+        PixelPos pixelPos;
+
+        if (hasHalfPxOffset) {
+            pixelPos = new PixelPos(x + 0.5, y + 0.5);
+        } else {
+            pixelPos = new PixelPos(x, y);
+        }
+
+        final GeoPos geoPos = geoCoding.getGeoPos(pixelPos, null);
         return new Point2D.Double(geoPos.lon, geoPos.lat);
     }
 

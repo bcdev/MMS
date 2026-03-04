@@ -22,7 +22,7 @@ public class ERASectionParserTest {
         assertEquals(variables.size(), parser.getNumVariables());
 
         Variable variable = variables.get(0);
-        assertEquals("ERA_longitude", variable.getShortName());
+        assertEquals("ERA_latitude", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(4);
@@ -83,7 +83,7 @@ public class ERASectionParserTest {
         assertEquals(variables.size(), parser.getNumVariables());
 
         Variable variable = variables.get(1);
-        assertEquals("ERA5_latitude", variable.getShortName());
+        assertEquals("ERA5_longitude", variable.getShortName());
         assertEquals(DataType.FLOAT, variable.getDataType());
 
         variable = variables.get(5);

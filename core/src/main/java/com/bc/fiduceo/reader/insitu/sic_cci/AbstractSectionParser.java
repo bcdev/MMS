@@ -34,16 +34,16 @@ abstract class AbstractSectionParser {
 
     static void createCommonVariables(List<Variable> variables, String prefix) {
         List<Attribute> attributes = new ArrayList<>();
-        attributes.add(new Attribute(CF_UNITS_NAME, "degree_east"));
-        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(float.class)));
-        attributes.add(new Attribute(CF_STANDARD_NAME, "longitude"));
-        variables.add(new VariableProxy(prefix + "longitude", DataType.FLOAT, attributes));
-
-        attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_UNITS_NAME, "degree_north"));
         attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(float.class)));
         attributes.add(new Attribute(CF_STANDARD_NAME, "latitude"));
         variables.add(new VariableProxy(prefix + "latitude", DataType.FLOAT, attributes));
+
+        attributes = new ArrayList<>();
+        attributes.add(new Attribute(CF_UNITS_NAME, "degree_east"));
+        attributes.add(new Attribute(CF_FILL_VALUE_NAME, NetCDFUtils.getDefaultFillValue(float.class)));
+        attributes.add(new Attribute(CF_STANDARD_NAME, "longitude"));
+        variables.add(new VariableProxy(prefix + "longitude", DataType.FLOAT, attributes));
 
         attributes = new ArrayList<>();
         attributes.add(new Attribute(CF_UNITS_NAME, "seconds since 1970-01-01"));
