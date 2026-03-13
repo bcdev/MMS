@@ -2,7 +2,6 @@ package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.core.IntRange;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.bc.fiduceo.post.plugin.era5.Era5PostProcessing.DATA_ARRAY_WIDTH;
@@ -21,6 +20,9 @@ class InterpolationContext {
         this.height = height;
         interpolators = new BilinearInterpolator[height][width];
         yRange = new IntRange(Integer.MAX_VALUE, Integer.MIN_VALUE);
+        xRanges = new IntRange[2];
+        xRanges[0] = new IntRange(Integer.MAX_VALUE, Integer.MIN_VALUE);
+        xRanges[1] = null;
         mustInitialise = true;
     }
 
@@ -53,59 +55,42 @@ class InterpolationContext {
     }
 
     private void initialize() {
-        final List<IntRange> tempXRanges = new ArrayList<>();
-        IntRange current = new IntRange();
+        int activeXRange = 0;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 final BilinearInterpolator interpolator = interpolators[y][x];
                 if (interpolator != null) {
-                    current = getXRange(interpolator, current, tempXRanges);
-                    int max;
-                    int min;
+                    int xMin = interpolator.getXMin();
+                    int xMax = (xMin + 1) % DATA_ARRAY_WIDTH;
 
-                    min = interpolator.getYMin();
-                    max = min + 1;
-                    if (yRange.getMin() > min) {
-                        yRange.setMin(min);
+                    if (xMax == 0 && xMin > xMax) {
+                        xRanges[activeXRange].setMax(1439);
+                        activeXRange++;
+                        xRanges[activeXRange] = new IntRange(0, 1);
+                    } else {
+                        if (xRanges[activeXRange].getMin() > xMin) {
+                            xRanges[activeXRange].setMin(xMin);
+                        }
+                        if (xRanges[activeXRange].getMax() < xMax) {
+                            xRanges[activeXRange].setMax(xMax);
+                        }
                     }
-                    if (yRange.getMax() < max) {
-                        yRange.setMax(max);
+
+                    int yMin = interpolator.getYMin();
+                    int yMax = yMin + 1;
+                    if (yRange.getMin() > yMin) {
+                        yRange.setMin(yMin);
+                    }
+                    if (yRange.getMax() < yMax) {
+                        yRange.setMax(yMax);
                     }
                 }
             }
         }
 
-        tempXRanges.add(current);
-        xRanges = tempXRanges.toArray(new IntRange[0]);
-
         setRelativeInterpolatorOffsets();
 
         mustInitialise = false;
-    }
-
-    // package access for testing only tb 2025-10-08
-    static IntRange getXRange(BilinearInterpolator interpolator, IntRange current, List<IntRange> xRanges) {
-        int min = interpolator.getXMin();
-        int max = (min + 1) % DATA_ARRAY_WIDTH;
-
-        if (max == 0 && min > 0) {
-            // we wrap around antimeridian
-            // finish current range with min = 1439
-            current.setMin(1438);
-            current.setMax(1439);
-            xRanges.add(current);
-            // start new range with xmin = 0 xmax = 1 - should always be the case
-            current = new IntRange(0, 1);
-            return current;
-        }
-
-        if (current.getMin() > min) {
-            current.setMin(min);
-        }
-        if (current.getMax() < max) {
-            current.setMax(max);
-        }
-        return current;
     }
 
     private void setRelativeInterpolatorOffsets() {

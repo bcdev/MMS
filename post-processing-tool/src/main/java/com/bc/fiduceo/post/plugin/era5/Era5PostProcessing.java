@@ -45,7 +45,7 @@ class Era5PostProcessing extends PostProcessing {
     static InterpolationContext getInterpolationContext(Array lonArray, Array latArray) {
         final int[] shape = lonArray.getShape();
         if (shape.length == 2) {
-            return createInterpolationContext_2D(lonArray, latArray, shape);
+            return createInterpolationContext_2D(lonArray, latArray);
         } else if (shape.length == 0) {
             return createInterpolationContext_0D(lonArray, latArray);
         }
@@ -53,7 +53,8 @@ class Era5PostProcessing extends PostProcessing {
         throw new IllegalStateException("Unsupported dimensionality of geolocation data");
     }
 
-    private static InterpolationContext createInterpolationContext_2D(Array lonArray, Array latArray, int[] shape) {
+    private static InterpolationContext createInterpolationContext_2D(Array lonArray, Array latArray) {
+        final int[] shape = lonArray.getShape();
         final InterpolationContext context = new InterpolationContext(shape[1], shape[0]);
 
         final Index lonIdx = lonArray.getIndex();

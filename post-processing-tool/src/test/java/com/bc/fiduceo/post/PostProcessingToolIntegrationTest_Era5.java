@@ -327,6 +327,12 @@ public class PostProcessingToolIntegrationTest_Era5 {
                 "                <time_variable>amsre.acquisition_time</time_variable>" +
                 "                <longitude_variable>amsre.longitude</longitude_variable>" +
                 "                <latitude_variable>amsre.latitude</latitude_variable>" +
+                "                <an_ml_lnsp>nwp_lnsp</an_ml_lnsp>" +
+                "                <an_ml_q>nwp_q</an_ml_q>" +
+                "                <an_ml_t>nwp_t</an_ml_t>" +
+                "                <an_ml_o3>nwp_o3</an_ml_o3>" +
+                "                <an_sfc_msl>nwp_msl</an_sfc_msl>" +
+                "                <an_sfc_tcc>nwp_tcc</an_sfc_tcc>" +
                 "            </satellite-fields>" +
                 "            <matchup-fields>" +
                 "                <time_steps_past>41</time_steps_past>" +
@@ -415,6 +421,12 @@ public class PostProcessingToolIntegrationTest_Era5 {
                 "                <longitude_variable>{sensor-ref}_longitude_tx</longitude_variable>" +
                 "                <latitude_variable>{sensor-ref}_latitude_tx</latitude_variable>" +
                 "                <an_sfc_v10>{sensor-ref}.blowVert</an_sfc_v10>" +
+                "                <an_ml_lnsp>nwp_lnsp</an_ml_lnsp>" +
+                "                <an_ml_q>nwp_q</an_ml_q>" +
+                "                <an_ml_t>nwp_t</an_ml_t>" +
+                "                <an_ml_o3>nwp_o3</an_ml_o3>" +
+                "                <an_sfc_msl>nwp_msl</an_sfc_msl>" +
+                "                <an_sfc_tcc>nwp_tcc</an_sfc_tcc>" +
                 "            </satellite-fields>" +
                 "        </era5>\n" +
                 "    </post-processings>\n" +

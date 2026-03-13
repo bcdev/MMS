@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static com.bc.fiduceo.post.plugin.era5.Era5PostProcessing.DATA_ARRAY_WIDTH;
 import static com.bc.fiduceo.post.plugin.era5.VariableUtils.*;
 import static com.bc.fiduceo.post.util.PPUtils.convertToFitTheRangeMinus180to180;
 
@@ -89,10 +88,6 @@ class SatelliteFields extends FieldsProcessor {
                 final Array lonLayer = lonArray.sectionNoReduce(nwpOffset, nwpShape, nwpStride).reduce(0).copy();
                 final Array latLayer = latArray.sectionNoReduce(nwpOffset, nwpShape, nwpStride).reduce(0).copy();
 
-                final int[] shape = lonLayer.getShape();
-                final int width = shape[1];
-                final int height = shape[0];
-
                 final InterpolationContext interpolationContext = Era5PostProcessing.getInterpolationContext(lonLayer, latLayer);
 
                 timeIndex.set(m);
@@ -106,6 +101,9 @@ class SatelliteFields extends FieldsProcessor {
                 //     - store to target raster
                 final Set<String> variableKeys = variables.keySet();
                 for (final String variableKey : variableKeys) {
+                    if (m == 9) {
+                        System.out.println("variableKey = " + variableKey + " mu = " + m);
+                    }
                     final float fillValue = variables.get(variableKey).getFillValue();
                     final Variable variable = variableCache.get(variableKey, era5Time);
 
@@ -115,6 +113,10 @@ class SatelliteFields extends FieldsProcessor {
                     final int rank = variable.getRank();
                     final Array era5Data = loadEra5Data(variable, interpolationContext, numLayers);
                     final Index era5Index = era5Data.getIndex();
+
+                    final int[] shape = lonLayer.getShape();
+                    final int width = shape[1];
+                    final int height = shape[0];
 
                     if (rank == 3) {
                         for (int y = 0; y < height; y++) {
@@ -212,7 +214,7 @@ class SatelliteFields extends FieldsProcessor {
         // request xRanges
         final IntRange[] xRanges = interpolationContext.getXRanges();
         final IntRange yRange = interpolationContext.getYRange();
-        if (xRanges.length == 1) {
+        if (xRanges[1] == null) {
             return readFullEra5Array(variable, numLayers, yRange, xRanges[0], scaleFactor, offset);
         } else {
             final Array left = readFullEra5Array(variable, numLayers, yRange, xRanges[0], scaleFactor, offset);
@@ -312,14 +314,14 @@ class SatelliteFields extends FieldsProcessor {
             variablesMap.put("an_ml_t", createTemplate(configuration.getVarName("an_ml_t"), "K", "Temperature", "air_temperature", true));
             variablesMap.put("an_ml_o3", createTemplate(configuration.getVarName("an_ml_o3"), "kg kg**-1", "Ozone mass mixing ratio", null, true));
             variablesMap.put("an_ml_lnsp", createTemplate(configuration.getVarName("an_ml_lnsp"), "~", "Logarithm of surface pressure", null, false));
+            variablesMap.put("an_sfc_msl", createTemplate(configuration.getVarName("an_sfc_msl"), "Pa", "Mean sea level pressure", "air_pressure_at_mean_sea_level", false));
+            variablesMap.put("an_sfc_tcc", createTemplate(configuration.getVarName("an_sfc_tcc"), "(0 - 1)", "Total cloud cover", "cloud_area_fraction", false));
             variablesMap.put("an_sfc_t2m", createTemplate(configuration.getVarName("an_sfc_t2m"), "K", "2 metre temperature", null, false));
             variablesMap.put("an_sfc_u10", createTemplate(configuration.getVarName("an_sfc_u10"), "m s**-1", "10 metre U wind component", null, false));
             variablesMap.put("an_sfc_v10", createTemplate(configuration.getVarName("an_sfc_v10"), "m s**-1", "10 metre V wind component", null, false));
             variablesMap.put("an_sfc_siconc", createTemplate(configuration.getVarName("an_sfc_siconc"), "(0 - 1)", "Sea ice area fraction", "sea_ice_area_fraction", false));
-            variablesMap.put("an_sfc_msl", createTemplate(configuration.getVarName("an_sfc_msl"), "Pa", "Mean sea level pressure", "air_pressure_at_mean_sea_level", false));
             variablesMap.put("an_sfc_skt", createTemplate(configuration.getVarName("an_sfc_skt"), "K", "Skin temperature", null, false));
             variablesMap.put("an_sfc_sst", createTemplate(configuration.getVarName("an_sfc_sst"), "K", "Sea surface temperature", null, false));
-            variablesMap.put("an_sfc_tcc", createTemplate(configuration.getVarName("an_sfc_tcc"), "(0 - 1)", "Total cloud cover", "cloud_area_fraction", false));
             variablesMap.put("an_sfc_tcwv", createTemplate(configuration.getVarName("an_sfc_tcwv"), "kg m**-2", "Total column water vapour", "lwe_thickness_of_atmosphere_mass_content_of_water_vapor", false));
 
             return variablesMap;
