@@ -101,9 +101,6 @@ class SatelliteFields extends FieldsProcessor {
                 //     - store to target raster
                 final Set<String> variableKeys = variables.keySet();
                 for (final String variableKey : variableKeys) {
-                    if (m == 9) {
-                        System.out.println("variableKey = " + variableKey + " mu = " + m);
-                    }
                     final float fillValue = variables.get(variableKey).getFillValue();
                     final Variable variable = variableCache.get(variableKey, era5Time);
 
@@ -113,6 +110,7 @@ class SatelliteFields extends FieldsProcessor {
                     final int rank = variable.getRank();
                     final Array era5Data = loadEra5Data(variable, interpolationContext, numLayers);
                     final Index era5Index = era5Data.getIndex();
+
 
                     final int[] shape = lonLayer.getShape();
                     final int width = shape[1];
