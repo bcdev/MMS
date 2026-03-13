@@ -2,8 +2,6 @@ package com.bc.fiduceo.post.plugin.era5;
 
 import com.bc.fiduceo.core.IntRange;
 
-import java.util.List;
-
 import static com.bc.fiduceo.post.plugin.era5.Era5PostProcessing.DATA_ARRAY_WIDTH;
 
 class InterpolationContext {
@@ -63,7 +61,8 @@ class InterpolationContext {
                     int xMin = interpolator.getXMin();
                     int xMax = (xMin + 1) % DATA_ARRAY_WIDTH;
 
-                    if (xMax == 0 && xMin > xMax) {
+                    if (xMax == 0 && xMin > xMax && activeXRange == 0) {
+                        // we wrap around the antimeridian
                         xRanges[activeXRange].setMax(1439);
                         activeXRange++;
                         xRanges[activeXRange] = new IntRange(0, 1);

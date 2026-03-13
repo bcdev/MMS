@@ -91,18 +91,18 @@ public class Era5PostProcessingPluginTest {
         final SatelliteFieldsConfiguration satConfig = configuration.getSatelliteFields();
         assertNotNull(satConfig);
 
-        //assertEquals("Kjuh", satConfig.getVarName("an_ml_q"));
-        //assertEquals("tea", satConfig.getVarName("an_ml_t"));
-        //assertEquals("ozone", satConfig.getVarName("an_ml_o3"));
-        //assertEquals("pressure", satConfig.getVarName("an_ml_lnsp"));
+        assertEquals("Kjuh", satConfig.getVarName("an_ml_q"));
+        assertEquals("tea", satConfig.getVarName("an_ml_t"));
+        assertEquals("ozone", satConfig.getVarName("an_ml_o3"));
+        assertEquals("pressure", satConfig.getVarName("an_ml_lnsp"));
         assertEquals("tempi", satConfig.getVarName("an_sfc_t2m") );
         assertEquals("blowUp", satConfig.getVarName("an_sfc_u10")  );
         assertEquals("blowVert", satConfig.getVarName("an_sfc_v10")  );
         assertEquals("concentrate", satConfig.getVarName("an_sfc_siconc")  );
-        //assertEquals("meanPress", satConfig.getVarName("an_sfc_msl"));
+        assertEquals("meanPress", satConfig.getVarName("an_sfc_msl"));
         assertEquals("skinTemp", satConfig.getVarName("an_sfc_skt"));
         assertEquals("ozeanTemp", satConfig.getVarName("an_sfc_sst"));
-        //assertEquals("cloudy", satConfig.getVarName("an_sfc_tcc"));
+        assertEquals("cloudy", satConfig.getVarName("an_sfc_tcc"));
         assertEquals("steam!", satConfig.getVarName("an_sfc_tcwv"));
 
         assertEquals(5, satConfig.get_x_dim());
