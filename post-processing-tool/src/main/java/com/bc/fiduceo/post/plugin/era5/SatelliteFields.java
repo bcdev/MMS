@@ -111,7 +111,6 @@ class SatelliteFields extends FieldsProcessor {
                     final Array era5Data = loadEra5Data(variable, interpolationContext, numLayers);
                     final Index era5Index = era5Data.getIndex();
 
-
                     final int[] shape = lonLayer.getShape();
                     final int width = shape[1];
                     final int height = shape[0];
@@ -134,6 +133,7 @@ class SatelliteFields extends FieldsProcessor {
                                 // calculate offsets into era5 data
                                 final int era5X = interpolator.getRelXMin();
                                 final int era5Y = interpolator.getRelYMin();
+
                                 // read c00 -> c11 directly from era5 data array
                                 era5Index.set(0, era5Y, era5X);
                                 final float c00 = era5Data.getFloat(era5Index);
@@ -307,7 +307,6 @@ class SatelliteFields extends FieldsProcessor {
             return generalizedVariables;
         } else {
             final HashMap<String, TemplateVariable> variablesMap = new HashMap<>();
-
             variablesMap.put("an_ml_q", createTemplate(configuration.getVarName("an_ml_q"), "kg kg**-1", "Specific humidity", "specific_humidity", true));
             variablesMap.put("an_ml_t", createTemplate(configuration.getVarName("an_ml_t"), "K", "Temperature", "air_temperature", true));
             variablesMap.put("an_ml_o3", createTemplate(configuration.getVarName("an_ml_o3"), "kg kg**-1", "Ozone mass mixing ratio", null, true));

@@ -72,7 +72,8 @@ class InterpolationContext {
 
         xStartPositions.sort(Integer::compare);
         final int largestX = xStartPositions.get(xStartPositions.size() - 1);
-        if (largestX == DATA_ARRAY_WIDTH - 1) {
+        final int smallestX = xStartPositions.get(0);
+        if (largestX == DATA_ARRAY_WIDTH - 1 && smallestX < DATA_ARRAY_WIDTH / 2) {
             // we are overlapping antimeridian, split xPositions int two groups, one east, one west
             xRanges[WEST] = new IntRange();
             xRanges[WEST].setMin(0);    // western section starts at anti-meridian
@@ -82,7 +83,7 @@ class InterpolationContext {
             for (int i = 0; i < xStartPositions.size() - 1; i++) {
                 final int currentX = xStartPositions.get(i);
                 final int delta = xStartPositions.get(i + 1) - currentX;
-                if (delta > 1000) {
+                if (delta > (DATA_ARRAY_WIDTH / 2)) {
                     switchRange = true;
                 }
 
@@ -106,8 +107,13 @@ class InterpolationContext {
             xRanges[WEST].setMax(xRanges[WEST].getMax() + 1);
         } else {
             xRanges[0].setMin(xStartPositions.get(0));
-            xRanges[0].setMax(xStartPositions.get(xStartPositions.size() - 1) + 1);
-            xRanges[1] = null;
+            if (largestX < DATA_ARRAY_WIDTH - 1) {
+                xRanges[0].setMax(xStartPositions.get(xStartPositions.size() - 1) + 1);
+                xRanges[1] = null;
+            } else {
+                xRanges[0].setMax(DATA_ARRAY_WIDTH - 1);
+                xRanges[1] = new IntRange(0, 1);
+            }
         }
 
         yStartPositions.sort(Integer::compareTo);
