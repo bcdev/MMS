@@ -148,7 +148,7 @@ public class InterpolationContextTest {
         assertEquals(1439, xRanges[0].getMax());
 
         assertEquals(0, xRanges[1].getMin());
-        assertEquals(1, xRanges[1].getMax());
+        assertEquals(2, xRanges[1].getMax());
     }
 
     @Test

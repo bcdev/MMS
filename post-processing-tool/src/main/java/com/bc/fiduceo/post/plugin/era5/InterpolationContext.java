@@ -77,7 +77,9 @@ class InterpolationContext {
             // we are overlapping antimeridian, split xPositions int two groups, one east, one west
             xRanges[WEST] = new IntRange();
             xRanges[WEST].setMin(0);    // western section starts at anti-meridian
-            xRanges[EAST].setMax(DATA_ARRAY_WIDTH - 1); // eastern section ends at anti-meridian
+            xRanges[WEST].setMax(1);
+            xRanges[EAST].setMin(DATA_ARRAY_WIDTH - 2); // eastern section ends at anti-meridian
+            xRanges[EAST].setMax(DATA_ARRAY_WIDTH - 1);
             int activeRange = WEST;
             boolean switchRange = false;
             for (int i = 0; i < xStartPositions.size() - 1; i++) {
