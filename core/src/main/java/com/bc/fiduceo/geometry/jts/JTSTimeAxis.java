@@ -27,21 +27,21 @@ import com.bc.fiduceo.geometry.Polygon;
 import com.bc.fiduceo.geometry.TimeAxis;
 import com.bc.fiduceo.math.TimeInterval;
 import com.bc.fiduceo.util.TimeUtils;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineSegment;
-import com.vividsolutions.jts.linearref.LengthIndexedLine;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineSegment;
+import org.locationtech.jts.linearref.LengthIndexedLine;
 
 import java.util.Date;
 
 class JTSTimeAxis implements TimeAxis {
 
     private final Date startTime;
-    private final com.vividsolutions.jts.geom.LineString lineString;
+    private final org.locationtech.jts.geom.LineString lineString;
     private final double inverseAxisLength;
     private final LengthIndexedLine lengthIndexedLine;
     private final long timeInterval;
 
-    JTSTimeAxis(com.vividsolutions.jts.geom.LineString lineString, Date startTime, Date endTime) {
+    JTSTimeAxis(org.locationtech.jts.geom.LineString lineString, Date startTime, Date endTime) {
         this.startTime = startTime;
         this.lineString = lineString;
         this.inverseAxisLength = 1.0 / lineString.getLength();
@@ -51,13 +51,13 @@ class JTSTimeAxis implements TimeAxis {
 
     @Override
     public TimeInterval getIntersectionTime(Polygon polygon) {
-        final com.vividsolutions.jts.geom.Polygon inner = (com.vividsolutions.jts.geom.Polygon) polygon.getInner();
-        final com.vividsolutions.jts.geom.LineString intersection = (com.vividsolutions.jts.geom.LineString) inner.intersection(lineString);
+        final org.locationtech.jts.geom.Polygon inner = (org.locationtech.jts.geom.Polygon) polygon.getInner();
+        final org.locationtech.jts.geom.LineString intersection = (org.locationtech.jts.geom.LineString) inner.intersection(lineString);
         if (intersection.isEmpty()) {
             return null;
         }
 
-        final com.vividsolutions.jts.geom.Point startPoint = intersection.getStartPoint();
+        final org.locationtech.jts.geom.Point startPoint = intersection.getStartPoint();
         final double pointLength = lengthIndexedLine.indexOf(startPoint.getCoordinate());
         final double intersectionLength = intersection.getLength();
 
@@ -73,14 +73,14 @@ class JTSTimeAxis implements TimeAxis {
 
     @Override
     public TimeInterval getProjectionTime(LineString polygonSide) {
-        final com.vividsolutions.jts.geom.LineString inner = (com.vividsolutions.jts.geom.LineString) polygonSide.getInner();
+        final org.locationtech.jts.geom.LineString inner = (org.locationtech.jts.geom.LineString) polygonSide.getInner();
         final int numPoints = inner.getNumPoints();
 
         Coordinate startProjection;
-        final com.vividsolutions.jts.geom.Point startPoint = inner.getPointN(0);
+        final org.locationtech.jts.geom.Point startPoint = inner.getPointN(0);
         startProjection = findProjection(startPoint.getCoordinate());
 
-        final com.vividsolutions.jts.geom.Point endPoint = inner.getPointN(numPoints - 1);
+        final org.locationtech.jts.geom.Point endPoint = inner.getPointN(numPoints - 1);
         final Coordinate endProjection = findProjection(endPoint.getCoordinate());
 
         final double startOffset = lengthIndexedLine.indexOf(startProjection);
@@ -107,7 +107,7 @@ class JTSTimeAxis implements TimeAxis {
 
     @Override
     public Date getTime(Point coordinate) {
-        final com.vividsolutions.jts.geom.Coordinate inner = (Coordinate) coordinate.getInner();
+        final org.locationtech.jts.geom.Coordinate inner = (Coordinate) coordinate.getInner();
         final Coordinate projection = findProjection(inner);
         if (projection == null) {
             return null;
@@ -149,8 +149,8 @@ class JTSTimeAxis implements TimeAxis {
         final int numPoints = lineString.getNumPoints();
 
         for (int n = 0; n < numPoints - 1; n++) {
-            final com.vividsolutions.jts.geom.Point point1 = lineString.getPointN(n);
-            final com.vividsolutions.jts.geom.Point point2 = lineString.getPointN(n + 1);
+            final org.locationtech.jts.geom.Point point1 = lineString.getPointN(n);
+            final org.locationtech.jts.geom.Point point2 = lineString.getPointN(n + 1);
             final LineSegment lineSegment = new LineSegment(point1.getCoordinate(), point2.getCoordinate());
             final double projectionFactor = lineSegment.projectionFactor(coordinate);
             if (projectionFactor >= 0.0 && projectionFactor <= 1.0) {

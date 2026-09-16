@@ -24,11 +24,11 @@ package com.bc.fiduceo.geometry.jts;
 import com.bc.fiduceo.geometry.Geometry;
 import com.bc.fiduceo.geometry.LineString;
 import com.bc.fiduceo.geometry.Point;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
-import com.vividsolutions.jts.io.WKTReader;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
+import org.locationtech.jts.io.WKTReader;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -242,10 +242,10 @@ public class JTSGeometryFactoryTest {
         assertNotNull(bytes);
         assertEquals(93, bytes.length);
 
-        final com.vividsolutions.jts.geom.Geometry geometry = wkbReader.read(bytes);
-        assertTrue(geometry instanceof com.vividsolutions.jts.geom.Polygon);
+        final org.locationtech.jts.geom.Geometry geometry = wkbReader.read(bytes);
+        assertTrue(geometry instanceof org.locationtech.jts.geom.Polygon);
 
-        final com.vividsolutions.jts.geom.Polygon jtsPolygon = (com.vividsolutions.jts.geom.Polygon) geometry;
+        final org.locationtech.jts.geom.Polygon jtsPolygon = (org.locationtech.jts.geom.Polygon) geometry;
         final Coordinate[] coordinates = jtsPolygon.getCoordinates();
         assertEquals(5, coordinates.length);
 
@@ -264,9 +264,9 @@ public class JTSGeometryFactoryTest {
         assertNotNull(bytes);
         assertEquals(57, bytes.length);
 
-        final com.vividsolutions.jts.geom.Geometry geometry = wkbReader.read(bytes);
-        assertTrue(geometry instanceof com.vividsolutions.jts.geom.LineString);
-        final com.vividsolutions.jts.geom.LineString jtsLineString = (com.vividsolutions.jts.geom.LineString) geometry;
+        final org.locationtech.jts.geom.Geometry geometry = wkbReader.read(bytes);
+        assertTrue(geometry instanceof org.locationtech.jts.geom.LineString);
+        final org.locationtech.jts.geom.LineString jtsLineString = (org.locationtech.jts.geom.LineString) geometry;
 
         Coordinate coordinate = jtsLineString.getCoordinateN(0);
         assertEquals(-108.0, coordinate.x, 1e-8);
@@ -285,9 +285,9 @@ public class JTSGeometryFactoryTest {
         assertNotNull(bytes);
         assertEquals(21, bytes.length);
 
-        final com.vividsolutions.jts.geom.Geometry geometry = wkbReader.read(bytes);
-        assertTrue(geometry instanceof com.vividsolutions.jts.geom.Point);
-        final com.vividsolutions.jts.geom.Point jtsPoint = (com.vividsolutions.jts.geom.Point) geometry;
+        final org.locationtech.jts.geom.Geometry geometry = wkbReader.read(bytes);
+        assertTrue(geometry instanceof org.locationtech.jts.geom.Point);
+        final org.locationtech.jts.geom.Point jtsPoint = (org.locationtech.jts.geom.Point) geometry;
         assertEquals(6.0, jtsPoint.getX(), 1e-8);
         assertEquals(-1.0, jtsPoint.getY(), 1e-8);
     }

@@ -23,8 +23,8 @@ package com.bc.fiduceo.geometry.jts;
 import com.bc.fiduceo.geometry.Geometry;
 import com.bc.fiduceo.geometry.Point;
 import com.bc.fiduceo.geometry.Polygon;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.MultiPolygon;
 
 class JTSMultiPolygon implements Polygon {
 
@@ -41,7 +41,7 @@ class JTSMultiPolygon implements Polygon {
 
     @Override
     public Geometry getIntersection(Geometry other) {
-        final com.vividsolutions.jts.geom.Polygon intersection = (com.vividsolutions.jts.geom.Polygon) innerMultiPolygon.intersection((com.vividsolutions.jts.geom.Geometry) other.getInner()).clone();
+        final org.locationtech.jts.geom.Polygon intersection = (org.locationtech.jts.geom.Polygon) innerMultiPolygon.intersection((org.locationtech.jts.geom.Geometry) other.getInner()).clone();
         return new JTSPolygon(intersection);
     }
 

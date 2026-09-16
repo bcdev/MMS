@@ -10,18 +10,17 @@ import com.bc.fiduceo.reader.*;
 import com.bc.fiduceo.util.NetCDFUtils;
 import org.esa.snap.core.dataio.ProductIO;
 import org.esa.snap.core.datamodel.*;
-import org.esa.snap.core.gpf.GPF;
-import ucar.ma2.*;
+import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.Index;
+import ucar.ma2.MAMath;
 import ucar.nc2.Variable;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static ucar.ma2.DataType.*;
 
@@ -29,7 +28,6 @@ public abstract class SNAP_Reader implements Reader {
 
     protected final GeometryFactory geometryFactory;
 
-    private Product uncachedProduct;
     protected Product product;
     protected PixelLocator pixelLocator;
 
@@ -43,19 +41,14 @@ public abstract class SNAP_Reader implements Reader {
             throw new IOException("Unable to read product of type '" + formatName + "`': " + file.getAbsolutePath());
         }
         pixelLocator = null;
-        uncachedProduct = null;
     }
 
     protected void openCached(File file, String formatName) throws IOException {
-        uncachedProduct = ProductIO.readProduct(file, formatName);
-        if (uncachedProduct == null) {
+        product = ProductIO.readProduct(file, formatName);
+        if (product == null) {
             throw new IOException("Unable to read product of type '" + formatName + "`': " + file.getAbsolutePath());
         }
-        final Map<String, Object> parameterMap = new HashMap<>();
-        parameterMap.put("cacheSize", 2048);
-        final Map<String, Product> productMap = new HashMap<>();
-        productMap.put("source", uncachedProduct);
-        this.product = GPF.createProduct("TileCache", parameterMap, productMap);
+
         pixelLocator = null;
     }
 
@@ -65,10 +58,6 @@ public abstract class SNAP_Reader implements Reader {
         if (product != null) {
             product.dispose();
             product = null;
-        }
-        if (uncachedProduct != null) {
-            uncachedProduct.dispose();
-            uncachedProduct = null;
         }
     }
 
@@ -260,9 +249,6 @@ public abstract class SNAP_Reader implements Reader {
         final double noDataValue = getNoDataValue(dataNode);
 
         dataNode.readRasterData(intersection.x, intersection.y, intersection.width, intersection.height, productData);
-//        for (int i = 0; i < rasterSize; i++) {
-//            readArray.setObject(i, productData.getElemDoubleAt(i));
-//        }
         int readIndex = 0;
         final Index index = readArray.getIndex();
         for (int y = 0; y < height; y++) {
@@ -273,10 +259,9 @@ public abstract class SNAP_Reader implements Reader {
                 if (currentX >= 0 && currentX < sceneRasterWidth && currentY >= 0 && currentY < sceneRasterHeight) {
                     readArray.setObject(index, productData.getElemDoubleAt(readIndex));
                     ++readIndex;
-                }else {
+                } else {
                     readArray.setObject(index, noDataValue);
                 }
-
             }
         }
     }

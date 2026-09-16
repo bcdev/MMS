@@ -102,7 +102,7 @@ public class SlstrReader extends SNAP_Reader {
             final long millis = System.currentTimeMillis();
             productDir = readerContext.createDirInTempDir(fileName + millis);
             try {
-                ZipUtils.unzip(file.toPath(), productDir.toPath(), true);
+                ZipUtils.unzip(file.toPath(), productDir.toPath(), false);
                 File[] files = productDir.listFiles();
                 if (files == null || files.length == 0) {
                     throw new IOException("Corrupt archive, no file listing possible");

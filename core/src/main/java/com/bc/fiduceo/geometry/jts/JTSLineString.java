@@ -25,13 +25,13 @@ package com.bc.fiduceo.geometry.jts;
 import com.bc.fiduceo.geometry.Geometry;
 import com.bc.fiduceo.geometry.LineString;
 import com.bc.fiduceo.geometry.Point;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 class JTSLineString implements LineString {
 
-    private final com.vividsolutions.jts.geom.LineString jtsLineString;
+    private final org.locationtech.jts.geom.LineString jtsLineString;
 
-    JTSLineString(com.vividsolutions.jts.geom.LineString jtsLineString) {
+    JTSLineString(org.locationtech.jts.geom.LineString jtsLineString) {
         this.jtsLineString = jtsLineString;
     }
 

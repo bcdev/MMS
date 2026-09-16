@@ -22,10 +22,10 @@ package com.bc.fiduceo.geometry.jts;
 
 
 import com.bc.fiduceo.geometry.Point;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.junit.Before;
 import org.junit.Test;
 

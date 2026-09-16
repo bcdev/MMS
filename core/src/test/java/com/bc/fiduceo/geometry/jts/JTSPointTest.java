@@ -22,7 +22,7 @@ package com.bc.fiduceo.geometry.jts;
 
 
 import com.bc.fiduceo.geometry.Point;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 import org.junit.Before;
 import org.junit.Test;
 

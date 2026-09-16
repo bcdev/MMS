@@ -88,7 +88,7 @@ public class DistanceConditionTest {
             distanceCondition.apply(matchupSet, new ConditionEngineContext());
             fail("NullPointerException expected");
         } catch (NullPointerException expected) {
-            assertEquals(null, expected.getMessage());
+            assertEquals("Cannot invoke \"com.bc.fiduceo.core.Sample.getLon()\" because \"secondary\" is null", expected.getMessage());
         }
     }
 

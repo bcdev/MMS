@@ -20,7 +20,7 @@
 
 package com.bc.fiduceo.geometry.jts;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 class JtsUtils {
 

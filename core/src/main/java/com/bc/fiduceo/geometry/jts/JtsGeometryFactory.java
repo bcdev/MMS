@@ -21,13 +21,13 @@
 package com.bc.fiduceo.geometry.jts;
 
 import com.bc.fiduceo.geometry.*;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
-import com.vividsolutions.jts.io.WKBWriter;
-import com.vividsolutions.jts.io.WKTReader;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
+import org.locationtech.jts.io.WKBWriter;
+import org.locationtech.jts.io.WKTReader;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,9 +35,9 @@ import java.util.List;
 
 public class JtsGeometryFactory extends AbstractGeometryFactory {
 
-    private final com.vividsolutions.jts.geom.Polygon westShiftedGlobe;
-    private final com.vividsolutions.jts.geom.Polygon eastShiftedGlobe;
-    private final com.vividsolutions.jts.geom.Polygon centralGlobe;
+    private final org.locationtech.jts.geom.Polygon westShiftedGlobe;
+    private final org.locationtech.jts.geom.Polygon eastShiftedGlobe;
+    private final org.locationtech.jts.geom.Polygon centralGlobe;
 
     private final WKTReader wktReader;
     private final GeometryFactory geometryFactory;
@@ -75,24 +75,24 @@ public class JtsGeometryFactory extends AbstractGeometryFactory {
         return coordinates;
     }
 
-    private static Geometry convertGeometry(com.vividsolutions.jts.geom.Geometry geometry) {
-        if (geometry instanceof com.vividsolutions.jts.geom.Polygon) {
-            return new JTSPolygon((com.vividsolutions.jts.geom.Polygon) geometry);
-        } else if (geometry instanceof com.vividsolutions.jts.geom.MultiPolygon) {
-            return new JTSMultiPolygon((com.vividsolutions.jts.geom.MultiPolygon) geometry);
-        } else if (geometry instanceof com.vividsolutions.jts.geom.LineString) {
-            return new JTSLineString((com.vividsolutions.jts.geom.LineString) geometry);
-        } else if (geometry instanceof com.vividsolutions.jts.geom.Point) {
+    private static Geometry convertGeometry(org.locationtech.jts.geom.Geometry geometry) {
+        if (geometry instanceof org.locationtech.jts.geom.Polygon) {
+            return new JTSPolygon((org.locationtech.jts.geom.Polygon) geometry);
+        } else if (geometry instanceof org.locationtech.jts.geom.MultiPolygon) {
+            return new JTSMultiPolygon((org.locationtech.jts.geom.MultiPolygon) geometry);
+        } else if (geometry instanceof org.locationtech.jts.geom.LineString) {
+            return new JTSLineString((org.locationtech.jts.geom.LineString) geometry);
+        } else if (geometry instanceof org.locationtech.jts.geom.Point) {
             return new JTSPoint(geometry.getCoordinate());
-        } else if (geometry instanceof com.vividsolutions.jts.geom.MultiLineString) {
-            return new JTSMultiLineString((com.vividsolutions.jts.geom.MultiLineString) geometry);
+        } else if (geometry instanceof org.locationtech.jts.geom.MultiLineString) {
+            return new JTSMultiLineString((org.locationtech.jts.geom.MultiLineString) geometry);
         }
         throw new RuntimeException("Unsupported geometry type");
     }
 
     @Override
     public Geometry parse(String wkt) {
-        final com.vividsolutions.jts.geom.Geometry geometry;
+        final org.locationtech.jts.geom.Geometry geometry;
         try {
             geometry = wktReader.read(wkt);
         } catch (ParseException e) {
@@ -109,13 +109,13 @@ public class JtsGeometryFactory extends AbstractGeometryFactory {
 
     @Override
     public byte[] toStorageFormat(Geometry geometry) {
-        com.vividsolutions.jts.geom.Geometry jtsGeometry;
+        org.locationtech.jts.geom.Geometry jtsGeometry;
         final Object inner = geometry.getInner();
         if (inner instanceof Coordinate) {
             final Coordinate jtsCoordinate = (Coordinate) inner;
             jtsGeometry = geometryFactory.createPoint(jtsCoordinate);
         } else {
-            jtsGeometry = (com.vividsolutions.jts.geom.Geometry) inner;
+            jtsGeometry = (org.locationtech.jts.geom.Geometry) inner;
         }
 
         return wkbWriter.write(jtsGeometry);
@@ -123,7 +123,7 @@ public class JtsGeometryFactory extends AbstractGeometryFactory {
 
     @Override
     public Geometry fromStorageFormat(byte[] rawData) {
-        final com.vividsolutions.jts.geom.Geometry geometry;
+        final org.locationtech.jts.geom.Geometry geometry;
         try {
             geometry = wkbReader.read(rawData);
         } catch (ParseException e) {
@@ -145,8 +145,8 @@ public class JtsGeometryFactory extends AbstractGeometryFactory {
         final Coordinate[] coordinates = extractCoordinates(points);
 
         JtsUtils.normalizePolygon(coordinates);
-        final com.vividsolutions.jts.geom.Polygon polygon = geometryFactory.createPolygon(coordinates);
-        final com.vividsolutions.jts.geom.Polygon[] polygons = mapToGlobe(polygon);
+        final org.locationtech.jts.geom.Polygon polygon = geometryFactory.createPolygon(coordinates);
+        final org.locationtech.jts.geom.Polygon[] polygons = mapToGlobe(polygon);
         if (polygons.length == 1) {
             return new JTSPolygon(polygons[0]);
         } else {
@@ -164,7 +164,7 @@ public class JtsGeometryFactory extends AbstractGeometryFactory {
     public LineString createLineString(List<Point> points) {
         final Coordinate[] coordinates = extractCoordinates(points);
 
-        com.vividsolutions.jts.geom.LineString lineString = geometryFactory.createLineString(coordinates);
+        org.locationtech.jts.geom.LineString lineString = geometryFactory.createLineString(coordinates);
         return new JTSLineString(lineString);
     }
 
@@ -175,33 +175,33 @@ public class JtsGeometryFactory extends AbstractGeometryFactory {
 
     @Override
     public TimeAxis createTimeAxis(LineString lineString, Date startTime, Date endTime) {
-        final com.vividsolutions.jts.geom.LineString jtsLineString = (com.vividsolutions.jts.geom.LineString) lineString.getInner();
+        final org.locationtech.jts.geom.LineString jtsLineString = (org.locationtech.jts.geom.LineString) lineString.getInner();
         return new JTSTimeAxis(jtsLineString, startTime, endTime);
     }
 
-    com.vividsolutions.jts.geom.Polygon[] mapToGlobe(com.vividsolutions.jts.geom.Polygon polygon) {
-        final ArrayList<com.vividsolutions.jts.geom.Polygon> geometries = new ArrayList<>();
-        final com.vividsolutions.jts.geom.Polygon westShifted = (com.vividsolutions.jts.geom.Polygon) westShiftedGlobe.intersection((com.vividsolutions.jts.geom.Polygon) polygon.clone());
+    org.locationtech.jts.geom.Polygon[] mapToGlobe(org.locationtech.jts.geom.Polygon polygon) {
+        final ArrayList<org.locationtech.jts.geom.Polygon> geometries = new ArrayList<>();
+        final org.locationtech.jts.geom.Polygon westShifted = (org.locationtech.jts.geom.Polygon) westShiftedGlobe.intersection((org.locationtech.jts.geom.Polygon) polygon.clone());
         if (!westShifted.isEmpty()) {
             westShifted.apply(new LonShifter(360.0));
             geometries.add(westShifted);
         }
 
-        final com.vividsolutions.jts.geom.Polygon central = (com.vividsolutions.jts.geom.Polygon) centralGlobe.intersection((com.vividsolutions.jts.geom.Polygon) polygon.clone());
+        final org.locationtech.jts.geom.Polygon central = (org.locationtech.jts.geom.Polygon) centralGlobe.intersection((org.locationtech.jts.geom.Polygon) polygon.clone());
         if (!central.isEmpty()) {
             geometries.add(central);
         }
 
-        final com.vividsolutions.jts.geom.Polygon eastShifted = (com.vividsolutions.jts.geom.Polygon) eastShiftedGlobe.intersection((com.vividsolutions.jts.geom.Polygon) polygon.clone());
+        final org.locationtech.jts.geom.Polygon eastShifted = (org.locationtech.jts.geom.Polygon) eastShiftedGlobe.intersection((org.locationtech.jts.geom.Polygon) polygon.clone());
         if (!eastShifted.isEmpty()) {
             eastShifted.apply(new LonShifter(-360.0));
             geometries.add(eastShifted);
         }
 
-        return geometries.toArray(new com.vividsolutions.jts.geom.Polygon[geometries.size()]);
+        return geometries.toArray(new org.locationtech.jts.geom.Polygon[geometries.size()]);
     }
 
-    private com.vividsolutions.jts.geom.Polygon createCentralGlobe() {
+    private org.locationtech.jts.geom.Polygon createCentralGlobe() {
         final Coordinate[] pointList = new Coordinate[5];
         pointList[0] = new Coordinate(-180, 90);
         pointList[1] = new Coordinate(-180, -90);
@@ -211,7 +211,7 @@ public class JtsGeometryFactory extends AbstractGeometryFactory {
         return geometryFactory.createPolygon(pointList);
     }
 
-    private com.vividsolutions.jts.geom.Polygon createEastShiftedGlobe() {
+    private org.locationtech.jts.geom.Polygon createEastShiftedGlobe() {
         final Coordinate[] pointList = new Coordinate[5];
         pointList[0] = new Coordinate(180, 90);
         pointList[1] = new Coordinate(180, -90);
@@ -221,7 +221,7 @@ public class JtsGeometryFactory extends AbstractGeometryFactory {
         return geometryFactory.createPolygon(pointList);
     }
 
-    private com.vividsolutions.jts.geom.Polygon createWestShiftedGlobe() {
+    private org.locationtech.jts.geom.Polygon createWestShiftedGlobe() {
         final Coordinate[] pointList = new Coordinate[5];
         pointList[0] = new Coordinate(-540, 90);
         pointList[1] = new Coordinate(-540, -90);

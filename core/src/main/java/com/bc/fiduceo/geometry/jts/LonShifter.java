@@ -41,8 +41,8 @@
 
 package com.bc.fiduceo.geometry.jts;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateFilter;
 
 class LonShifter implements CoordinateFilter {
 

@@ -6,9 +6,9 @@ import com.bc.fiduceo.geometry.Point;
 
 public class JTSMultiLineString implements MultiLineString {
 
-    private final com.vividsolutions.jts.geom.MultiLineString jtsMultiLineString;
+    private final org.locationtech.jts.geom.MultiLineString jtsMultiLineString;
 
-    public JTSMultiLineString(com.vividsolutions.jts.geom.MultiLineString jtsMultiLineString) {
+    public JTSMultiLineString(org.locationtech.jts.geom.MultiLineString jtsMultiLineString) {
         this.jtsMultiLineString = jtsMultiLineString;
     }
 
